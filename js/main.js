@@ -316,12 +316,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== FUNCIONES DEL PANEL DE ADMINISTRACIÓN =====
 
+// Variables para el editor de tabla
+let tableData = [];
+let currentEditingCell = null;
+
 // Toggle del panel de administración
 function toggleAdminPanel() {
     const panel = document.getElementById('adminPanel');
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'flex';
         loadProductsManager();
+        initializeTableEditor();
     } else {
         panel.style.display = 'none';
     }
@@ -816,4 +821,208 @@ function updateCategoryCounts() {
             }
         }
     });
+}
+
+// ===== FUNCIONES DEL EDITOR DE TABLA =====
+
+// Inicializar editor de tabla
+function initializeTableEditor() {
+    const tbody = document.getElementById('productsTableBody');
+    if (!tbody) return;
+    
+    // Agregar una fila inicial si no hay datos
+    if (tableData.length === 0) {
+        addNewRow();
+    } else {
+        renderTable();
+    }
+}
+
+// Agregar nueva fila
+function addNewRow() {
+    const newRow = {
+        id: Date.now(),
+        referencia: '',
+        descripcion: '',
+        cantidad: 1,
+        precio: 0,
+        imagen1: '',
+        imagen2: '',
+        imagen3: ''
+    };
+    
+    tableData.push(newRow);
+    renderTable();
+}
+
+// Renderizar tabla
+function renderTable() {
+    const tbody = document.getElementById('productsTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    tableData.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>
+                <div class="editable-cell" onclick="editCell(this, ${index}, 'referencia')">
+                    <input type="text" value="${row.referencia}" onblur="saveCellValue(${index}, 'referencia', this.value)">
+                </div>
+            </td>
+            <td>
+                <div class="editable-cell" onclick="editCell(this, ${index}, 'descripcion')">
+                    <textarea onblur="saveCellValue(${index}, 'descripcion', this.value)">${row.descripcion}</textarea>
+                </div>
+            </td>
+            <td>
+                <div class="editable-cell" onclick="editCell(this, ${index}, 'cantidad')">
+                    <input type="number" value="${row.cantidad}" min="1" onblur="saveCellValue(${index}, 'cantidad', this.value)">
+                </div>
+            </td>
+            <td>
+                <div class="editable-cell" onclick="editCell(this, ${index}, 'precio')">
+                    <input type="number" value="${row.precio}" step="0.01" min="0" onblur="saveCellValue(${index}, 'precio', this.value)">
+                </div>
+            </td>
+            <td class="image-upload-cell">
+                <button class="image-upload-btn ${row.imagen1 ? 'has-image' : ''}" onclick="uploadImage(${index}, 1)">
+                    <i class="fas fa-image"></i>
+                    ${row.imagen1 ? 'Cambiar' : 'Subir'}
+                </button>
+                ${row.imagen1 ? `<img src="${row.imagen1}" class="image-preview-small" alt="Imagen 1">` : ''}
+                <input type="file" id="image1_${index}" accept="image/*" style="display: none;" onchange="handleImageUpload(${index}, 1, this)">
+            </td>
+            <td class="image-upload-cell">
+                <button class="image-upload-btn ${row.imagen2 ? 'has-image' : ''}" onclick="uploadImage(${index}, 2)">
+                    <i class="fas fa-image"></i>
+                    ${row.imagen2 ? 'Cambiar' : 'Subir'}
+                </button>
+                ${row.imagen2 ? `<img src="${row.imagen2}" class="image-preview-small" alt="Imagen 2">` : ''}
+                <input type="file" id="image2_${index}" accept="image/*" style="display: none;" onchange="handleImageUpload(${index}, 2, this)">
+            </td>
+            <td class="image-upload-cell">
+                <button class="image-upload-btn ${row.imagen3 ? 'has-image' : ''}" onclick="uploadImage(${index}, 3)">
+                    <i class="fas fa-image"></i>
+                    ${row.imagen3 ? 'Cambiar' : 'Subir'}
+                </button>
+                ${row.imagen3 ? `<img src="${row.imagen3}" class="image-preview-small" alt="Imagen 3">` : ''}
+                <input type="file" id="image3_${index}" accept="image/*" style="display: none;" onchange="handleImageUpload(${index}, 3, this)">
+            </td>
+            <td>
+                <button class="delete-row-btn" onclick="deleteRow(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Editar celda
+function editCell(cell, rowIndex, field) {
+    const input = cell.querySelector('input, textarea');
+    if (input) {
+        input.focus();
+        input.select();
+    }
+}
+
+// Guardar valor de celda
+function saveCellValue(rowIndex, field, value) {
+    if (rowIndex >= 0 && rowIndex < tableData.length) {
+        if (field === 'cantidad' || field === 'precio') {
+            tableData[rowIndex][field] = parseFloat(value) || 0;
+        } else {
+            tableData[rowIndex][field] = value;
+        }
+    }
+}
+
+// Subir imagen
+function uploadImage(rowIndex, imageNumber) {
+    const input = document.getElementById(`image${imageNumber}_${rowIndex}`);
+    if (input) {
+        input.click();
+    }
+}
+
+// Manejar subida de imagen
+function handleImageUpload(rowIndex, imageNumber, input) {
+    const file = input.files[0];
+    if (!file) return;
+    
+    if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen válido');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        tableData[rowIndex][`imagen${imageNumber}`] = e.target.result;
+        renderTable();
+    };
+    reader.readAsDataURL(file);
+}
+
+// Eliminar fila
+function deleteRow(rowIndex) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta fila?')) {
+        tableData.splice(rowIndex, 1);
+        renderTable();
+    }
+}
+
+// Guardar todos los productos
+function saveAllProducts() {
+    if (tableData.length === 0) {
+        alert('No hay productos para guardar');
+        return;
+    }
+    
+    let savedCount = 0;
+    
+    tableData.forEach((row, index) => {
+        // Validar datos obligatorios
+        if (!row.referencia || !row.descripcion || !row.precio) {
+            alert(`Fila ${index + 1}: Faltan datos obligatorios (Referencia, Descripción, Precio)`);
+            return;
+        }
+        
+        // Procesar imágenes
+        const images = [];
+        if (row.imagen1) images.push(row.imagen1);
+        if (row.imagen2) images.push(row.imagen2);
+        if (row.imagen3) images.push(row.imagen3);
+        
+        // Crear producto
+        const newProduct = {
+            id: Date.now() + index,
+            name: row.descripcion,
+            brand: 'EDITOR',
+            category: 'otros',
+            price: `US$ ${row.precio.toFixed(2)}`,
+            quantity: row.cantidad,
+            rating: 5,
+            reviews: 0,
+            shipping: 'Envío gratis',
+            description: row.descripcion,
+            referencia: row.referencia,
+            images: images
+        };
+        
+        products.push(newProduct);
+        savedCount++;
+    });
+    
+    // Actualizar interfaz
+    updateProductsGrid();
+    updateCategoryCounts();
+    loadProductsManager();
+    
+    // Limpiar tabla
+    tableData = [];
+    renderTable();
+    
+    alert(`Se guardaron ${savedCount} productos exitosamente`);
 }

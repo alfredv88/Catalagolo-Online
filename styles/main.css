@@ -588,6 +588,210 @@ body {
     display: block;
 }
 
+/* Estilos para editor de tabla */
+.table-editor-section h3 {
+    color: #1877f2;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.add-row-btn, .save-all-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.add-row-btn {
+    background: #28a745;
+    color: white;
+}
+
+.add-row-btn:hover {
+    background: #218838;
+}
+
+.save-all-btn {
+    background: #1877f2;
+    color: white;
+}
+
+.save-all-btn:hover {
+    background: #166fe5;
+}
+
+.table-container {
+    overflow-x: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.products-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+.products-table th {
+    background: #1877f2;
+    color: white;
+    padding: 12px 8px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    border-right: 1px solid rgba(255,255,255,0.2);
+}
+
+.products-table th:last-child {
+    border-right: none;
+}
+
+.products-table td {
+    padding: 8px;
+    border-bottom: 1px solid #e0e0e0;
+    border-right: 1px solid #f0f0f0;
+    vertical-align: middle;
+}
+
+.products-table td:last-child {
+    border-right: none;
+}
+
+.products-table tr:hover {
+    background: #f8f9fa;
+}
+
+.editable-cell {
+    position: relative;
+    cursor: pointer;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.editable-cell input, .editable-cell textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    padding: 4px 8px;
+    font-size: 14px;
+    outline: none;
+    resize: none;
+}
+
+.editable-cell input:focus, .editable-cell textarea:focus {
+    background: #e3f2fd;
+    border-radius: 4px;
+}
+
+.editable-cell textarea {
+    min-height: 60px;
+    font-family: inherit;
+}
+
+.image-upload-cell {
+    text-align: center;
+}
+
+.image-upload-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background-color 0.3s;
+}
+
+.image-upload-btn:hover {
+    background: #5a6268;
+}
+
+.image-upload-btn.has-image {
+    background: #28a745;
+}
+
+.image-upload-btn.has-image:hover {
+    background: #218838;
+}
+
+.image-preview-small {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 2px solid #e0e0e0;
+    margin: 0 auto;
+    display: block;
+}
+
+.delete-row-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s;
+}
+
+.delete-row-btn:hover {
+    background: #c82333;
+}
+
+.table-info {
+    margin-top: 20px;
+    padding: 16px;
+    background: #e3f2fd;
+    border-radius: 6px;
+    border-left: 4px solid #1877f2;
+}
+
+.table-info p {
+    margin: 0 0 8px 0;
+    font-weight: 500;
+    color: #1877f2;
+}
+
+.table-info ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.table-info li {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #333;
+}
+
 /* Estilos para importación */
 .import-section h3 {
     color: #1877f2;

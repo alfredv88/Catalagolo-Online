@@ -47,7 +47,7 @@
             
             <div class="admin-tabs">
                 <button class="tab-btn active" onclick="showTab('import')">
-                    <i class="fas fa-file-excel"></i> Importar Excel/CSV
+                    <i class="fas fa-table"></i> Editor de Tabla
                 </button>
                 <button class="tab-btn" onclick="showTab('add')">
                     <i class="fas fa-plus"></i> Agregar Producto
@@ -57,39 +57,49 @@
                 </button>
             </div>
             
-            <!-- Tab Importar -->
+            <!-- Tab Editor de Tabla -->
             <div class="tab-content active" id="importTab">
-                <div class="import-section">
-                    <h3>Importar desde Hoja de Cálculo</h3>
-                    <p>Sube un archivo Excel (.xlsx) o CSV con los datos de los productos</p>
-                    
-                    <div class="file-upload">
-                        <input type="file" id="fileInput" accept=".xlsx,.csv" onchange="handleFileUpload(event)">
-                        <label for="fileInput" class="file-label">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <span>Seleccionar archivo Excel/CSV</span>
-                        </label>
-                    </div>
-                    
-                    <div class="import-preview" id="importPreview" style="display: none;">
-                        <h4>Vista previa de datos:</h4>
-                        <div class="preview-table" id="previewTable"></div>
-                        <button class="import-btn" onclick="importProducts()">
-                            <i class="fas fa-download"></i> Importar Productos
-                        </button>
-                    </div>
-                    
-                    <div class="import-template">
-                        <h4>Formato requerido:</h4>
-                        <p>Las columnas deben ser: <strong>Referencia, Descripción, Cantidad, Precio, Imagen Portada, Imagen 2, Imagen 3</strong></p>
-                        <div class="template-info">
-                            <p><strong>📸 Imágenes:</strong> Coloca el nombre del archivo de imagen (ej: producto1.jpg)</p>
-                            <p><strong>🎯 Imagen Portada:</strong> La primera imagen será la imagen principal del producto</p>
-                            <p><strong>📁 Ubicación:</strong> Las imágenes deben estar en la carpeta <code>images/productos/</code></p>
+                <div class="table-editor-section">
+                    <div class="editor-header">
+                        <h3><i class="fas fa-table"></i> Editor de Productos</h3>
+                        <div class="editor-actions">
+                            <button class="add-row-btn" onclick="addNewRow()">
+                                <i class="fas fa-plus"></i> Agregar Fila
+                            </button>
+                            <button class="save-all-btn" onclick="saveAllProducts()">
+                                <i class="fas fa-save"></i> Guardar Todos
+                            </button>
                         </div>
-                        <button class="download-template" onclick="downloadTemplate()">
-                            <i class="fas fa-download"></i> Descargar Plantilla
-                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="products-table" id="productsTable">
+                            <thead>
+                                <tr>
+                                    <th>Referencia</th>
+                                    <th>Descripción</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio (US$)</th>
+                                    <th>Imagen 1 (Portada)</th>
+                                    <th>Imagen 2</th>
+                                    <th>Imagen 3</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productsTableBody">
+                                <!-- Las filas se generarán dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="table-info">
+                        <p><strong>💡 Instrucciones:</strong></p>
+                        <ul>
+                            <li>Haz clic en cualquier celda para editar</li>
+                            <li>La <strong>Imagen 1</strong> será la imagen de portada</li>
+                            <li>Sube imágenes haciendo clic en el botón de imagen</li>
+                            <li>Usa <strong>"Agregar Fila"</strong> para nuevos productos</li>
+                        </ul>
                     </div>
                 </div>
             </div>
