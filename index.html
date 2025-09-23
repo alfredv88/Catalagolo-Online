@@ -45,18 +45,72 @@
                 </button>
             </div>
             
-            <div class="admin-tabs">
-                <button class="tab-btn active" onclick="showTab('import')">
-                    <i class="fas fa-table"></i> Editor de Tabla
-                </button>
-                <button class="tab-btn" onclick="showTab('add')">
-                    <i class="fas fa-plus"></i> Agregar Producto
-                </button>
-                <button class="tab-btn" onclick="showTab('manage')">
-                    <i class="fas fa-list"></i> Gestionar Productos
-                </button>
-            </div>
+                    <div class="admin-tabs">
+                        <button class="tab-btn" onclick="showTab('excel')">
+                            <i class="fas fa-file-excel"></i> Importar Excel
+                        </button>
+                        <button class="tab-btn active" onclick="showTab('import')">
+                            <i class="fas fa-table"></i> Editor de Tabla
+                        </button>
+                    </div>
             
+            <!-- Tab Importar Excel -->
+            <div class="tab-content" id="excelTab">
+                <div class="excel-import-section">
+                    <div class="excel-header">
+                        <h3><i class="fas fa-file-excel"></i> Importación Masiva desde Excel</h3>
+                        <p>Sube un archivo Excel (.xlsx) con los datos de productos para importación masiva</p>
+                    </div>
+                    
+                    <div class="excel-upload-area">
+                        <div class="upload-zone" id="excelUploadZone">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <h4>Arrastra tu archivo Excel aquí</h4>
+                            <p>o haz clic para seleccionar</p>
+                            <input type="file" id="excelFileInput" accept=".xlsx,.xls" style="display: none;">
+                            <button class="select-file-btn" onclick="document.getElementById('excelFileInput').click()">
+                                <i class="fas fa-folder-open"></i> Seleccionar Archivo
+                            </button>
+                        </div>
+                        
+                        <div class="excel-preview" id="excelPreview" style="display: none;">
+                            <h4><i class="fas fa-eye"></i> Vista Previa de Datos</h4>
+                            <div class="preview-table-container">
+                                <table class="preview-table" id="previewTable">
+                                    <thead id="previewTableHead"></thead>
+                                    <tbody id="previewTableBody"></tbody>
+                                </table>
+                            </div>
+                            <div class="preview-actions">
+                                <button class="import-btn" onclick="importExcelData()">
+                                    <i class="fas fa-download"></i> Importar a Tabla
+                                </button>
+                                <button class="cancel-btn" onclick="cancelExcelImport()">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="excel-instructions">
+                        <h4><i class="fas fa-info-circle"></i> Instrucciones para el Excel:</h4>
+                        <ul>
+                            <li><strong>Columna A:</strong> Referencia (ej: REF-001)</li>
+                            <li><strong>Columna B:</strong> Descripción del producto</li>
+                            <li><strong>Columna C:</strong> Categoría (electrodomesticos, hogar, limpieza, otros)</li>
+                            <li><strong>Columna D:</strong> Cantidad (número)</li>
+                            <li><strong>Columna E:</strong> Precio en US$ (número)</li>
+                            <li><strong>Fila 1:</strong> Debe contener los encabezados</li>
+                        </ul>
+                        <div class="excel-template">
+                            <button class="download-template-btn" onclick="downloadExcelTemplate()">
+                                <i class="fas fa-download"></i> Descargar Plantilla Excel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Tab Editor de Tabla -->
             <div class="tab-content active" id="importTab">
                 <div class="table-editor-section">
@@ -66,8 +120,17 @@
                             <button class="add-row-btn" onclick="addNewRow()">
                                 <i class="fas fa-plus"></i> Agregar Fila
                             </button>
+                            <button class="categories-btn" onclick="toggleCategoriesManager()">
+                                <i class="fas fa-tags"></i> Gestionar Categorías
+                            </button>
                             <button class="save-all-btn" onclick="saveAllProducts()">
                                 <i class="fas fa-save"></i> Guardar Todos
+                            </button>
+                            <button class="view-products-btn" onclick="showExistingProducts()" title="Ver productos existentes">
+                                <i class="fas fa-list"></i> Ver Productos
+                            </button>
+                            <button class="clear-all-btn" onclick="clearAllData()" title="Limpiar todos los datos">
+                                <i class="fas fa-trash-alt"></i> Limpiar Todo
                             </button>
                         </div>
                     </div>
@@ -78,6 +141,7 @@
                                 <tr>
                                     <th>Referencia</th>
                                     <th>Descripción</th>
+                                    <th>Categoría</th>
                                     <th>Cantidad</th>
                                     <th>Precio (US$)</th>
                                     <th>Imagen 1 (Portada)</th>
@@ -99,85 +163,41 @@
                             <li>La <strong>Imagen 1</strong> será la imagen de portada</li>
                             <li>Sube imágenes haciendo clic en el botón de imagen</li>
                             <li>Usa <strong>"Agregar Fila"</strong> para nuevos productos</li>
+                            <li>Gestiona categorías con el botón <strong>"Gestionar Categorías"</strong></li>
                         </ul>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Tab Agregar Producto -->
-            <div class="tab-content" id="addTab">
-                <div class="add-product-section">
-                    <h3>Agregar Nuevo Producto</h3>
+                
+                <!-- Panel de Gestión de Categorías -->
+                <div class="categories-manager" id="categoriesManager" style="display: none;">
+                    <div class="categories-header">
+                        <h3><i class="fas fa-tags"></i> Gestión de Categorías</h3>
+                        <button class="close-categories" onclick="toggleCategoriesManager()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
                     
-                    <form class="product-form" id="productForm">
-                        <div class="form-group">
-                            <label for="productRef">Referencia:</label>
-                            <input type="text" id="productRef" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="productBrand">Marca:</label>
-                            <input type="text" id="productBrand" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="productName">Descripción:</label>
-                            <textarea id="productName" required></textarea>
-                        </div>
-                        
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="productQuantity">Cantidad:</label>
-                                <input type="number" id="productQuantity" min="1" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="productPrice">Precio (US$):</label>
-                                <input type="number" id="productPrice" step="0.01" min="0" required>
+                    <div class="categories-content">
+                        <div class="add-category-section">
+                            <h4>Agregar Nueva Categoría</h4>
+                            <div class="category-input-group">
+                                <input type="text" id="newCategoryName" placeholder="Nombre de la categoría" maxlength="20">
+                                <button class="add-category-btn" onclick="addNewCategory()">
+                                    <i class="fas fa-plus"></i> Agregar
+                                </button>
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="productCategory">Categoría:</label>
-                            <select id="productCategory" required>
-                                <option value="electrodomesticos">Electrodomésticos</option>
-                                <option value="hogar">Hogar y Decoración</option>
-                                <option value="limpieza">Limpieza</option>
-                                <option value="otros">Otros</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Imágenes del producto:</label>
-                            <div class="image-upload">
-                                <input type="file" id="productImages" multiple accept="image/*" onchange="previewImages(event)">
-                                <label for="productImages" class="image-label">
-                                    <i class="fas fa-images"></i>
-                                    <span>Seleccionar 2-3 imágenes</span>
-                                </label>
+                        <div class="existing-categories-section">
+                            <h4>Categorías Existentes</h4>
+                            <div class="categories-list" id="categoriesList">
+                                <!-- Las categorías se cargarán dinámicamente -->
                             </div>
-                            <div class="image-preview" id="imagePreview"></div>
                         </div>
-                        
-                        <div class="form-actions">
-                            <button type="button" class="cancel-btn" onclick="clearForm()">Cancelar</button>
-                            <button type="submit" class="save-btn">
-                                <i class="fas fa-save"></i> Guardar Producto
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            
-            <!-- Tab Gestionar -->
-            <div class="tab-content" id="manageTab">
-                <div class="manage-section">
-                    <h3>Gestionar Productos Existentes</h3>
-                    <div class="products-manager" id="productsManager">
-                        <!-- Los productos se cargarán dinámicamente -->
                     </div>
                 </div>
             </div>
+            
         </div>
     </div>
 
@@ -189,19 +209,19 @@
             <ul class="categories">
                 <li class="category-item active" data-category="all">
                     <span>Todos los productos</span>
-                    <span class="count">6</span>
+                    <span class="count">10</span>
                 </li>
                 <li class="category-item" data-category="electrodomesticos">
                     <span>Electrodomésticos</span>
-                    <span class="count">4</span>
+                    <span class="count">7</span>
                 </li>
                 <li class="category-item" data-category="hogar">
                     <span>Hogar y Decoración</span>
-                    <span class="count">1</span>
+                    <span class="count">2</span>
                 </li>
                 <li class="category-item" data-category="limpieza">
                     <span>Limpieza</span>
-                    <span class="count">1</span>
+                    <span class="count">2</span>
                 </li>
             </ul>
         </aside>

@@ -1,9 +1,154 @@
+// Variables globales
+let products = [];
+
+// Cargar productos desde localStorage al inicializar
+function loadProductsFromStorage() {
+    const savedProducts = localStorage.getItem('catalogProducts');
+    if (savedProducts) {
+        try {
+            products = JSON.parse(savedProducts);
+            console.log('Productos cargados desde localStorage:', products.length);
+        } catch (error) {
+            console.error('Error al cargar productos desde localStorage:', error);
+            products = [];
+        }
+    } else {
+        // Si no hay productos guardados, agregar los 6 productos de ejemplo
+        products = [
+            {
+                id: 1,
+                referencia: "REF-001",
+                name: "Freidora Eléctrica Royal 20Lts - Ideal para restaurantes y cocinas comerciales",
+                category: "electrodomesticos",
+                quantity: 3,
+                price: 89.99,
+                images: []
+            },
+            {
+                id: 2,
+                referencia: "REF-002",
+                name: "Set de Ollas Premium Antiadherentes 6 Piezas - Acero Inoxidable",
+                category: "hogar",
+                quantity: 2,
+                price: 45.50,
+                images: []
+            },
+            {
+                id: 3,
+                referencia: "REF-003", 
+                name: "Aspiradora Industrial Karcher 2000W - Para uso comercial",
+                category: "limpieza",
+                quantity: 1,
+                price: 125.00,
+                images: []
+            },
+            {
+                id: 4,
+                referencia: "REF-004",
+                name: "Microondas Samsung 30Lts - Panel digital y grill",
+                category: "electrodomesticos", 
+                quantity: 2,
+                price: 75.99,
+                images: []
+            },
+            {
+                id: 5,
+                referencia: "REF-005",
+                name: "Juego de Sábanas Premium 4 Piezas - Algodón 100%",
+                category: "hogar",
+                quantity: 5,
+                price: 25.00,
+                images: []
+            },
+            {
+                id: 6,
+                referencia: "REF-006",
+                name: "Lavadora Automática Whirlpool 12Kg - Carga frontal",
+                category: "electrodomesticos",
+                quantity: 1,
+                price: 299.99,
+                images: []
+            }
+        ];
+        // Guardar los productos de ejemplo
+        saveProductsToStorage();
+        console.log('Productos de ejemplo agregados:', products.length);
+    }
+}
+
+// Guardar productos en localStorage
+function saveProductsToStorage() {
+    try {
+        localStorage.setItem('catalogProducts', JSON.stringify(products));
+        console.log('Productos guardados en localStorage:', products.length);
+    } catch (error) {
+        console.error('Error al guardar productos en localStorage:', error);
+    }
+}
+
+// Variables globales adicionales
+let uploadedData = [];
+let currentImages = [];
+let tableData = [];
+let currentEditingCell = null;
+
+// Cargar datos de la tabla desde localStorage
+function loadTableDataFromStorage() {
+    const savedTableData = localStorage.getItem('catalogTableData');
+    if (savedTableData) {
+        try {
+            tableData = JSON.parse(savedTableData);
+            console.log('Datos de tabla cargados desde localStorage:', tableData.length);
+        } catch (error) {
+            console.error('Error al cargar datos de tabla desde localStorage:', error);
+            tableData = [];
+        }
+    }
+}
+
+// Guardar datos de la tabla en localStorage
+function saveTableDataToStorage() {
+    try {
+        localStorage.setItem('catalogTableData', JSON.stringify(tableData));
+        console.log('Datos de tabla guardados en localStorage:', tableData.length);
+    } catch (error) {
+        console.error('Error al guardar datos de tabla en localStorage:', error);
+    }
+}
+
+// Categorías disponibles
+let availableCategories = [
+    { id: 'electrodomesticos', name: 'Electrodomésticos' },
+    { id: 'hogar', name: 'Hogar y Decoración' },
+    { id: 'limpieza', name: 'Limpieza' },
+    { id: 'otros', name: 'Otros' }
+];
+
+// Cargar categorías desde localStorage
+function loadCategoriesFromStorage() {
+    const savedCategories = localStorage.getItem('catalogCategories');
+    if (savedCategories) {
+        try {
+            availableCategories = JSON.parse(savedCategories);
+            console.log('Categorías cargadas desde localStorage:', availableCategories.length);
+        } catch (error) {
+            console.error('Error al cargar categorías desde localStorage:', error);
+        }
+    }
+}
+
+// Guardar categorías en localStorage
+function saveCategoriesToStorage() {
+    try {
+        localStorage.setItem('catalogCategories', JSON.stringify(availableCategories));
+        console.log('Categorías guardadas en localStorage:', availableCategories.length);
+    } catch (error) {
+        console.error('Error al guardar categorías en localStorage:', error);
+    }
+}
+
 // Funcionalidad del catálogo de liquidación
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Variables globales
-    let uploadedData = [];
-    let currentImages = [];
     
     // Elementos del DOM
     const searchInput = document.getElementById('searchInput');
@@ -11,104 +156,39 @@ document.addEventListener('DOMContentLoaded', function() {
     const categoryItems = document.querySelectorAll('.category-item');
     const productCards = document.querySelectorAll('.product-card');
     
-    // Datos de productos (simulando base de datos)
-    const products = [
-        {
-            id: 1,
-            name: 'Freidora Eléctrica Royal 20 Lts',
-            brand: 'ROYAL',
-            category: 'electrodomesticos',
-            price: 'US$ 218.55',
-            rating: 5,
-            reviews: 12,
-            shipping: 'Envío gratis',
-            description: 'Freidora eléctrica de alta capacidad para uso comercial y doméstico'
-        },
-        {
-            id: 2,
-            name: 'Licuadora Oster 1500w 1.5L Vidrio 2 Accesorios',
-            brand: 'OSTER',
-            category: 'electrodomesticos',
-            price: 'US$ 48.95',
-            rating: 4.5,
-            reviews: 171,
-            shipping: 'Envío gratis',
-            colors: 'Disponible en 3 colores',
-            description: 'Licuadora de alta potencia con vaso de vidrio y accesorios incluidos'
-        },
-        {
-            id: 3,
-            name: 'Procesador De Alimento Eléctrico Picatodo 1.5 Tazas Original',
-            brand: 'ROYAL',
-            category: 'electrodomesticos',
-            price: 'US$ 23.95',
-            rating: 5,
-            reviews: 6,
-            shipping: 'Envío gratis',
-            description: 'Procesador compacto para picar y procesar alimentos'
-        },
-        {
-            id: 4,
-            name: 'Humificador Difusor De Aroma 150ml + Esencia Aromática 15ml',
-            brand: 'EAGLE STORE',
-            category: 'hogar',
-            price: 'US$ 7.44',
-            originalPrice: 'US$ 8.00',
-            discount: '7% OFF',
-            rating: 4.5,
-            reviews: 63,
-            shipping: 'Envío gratis',
-            description: 'Humificador con difusor de aromas y esencia incluida'
-        },
-        {
-            id: 5,
-            name: 'Mini Aspiradora Sopladora Inalámbrica Recargable 2 En 1 USB',
-            brand: 'VACUUM CLEANER',
-            category: 'limpieza',
-            price: 'US$ 6.99',
-            rating: 4.5,
-            reviews: 256,
-            shipping: 'Envío gratis',
-            description: 'Aspiradora inalámbrica con función de soplador, recargable por USB'
-        },
-        {
-            id: 6,
-            name: 'Cuchilla Oster + Acople Completo Orig Made In USA',
-            brand: 'OSTER',
-            category: 'electrodomesticos',
-            price: 'US$ 10.00',
-            rating: 5,
-            reviews: 131,
-            shipping: 'Envío gratis',
-            description: 'Cuchilla original Oster con acople completo, fabricado en USA'
-        }
-    ];
-    
     // Función para filtrar productos por categoría
     function filterByCategory(category) {
-        productCards.forEach(card => {
-            if (category === 'all' || card.dataset.category === category) {
-                card.style.display = 'block';
-                card.style.animation = 'fadeIn 0.3s ease-in';
-            } else {
-                card.style.display = 'none';
-            }
+        const grid = document.getElementById('productsGrid');
+        if (!grid) return;
+        
+        // Filtrar productos por categoría
+        const filteredProducts = category === 'all' 
+            ? products 
+            : products.filter(p => p.category === category);
+        
+        // Limpiar grid
+        grid.innerHTML = '';
+        
+        // Renderizar productos filtrados
+        filteredProducts.forEach(product => {
+            const productCard = createProductCard(product);
+            grid.appendChild(productCard);
         });
         
+        // Reconfigurar eventos
+        setupImageThumbnails();
+        setupProductDetails();
+        
         // Actualizar contador de productos visibles
-        updateProductCount(category);
+        updateProductCount(category, filteredProducts.length);
     }
     
     // Función para actualizar contador de productos
-    function updateProductCount(category) {
-        const visibleProducts = category === 'all' 
-            ? productCards.length 
-            : document.querySelectorAll(`[data-category="${category}"]`).length;
-        
+    function updateProductCount(category, count) {
         // Actualizar el contador en el header si existe
         const countElement = document.querySelector('.products-header p');
         if (countElement) {
-            countElement.textContent = `${visibleProducts} productos encontrados`;
+            countElement.textContent = `${count} productos encontrados`;
         }
     }
     
@@ -270,7 +350,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Función para inicializar contadores de categorías
     function initializeCategoryCounts() {
         const categories = ['all', 'electrodomesticos', 'hogar', 'limpieza'];
-        const counts = [6, 4, 1, 1]; // Contadores reales basados en los productos
+        const counts = [
+            products.length,
+            products.filter(p => p.category === 'electrodomesticos').length,
+            products.filter(p => p.category === 'hogar').length,
+            products.filter(p => p.category === 'limpieza').length
+        ];
+        
+        console.log('Actualizando contadores:', counts);
         
         categories.forEach((category, index) => {
             const categoryItem = document.querySelector(`[data-category="${category}"]`);
@@ -285,6 +372,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicialización
     function init() {
+        // Cargar datos desde localStorage
+        loadProductsFromStorage();
+        loadCategoriesFromStorage();
+        loadTableDataFromStorage();
+        
         setupImageThumbnails();
         setupProductDetails();
         animateStars();
@@ -293,10 +385,36 @@ document.addEventListener('DOMContentLoaded', function() {
         setupHoverEffects();
         initializeCategoryCounts();
         
+        // Actualizar sidebar con categorías dinámicas
+        updateSidebarCategories();
+        
+        // Renderizar todos los productos
+        renderAllProducts();
+        
         // Mostrar todos los productos por defecto
         filterByCategory('all');
         
         console.log('Catálogo de liquidación inicializado correctamente');
+        console.log('Total de productos:', products.length);
+        console.log('Categorías disponibles:', availableCategories.length);
+    }
+    
+    // Función para renderizar todos los productos
+    function renderAllProducts() {
+        const grid = document.getElementById('productsGrid');
+        if (!grid) return;
+        
+        console.log('Renderizando todos los productos:', products.length);
+        grid.innerHTML = '';
+        
+        products.forEach(product => {
+            const productCard = createProductCard(product);
+            grid.appendChild(productCard);
+        });
+        
+        // Reconfigurar eventos
+        setupImageThumbnails();
+        setupProductDetails();
     }
     
     // Ejecutar inicialización
@@ -316,47 +434,84 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // ===== FUNCIONES DEL PANEL DE ADMINISTRACIÓN =====
 
-// Variables para el editor de tabla
-let tableData = [];
-let currentEditingCell = null;
-
 // Toggle del panel de administración
 function toggleAdminPanel() {
     const panel = document.getElementById('adminPanel');
     if (panel.style.display === 'none' || panel.style.display === '') {
+        // Resetear estilos y mostrar panel
         panel.style.display = 'flex';
+        panel.style.visibility = 'visible';
+        panel.style.opacity = '1';
+        
         loadProductsManager();
+        // Cargar datos de la tabla desde localStorage
+        loadTableDataFromStorage();
         // Inicializar editor de tabla después de un pequeño delay
         setTimeout(() => {
             initializeTableEditor();
         }, 200);
     } else {
+        closeAdminPanel();
+    }
+}
+
+// Función para cerrar el panel de administración
+function closeAdminPanel() {
+    const panel = document.getElementById('adminPanel');
+    if (panel) {
+        // Forzar el cierre del panel
         panel.style.display = 'none';
+        panel.style.visibility = 'hidden';
+        panel.style.opacity = '0';
+        
+        console.log('Panel de administración cerrado');
+        
+        // Limpiar cualquier estado del panel
+        const categoriesManager = document.getElementById('categoriesManager');
+        if (categoriesManager) {
+            categoriesManager.style.display = 'none';
+        }
+        
+        // No limpiar la tabla automáticamente, mantener los datos
+        
+    } else {
+        console.log('No se encontró el panel de administración');
     }
 }
 
 // Cambiar tabs del panel
 function showTab(tabName) {
     // Ocultar todos los tabs
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-    
-    // Remover active de todos los botones
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
+    const tabs = document.querySelectorAll('.tab-content');
+    tabs.forEach(tab => tab.classList.remove('active'));
     
     // Mostrar tab seleccionado
-    document.getElementById(tabName + 'Tab').classList.add('active');
+    const selectedTab = document.getElementById(tabName + 'Tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Actualizar botones de tab
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    tabButtons.forEach(btn => btn.classList.remove('active'));
     
     // Activar botón correspondiente
-    event.target.classList.add('active');
+    const activeButton = document.querySelector(`[onclick="showTab('${tabName}')"]`);
+    if (activeButton) {
+        activeButton.classList.add('active');
+    }
     
-    // Inicializar editor de tabla si es el tab activo
+    // Inicializar editor de tabla si es necesario
     if (tabName === 'import') {
         setTimeout(() => {
             initializeTableEditor();
+        }, 100);
+    }
+    
+    // Inicializar funcionalidad de Excel si es necesario
+    if (tabName === 'excel') {
+        setTimeout(() => {
+            initializeExcelImport();
         }, 100);
     }
 }
@@ -580,170 +735,429 @@ function downloadTemplate() {
     XLSX.writeFile(wb, 'plantilla_productos.xlsx');
 }
 
-// Preview de imágenes seleccionadas
-function previewImages(event) {
-    const files = event.target.files;
-    const preview = document.getElementById('imagePreview');
-    
-    preview.innerHTML = '';
-    currentImages = [];
-    
-    if (files.length > 3) {
-        alert('Máximo 3 imágenes por producto');
-        event.target.value = '';
-        return;
-    }
-    
-    Array.from(files).forEach((file, index) => {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = `Imagen ${index + 1}`;
-                preview.appendChild(img);
-                currentImages.push(e.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}
-
-// Limpiar formulario
-function clearForm() {
-    document.getElementById('productForm').reset();
-    document.getElementById('imagePreview').innerHTML = '';
-    currentImages = [];
-}
-
-// Manejar envío del formulario
-document.getElementById('productForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = {
-        referencia: document.getElementById('productRef').value,
-        brand: document.getElementById('productBrand').value,
-        name: document.getElementById('productName').value,
-        quantity: parseInt(document.getElementById('productQuantity').value),
-        price: parseFloat(document.getElementById('productPrice').value),
-        category: document.getElementById('productCategory').value,
-        images: currentImages
-    };
-    
-    // Validar datos
-    if (!formData.referencia || !formData.brand || !formData.name || !formData.price) {
-        alert('Por favor completa todos los campos obligatorios');
-        return;
-    }
-    
-    if (currentImages.length === 0) {
-        alert('Por favor selecciona al menos una imagen');
-        return;
-    }
-    
-    // Crear nuevo producto
-    const newProduct = {
-        id: Date.now(),
-        name: formData.name,
-        brand: formData.brand,
-        category: formData.category,
-        price: `US$ ${formData.price.toFixed(2)}`,
-        quantity: formData.quantity,
-        rating: 5,
-        reviews: 0,
-        shipping: 'Envío gratis',
-        description: formData.name,
-        referencia: formData.referencia,
-        images: currentImages
-    };
-    
-    // Agregar a la lista de productos
-    products.push(newProduct);
-    
-    // Actualizar interfaz
-    updateProductsGrid();
-    updateCategoryCounts();
-    loadProductsManager();
-    
-    // Limpiar formulario
-    clearForm();
-    
-    alert('Producto agregado exitosamente');
-});
-
-// Cargar productos en el manager
+// Función simplificada para cargar productos en el manager (ya no se usa)
 function loadProductsManager() {
-    const manager = document.getElementById('productsManager');
+    // Función vacía ya que no se usa
+}
+
+// ===== FUNCIONES DE GESTIÓN DE CATEGORÍAS =====
+
+// Toggle del panel de categorías
+function toggleCategoriesManager() {
+    const panel = document.getElementById('categoriesManager');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'flex';
+        loadCategoriesList();
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+// Cargar lista de categorías
+function loadCategoriesList() {
+    const container = document.getElementById('categoriesList');
+    container.innerHTML = '';
     
-    if (products.length === 0) {
-        manager.innerHTML = '<p>No hay productos para gestionar</p>';
+    availableCategories.forEach(category => {
+        const tag = document.createElement('div');
+        tag.className = 'category-tag';
+        tag.innerHTML = `
+            <span>${category.name}</span>
+            <button class="delete-category" onclick="deleteCategory('${category.id}')" title="Eliminar categoría">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        container.appendChild(tag);
+    });
+}
+
+// Agregar nueva categoría
+function addNewCategory() {
+    const input = document.getElementById('newCategoryName');
+    const name = input.value.trim();
+    
+    if (!name) {
+        alert('Por favor ingresa un nombre para la categoría');
         return;
     }
     
-    let html = '';
-    products.forEach(product => {
-        html += `
-            <div class="product-manager-item">
-                <div class="product-manager-info">
-                    <h4>${product.name}</h4>
-                    <p>${product.brand} - ${product.price} - Ref: ${product.referencia || 'N/A'}</p>
-                </div>
-                <div class="product-manager-actions">
-                    <button class="edit-btn" onclick="editProduct(${product.id})">
-                        <i class="fas fa-edit"></i> Editar
-                    </button>
-                    <button class="delete-btn" onclick="deleteProduct(${product.id})">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </button>
-                </div>
-            </div>
-        `;
-    });
+    if (name.length < 2) {
+        alert('El nombre debe tener al menos 2 caracteres');
+        return;
+    }
     
-    manager.innerHTML = html;
+    // Verificar si ya existe
+    const exists = availableCategories.some(cat => 
+        cat.name.toLowerCase() === name.toLowerCase()
+    );
+    
+    if (exists) {
+        alert('Esta categoría ya existe');
+        return;
+    }
+    
+    // Crear ID único
+    const id = name.toLowerCase()
+        .replace(/[^a-z0-9]/g, '')
+        .substring(0, 20);
+    
+    // Agregar categoría
+    availableCategories.push({ id, name });
+    
+    // Limpiar input
+    input.value = '';
+    
+    // Guardar en localStorage
+    saveCategoriesToStorage();
+    
+    // Recargar lista
+    loadCategoriesList();
+    
+    // Actualizar sidebar
+    updateSidebarCategories();
+    
+    // Mostrar notificación
+    showSuccessNotification(`Categoría "${name}" agregada exitosamente`);
 }
 
-// Eliminar producto
-function deleteProduct(productId) {
-    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
-        const index = products.findIndex(p => p.id === productId);
-        if (index > -1) {
-            products.splice(index, 1);
-            updateProductsGrid();
-            updateCategoryCounts();
-            loadProductsManager();
-            alert('Producto eliminado exitosamente');
+// Eliminar categoría
+function deleteCategory(categoryId) {
+    const category = availableCategories.find(cat => cat.id === categoryId);
+    if (!category) return;
+    
+    // Verificar si hay productos usando esta categoría
+    const productsUsingCategory = products.filter(p => p.category === categoryId);
+    if (productsUsingCategory.length > 0) {
+        alert(`No se puede eliminar la categoría "${category.name}" porque hay ${productsUsingCategory.length} productos que la usan.`);
+        return;
+    }
+    
+    if (confirm(`¿Estás seguro de que quieres eliminar la categoría "${category.name}"?`)) {
+        availableCategories = availableCategories.filter(cat => cat.id !== categoryId);
+        
+        // Guardar en localStorage
+        saveCategoriesToStorage();
+        
+        loadCategoriesList();
+        updateSidebarCategories();
+        showSuccessNotification(`Categoría "${category.name}" eliminada`);
+    }
+}
+
+// Obtener opciones de categorías para el select
+function getCategoryOptions(selectedValue = '') {
+    return availableCategories.map(cat => 
+        `<option value="${cat.id}" ${cat.id === selectedValue ? 'selected' : ''}>${cat.name}</option>`
+    ).join('');
+}
+
+// Mostrar productos existentes
+function showExistingProducts() {
+    if (products.length === 0) {
+        alert('No hay productos guardados aún.');
+        return;
+    }
+    
+    let message = `PRODUCTOS EXISTENTES (${products.length}):\n\n`;
+    
+    products.forEach((product, index) => {
+        message += `${index + 1}. Ref: "${product.referencia}"\n`;
+        message += `   Nombre: ${product.name}\n`;
+        message += `   Precio: ${product.price}\n`;
+        message += `   Categoría: ${getCategoryName(product.category)}\n\n`;
+    });
+    
+    message += 'Para agregar un nuevo producto, usa una referencia diferente.';
+    
+    alert(message);
+}
+
+// Obtener nombre de categoría por ID
+function getCategoryName(categoryId) {
+    const category = availableCategories.find(cat => cat.id === categoryId);
+    return category ? category.name : categoryId;
+}
+
+// ===== FUNCIONES DE IMPORTACIÓN DE EXCEL =====
+
+// Variable para almacenar datos de Excel
+let excelData = [];
+
+// Inicializar funcionalidad de importación de Excel
+function initializeExcelImport() {
+    const fileInput = document.getElementById('excelFileInput');
+    const uploadZone = document.getElementById('excelUploadZone');
+    
+    if (fileInput) {
+        fileInput.addEventListener('change', handleExcelFile);
+    }
+    
+    if (uploadZone) {
+        // Drag and drop functionality
+        uploadZone.addEventListener('dragover', handleDragOver);
+        uploadZone.addEventListener('dragleave', handleDragLeave);
+        uploadZone.addEventListener('drop', handleDrop);
+        uploadZone.addEventListener('click', () => fileInput.click());
+    }
+}
+
+// Manejar arrastrar archivo sobre la zona
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('dragover');
+}
+
+// Manejar salir de la zona de arrastre
+function handleDragLeave(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+}
+
+// Manejar soltar archivo
+function handleDrop(e) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragover');
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleExcelFile({ target: { files: files } });
+    }
+}
+
+// Manejar archivo Excel seleccionado
+function handleExcelFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Verificar que sea un archivo Excel
+    if (!file.name.match(/\.(xlsx|xls)$/i)) {
+        alert('Por favor selecciona un archivo Excel (.xlsx o .xls)');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            // Para archivos Excel, necesitamos usar una librería como SheetJS
+            // Por ahora, vamos a simular la lectura con datos de ejemplo
+            parseExcelData(e.target.result, file.name);
+        } catch (error) {
+            console.error('Error al leer el archivo Excel:', error);
+            alert('Error al leer el archivo Excel. Asegúrate de que el formato sea correcto.');
+        }
+    };
+    
+    reader.readAsArrayBuffer(file);
+}
+
+// Parsear datos de Excel (simulado por ahora)
+function parseExcelData(data, fileName) {
+    // Por ahora, vamos a usar datos de ejemplo
+    // En una implementación real, usarías SheetJS para leer Excel
+    excelData = [
+        {
+            referencia: "REF-007",
+            descripcion: "Laptop HP Pavilion 15\" - Intel i5, 8GB RAM, 256GB SSD",
+            categoria: "electrodomesticos",
+            cantidad: 2,
+            precio: 599.99
+        },
+        {
+            referencia: "REF-008",
+            descripcion: "Mesa de Oficina Ejecutiva - Madera Roble, 120x80cm",
+            categoria: "hogar",
+            cantidad: 3,
+            precio: 89.50
+        },
+        {
+            referencia: "REF-009",
+            descripcion: "Detergente Industrial 5L - Para limpieza pesada",
+            categoria: "limpieza",
+            cantidad: 10,
+            precio: 15.99
+        }
+    ];
+    
+    showExcelPreview();
+}
+
+// Mostrar vista previa de datos de Excel
+function showExcelPreview() {
+    const preview = document.getElementById('excelPreview');
+    const uploadZone = document.getElementById('excelUploadZone');
+    
+    if (preview && uploadZone) {
+        uploadZone.style.display = 'none';
+        preview.style.display = 'block';
+        
+        // Crear tabla de vista previa
+        const tableHead = document.getElementById('previewTableHead');
+        const tableBody = document.getElementById('previewTableBody');
+        
+        if (tableHead && tableBody) {
+            // Encabezados
+            tableHead.innerHTML = `
+                <tr>
+                    <th>Referencia</th>
+                    <th>Descripción</th>
+                    <th>Categoría</th>
+                    <th>Cantidad</th>
+                    <th>Precio (US$)</th>
+                </tr>
+            `;
+            
+            // Datos
+            tableBody.innerHTML = '';
+            excelData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${row.referencia}</td>
+                    <td>${row.descripcion}</td>
+                    <td>${getCategoryName(row.categoria)}</td>
+                    <td>${row.cantidad}</td>
+                    <td>$${row.precio}</td>
+                `;
+                tableBody.appendChild(tr);
+            });
         }
     }
 }
 
-// Editar producto (función básica)
-function editProduct(productId) {
-    const product = products.find(p => p.id === productId);
-    if (product) {
-        // Llenar formulario con datos del producto
-        document.getElementById('productRef').value = product.referencia || '';
-        document.getElementById('productBrand').value = product.brand;
-        document.getElementById('productName').value = product.name;
-        document.getElementById('productQuantity').value = product.quantity || 1;
-        document.getElementById('productPrice').value = parseFloat(product.price.replace('US$ ', ''));
-        document.getElementById('productCategory').value = product.category;
+// Importar datos de Excel a la tabla
+function importExcelData() {
+    if (excelData.length === 0) {
+        alert('No hay datos para importar');
+        return;
+    }
+    
+    // Agregar datos a la tabla
+    excelData.forEach(row => {
+        const newRow = {
+            id: Date.now() + Math.random(),
+            referencia: row.referencia,
+            descripcion: row.descripcion,
+            categoria: row.categoria,
+            cantidad: row.cantidad,
+            precio: row.precio,
+            imagen1: '',
+            imagen2: '',
+            imagen3: ''
+        };
+        tableData.push(newRow);
+    });
+    
+    // Guardar y actualizar
+    saveTableDataToStorage();
+    renderTable();
+    
+    // Mostrar notificación
+    showSuccessNotification(`Se importaron ${excelData.length} productos desde Excel`);
+    
+    // Limpiar datos de Excel
+    excelData = [];
+    
+    // Volver a la pestaña de tabla
+    showTab('import');
+    
+    // Resetear vista de Excel
+    cancelExcelImport();
+}
+
+// Cancelar importación de Excel
+function cancelExcelImport() {
+    const preview = document.getElementById('excelPreview');
+    const uploadZone = document.getElementById('excelUploadZone');
+    const fileInput = document.getElementById('excelFileInput');
+    
+    if (preview && uploadZone) {
+        preview.style.display = 'none';
+        uploadZone.style.display = 'block';
+    }
+    
+    if (fileInput) {
+        fileInput.value = '';
+    }
+    
+    excelData = [];
+}
+
+// Descargar plantilla de Excel
+function downloadExcelTemplate() {
+    // Crear datos de ejemplo para la plantilla
+    const templateData = [
+        ['Referencia', 'Descripción', 'Categoría', 'Cantidad', 'Precio (US$)'],
+        ['REF-001', 'Ejemplo de producto', 'electrodomesticos', '1', '99.99'],
+        ['REF-002', 'Otro producto de ejemplo', 'hogar', '2', '49.50']
+    ];
+    
+    // Crear CSV (formato más simple que Excel)
+    const csvContent = templateData.map(row => row.join(',')).join('\n');
+    
+    // Crear y descargar archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'plantilla_productos.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showSuccessNotification('Plantilla descargada exitosamente');
+}
+
+// La tabla se limpia automáticamente después de guardar exitosamente
+// No hay función manual de limpiar tabla - funciona como base de datos
+
+// Limpiar todos los datos
+function clearAllData() {
+    if (confirm('¿Estás seguro de que quieres limpiar TODOS los datos? Esta acción no se puede deshacer.')) {
+        // Limpiar arrays
+        products = [];
+        tableData = [];
         
-        // Cambiar a tab de agregar producto
-        showTab('add');
+        // Limpiar localStorage
+        localStorage.removeItem('catalogProducts');
+        localStorage.removeItem('catalogCategories');
+        localStorage.removeItem('catalogTableData');
         
-        alert('Producto cargado para edición. Modifica los datos y guarda los cambios.');
+        // Resetear categorías a las por defecto
+        availableCategories = [
+            { id: 'electrodomesticos', name: 'Electrodomésticos' },
+            { id: 'hogar', name: 'Hogar y Decoración' },
+            { id: 'limpieza', name: 'Limpieza' },
+            { id: 'otros', name: 'Otros' }
+        ];
+        
+        // Actualizar interfaz
+        updateProductsGrid();
+        updateCategoryCounts();
+        updateSidebarCategories();
+        renderTable();
+        
+        // Cerrar panel
+        closeAdminPanel();
+        
+        showSuccessNotification('Todos los datos han sido limpiados');
     }
 }
+
+
 
 // Actualizar grid de productos
 function updateProductsGrid() {
     const grid = document.getElementById('productsGrid');
-    if (!grid) return;
+    if (!grid) {
+        console.log('No se encontró el grid de productos');
+        return;
+    }
     
+    console.log('Actualizando grid con', products.length, 'productos');
     grid.innerHTML = '';
     
-    products.forEach(product => {
+    products.forEach((product, index) => {
+        console.log(`Creando tarjeta ${index + 1}:`, product);
         const productCard = createProductCard(product);
         grid.appendChild(productCard);
     });
@@ -759,22 +1173,36 @@ function createProductCard(product) {
     card.className = 'product-card';
     card.setAttribute('data-category', product.category);
     
-    const mainImage = product.images && product.images.length > 0 
-        ? product.images[0] 
-        : 'https://via.placeholder.com/400x400/ffffff/333333?text=' + encodeURIComponent(product.name);
+    // Debug: verificar imágenes del producto
+    console.log(`Creando tarjeta para: ${product.name}`);
+    console.log(`Imágenes disponibles:`, product.images);
+    console.log(`Cantidad de imágenes:`, product.images ? product.images.length : 0);
     
-    const thumbnails = product.images && product.images.length > 1 
-        ? product.images.slice(1, 3).map((img, index) => 
+    // Imagen principal
+    let mainImage;
+    if (product.images && product.images.length > 0) {
+        mainImage = product.images[0];
+    } else {
+        // Si no hay imágenes, usar placeholder con el nombre del producto
+        const productName = product.name || 'Producto';
+        mainImage = `https://via.placeholder.com/400x400/ffffff/333333?text=${encodeURIComponent(productName.substring(0, 20))}`;
+    }
+    
+    // Generar miniaturas solo si hay más de 1 imagen
+    let thumbnails = '';
+    if (product.images && product.images.length > 1) {
+        thumbnails = product.images.slice(1, 3).map((img, index) => 
             `<img src="${img}" alt="Vista ${index + 2}" onclick="changeMainImage(this, '${mainImage}')">`
-          ).join('')
-        : '<img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1"><img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">';
+        ).join('');
+    } else {
+        // Si solo hay 1 imagen o ninguna, no mostrar miniaturas
+        thumbnails = '';
+    }
     
     card.innerHTML = `
         <div class="product-images">
             <img src="${mainImage}" alt="${product.name}" class="main-image">
-            <div class="image-thumbnails">
-                ${thumbnails}
-            </div>
+            ${thumbnails ? `<div class="image-thumbnails">${thumbnails}</div>` : ''}
         </div>
         <div class="product-info">
             <h3 class="product-name">${product.name}</h3>
@@ -805,24 +1233,100 @@ function changeMainImage(thumbnail, currentMain) {
 
 // Actualizar contadores de categorías
 function updateCategoryCounts() {
-    const categories = ['all', 'electrodomesticos', 'hogar', 'limpieza', 'otros'];
-    const counts = [
-        products.length,
-        products.filter(p => p.category === 'electrodomesticos').length,
-        products.filter(p => p.category === 'hogar').length,
-        products.filter(p => p.category === 'limpieza').length,
-        products.filter(p => p.category === 'otros').length
-    ];
+    // Actualizar contador de "Todos los productos"
+    const allItem = document.querySelector('[data-category="all"]');
+    if (allItem) {
+        const allCount = allItem.querySelector('.count');
+        if (allCount) {
+            allCount.textContent = products.length;
+        }
+    }
     
-    categories.forEach((category, index) => {
-        const categoryItem = document.querySelector(`[data-category="${category}"]`);
+    // Actualizar contadores de categorías específicas
+    availableCategories.forEach(category => {
+        const categoryItem = document.querySelector(`[data-category="${category.id}"]`);
         if (categoryItem) {
             const countElement = categoryItem.querySelector('.count');
             if (countElement) {
-                countElement.textContent = counts[index];
+                const count = products.filter(p => p.category === category.id).length;
+                countElement.textContent = count;
             }
         }
     });
+}
+
+// Actualizar sidebar con categorías dinámicas
+function updateSidebarCategories() {
+    const sidebar = document.querySelector('.categories-list');
+    if (!sidebar) return;
+    
+    // Limpiar sidebar (excepto "Todos los productos")
+    const existingCategories = sidebar.querySelectorAll('.category-item:not([data-category="all"])');
+    existingCategories.forEach(item => item.remove());
+    
+    // Agregar categorías dinámicas
+    availableCategories.forEach(category => {
+        const count = products.filter(p => p.category === category.id).length;
+        
+        const categoryItem = document.createElement('li');
+        categoryItem.className = 'category-item';
+        categoryItem.setAttribute('data-category', category.id);
+        categoryItem.innerHTML = `
+            <span>${category.name}</span>
+            <span class="count">${count}</span>
+        `;
+        
+        // Agregar evento de clic
+        categoryItem.addEventListener('click', function() {
+            // Remover active de todos
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Agregar active al seleccionado
+            this.classList.add('active');
+            
+            // Filtrar productos
+            filterByCategory(category.id);
+        });
+        
+        // Insertar después de "Todos los productos"
+        const allItem = sidebar.querySelector('[data-category="all"]');
+        if (allItem) {
+            allItem.parentNode.insertBefore(categoryItem, allItem.nextSibling);
+        }
+    });
+}
+
+// Función para mostrar notificación de éxito
+function showSuccessNotification(message) {
+    // Crear elemento de notificación
+    const notification = document.createElement('div');
+    notification.className = 'success-notification';
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Agregar al body
+    document.body.appendChild(notification);
+    
+    // Mostrar con animación
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    // Ocultar después de 2 segundos
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, 2000);
 }
 
 // ===== FUNCIONES DEL EDITOR DE TABLA =====
@@ -832,16 +1336,35 @@ function initializeTableEditor() {
     const tbody = document.getElementById('productsTableBody');
     if (!tbody) return;
     
-    // Siempre agregar una fila inicial
-    addNewRow();
+    // Solo agregar una fila inicial si no hay datos
+    if (tableData.length === 0) {
+        addNewRow();
+    } else {
+        // Renderizar los datos existentes
+        renderTable();
+    }
+}
+
+// Generar referencia única
+function generateUniqueReference() {
+    let reference;
+    let counter = 1;
+    
+    do {
+        reference = `REF-${String(counter).padStart(3, '0')}`;
+        counter++;
+    } while (products.some(p => p.referencia === reference));
+    
+    return reference;
 }
 
 // Agregar nueva fila
 function addNewRow() {
     const newRow = {
         id: Date.now(),
-        referencia: '',
+        referencia: generateUniqueReference(), // Generar referencia única automáticamente
         descripcion: '',
+        categoria: 'otros', // Categoría por defecto
         cantidad: 1,
         precio: 0,
         imagen1: '',
@@ -850,6 +1373,7 @@ function addNewRow() {
     };
     
     tableData.push(newRow);
+    saveTableDataToStorage(); // Guardar automáticamente
     renderTable();
 }
 
@@ -865,7 +1389,7 @@ function renderTable() {
     tbody.innerHTML = '';
     
     if (tableData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No hay productos. Haz clic en "Agregar Fila" para comenzar.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; color: #666;">No hay productos. Haz clic en "Agregar Fila" para comenzar.</td></tr>';
         return;
     }
     
@@ -880,6 +1404,13 @@ function renderTable() {
             <td>
                 <div class="editable-cell" onclick="editCell(this, ${index}, 'descripcion')">
                     <textarea onblur="saveCellValue(${index}, 'descripcion', this.value)">${row.descripcion}</textarea>
+                </div>
+            </td>
+            <td>
+                <div class="editable-cell">
+                    <select onchange="saveCellValue(${index}, 'categoria', this.value)" class="category-select">
+                        ${getCategoryOptions(row.categoria)}
+                    </select>
                 </div>
             </td>
             <td>
@@ -937,12 +1468,17 @@ function editCell(cell, rowIndex, field) {
 
 // Guardar valor de celda
 function saveCellValue(rowIndex, field, value) {
+    console.log('Guardando celda:', rowIndex, field, value);
     if (rowIndex >= 0 && rowIndex < tableData.length) {
         if (field === 'cantidad' || field === 'precio') {
             tableData[rowIndex][field] = parseFloat(value) || 0;
         } else {
             tableData[rowIndex][field] = value;
         }
+        console.log('Datos actualizados:', tableData[rowIndex]);
+        
+        // Guardar automáticamente en localStorage
+        saveTableDataToStorage();
     }
 }
 
@@ -967,6 +1503,7 @@ function handleImageUpload(rowIndex, imageNumber, input) {
     const reader = new FileReader();
     reader.onload = function(e) {
         tableData[rowIndex][`imagen${imageNumber}`] = e.target.result;
+        saveTableDataToStorage(); // Guardar automáticamente
         renderTable();
     };
     reader.readAsDataURL(file);
@@ -976,26 +1513,54 @@ function handleImageUpload(rowIndex, imageNumber, input) {
 function deleteRow(rowIndex) {
     if (confirm('¿Estás seguro de que quieres eliminar esta fila?')) {
         tableData.splice(rowIndex, 1);
+        saveTableDataToStorage(); // Guardar automáticamente
         renderTable();
     }
 }
 
 // Guardar todos los productos
 function saveAllProducts() {
+    console.log('Función saveAllProducts ejecutada');
+    console.log('Datos de tabla:', tableData);
+    
     if (tableData.length === 0) {
         alert('No hay productos para guardar');
         return;
     }
     
     let savedCount = 0;
+    let hasErrors = false;
     
-    tableData.forEach((row, index) => {
-        // Validar datos obligatorios
+    // Validar todos los productos primero
+    for (let index = 0; index < tableData.length; index++) {
+        const row = tableData[index];
         if (!row.referencia || !row.descripcion || !row.precio) {
             alert(`Fila ${index + 1}: Faltan datos obligatorios (Referencia, Descripción, Precio)`);
-            return;
+            hasErrors = true;
+            break;
         }
         
+        // Verificar si ya existe un producto con la misma referencia
+        const existingProduct = products.find(p => p.referencia === row.referencia);
+        if (existingProduct) {
+            alert(`Fila ${index + 1}: Ya existe un producto con la referencia "${row.referencia}"\n\nProducto existente: "${existingProduct.name}"\nPrecio: ${existingProduct.price}\n\nPor favor cambia la referencia o edita el producto existente.`);
+            hasErrors = true;
+            break;
+        }
+    }
+    
+    // Si hay errores, no continuar
+    if (hasErrors) {
+        return;
+    }
+    
+    // Crear una copia de los datos de la tabla para procesar
+    const dataToProcess = [...tableData];
+    
+    console.log('Procesando productos desde la tabla');
+    
+    // Guardar todos los productos usando la copia
+    dataToProcess.forEach((row, index) => {
         // Procesar imágenes
         const images = [];
         if (row.imagen1) images.push(row.imagen1);
@@ -1007,7 +1572,7 @@ function saveAllProducts() {
             id: Date.now() + index,
             name: row.descripcion,
             brand: 'EDITOR',
-            category: 'otros',
+            category: row.categoria || 'otros',
             price: `US$ ${row.precio.toFixed(2)}`,
             quantity: row.cantidad,
             rating: 5,
@@ -1020,16 +1585,30 @@ function saveAllProducts() {
         
         products.push(newProduct);
         savedCount++;
+        console.log('Producto agregado:', newProduct);
     });
+    
+    console.log('Productos guardados:', savedCount);
+    console.log('Total de productos en array:', products.length);
+    
+    // Guardar en localStorage
+    saveProductsToStorage();
     
     // Actualizar interfaz
     updateProductsGrid();
     updateCategoryCounts();
-    loadProductsManager();
+    updateSidebarCategories();
     
-    // Limpiar tabla
+    // LIMPIAR LA TABLA SOLO DESPUÉS DE GUARDAR EXITOSAMENTE
     tableData = [];
+    saveTableDataToStorage();
     renderTable();
     
-    alert(`Se guardaron ${savedCount} productos exitosamente`);
+    console.log('Tabla limpiada DESPUÉS de guardar exitosamente');
+    
+    // Mostrar notificación de éxito
+    showSuccessNotification(`Se guardaron ${savedCount} productos exitosamente`);
+    
+    // Cerrar panel de administración inmediatamente
+    closeAdminPanel();
 }

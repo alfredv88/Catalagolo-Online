@@ -1164,3 +1164,535 @@ body {
         font-size: 13px;
     }
 }
+
+/* Notificación de éxito */
+.success-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 3000;
+    transform: translateX(100%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.success-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.notification-content i {
+    font-size: 20px;
+    color: white;
+}
+
+.notification-content span {
+    font-size: 14px;
+}
+
+/* Panel de Gestión de Categorías */
+.categories-manager {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.categories-manager .categories-header {
+    background: #1877f2;
+    color: white;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.categories-manager .categories-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.categories-manager .close-categories {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.categories-manager .close-categories:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.categories-content {
+    background: white;
+    border-radius: 0 0 12px 12px;
+    padding: 20px;
+    min-width: 400px;
+    max-width: 500px;
+}
+
+.add-category-section {
+    margin-bottom: 30px;
+}
+
+.add-category-section h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.category-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.category-input-group input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.category-input-group input:focus {
+    outline: none;
+    border-color: #1877f2;
+}
+
+.add-category-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.add-category-btn:hover {
+    background: #218838;
+}
+
+.existing-categories-section h4 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.categories-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-tag {
+    background: #f0f2f5;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.category-tag:hover {
+    background: #e3f2fd;
+    border-color: #1877f2;
+}
+
+.category-tag .delete-category {
+    background: none;
+    border: none;
+    color: #dc3545;
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.category-tag .delete-category:hover {
+    background: #dc3545;
+    color: white;
+}
+
+/* Botón de categorías en el editor */
+.categories-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.categories-btn:hover {
+    background: #5a6268;
+}
+
+/* Botón de limpiar todo */
+.clear-all-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.clear-all-btn:hover {
+    background: #c82333;
+}
+
+
+/* Botón de ver productos */
+.view-products-btn {
+    background: #17a2b8;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.view-products-btn:hover {
+    background: #138496;
+}
+
+/* ===== ESTILOS PARA IMPORTACIÓN DE EXCEL ===== */
+
+/* Sección de importación de Excel */
+.excel-import-section {
+    padding: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.excel-header {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.excel-header h3 {
+    color: #1877f2;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.excel-header p {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Zona de carga de archivos */
+.excel-upload-area {
+    margin-bottom: 20px;
+}
+
+.upload-zone {
+    border: 2px dashed #1877f2;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    background: #f8f9ff;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.upload-zone:hover {
+    border-color: #166fe5;
+    background: #f0f4ff;
+}
+
+.upload-zone.dragover {
+    border-color: #166fe5;
+    background: #e8f2ff;
+    transform: scale(1.02);
+}
+
+.upload-zone i {
+    font-size: 48px;
+    color: #1877f2;
+    margin-bottom: 16px;
+}
+
+.upload-zone h4 {
+    color: #1877f2;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.upload-zone p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.select-file-btn {
+    background: #1877f2;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.select-file-btn:hover {
+    background: #166fe5;
+}
+
+/* Vista previa de Excel */
+.excel-preview {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.excel-preview h4 {
+    color: #1877f2;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.preview-table-container {
+    max-height: 300px;
+    overflow: auto;
+    margin-bottom: 20px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.preview-table th,
+.preview-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 13px;
+}
+
+.preview-table th {
+    background: #1877f2;
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.preview-table tr:hover {
+    background: #f8f9fa;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.import-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.import-btn:hover {
+    background: #218838;
+}
+
+.cancel-btn {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.cancel-btn:hover {
+    background: #5a6268;
+}
+
+/* Instrucciones de Excel */
+.excel-instructions {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.excel-instructions h4 {
+    color: #856404;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.excel-instructions ul {
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
+.excel-instructions li {
+    color: #856404;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.excel-instructions strong {
+    color: #533f03;
+}
+
+.excel-template {
+    text-align: center;
+}
+
+.download-template-btn {
+    background: #ffc107;
+    color: #212529;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+
+.download-template-btn:hover {
+    background: #e0a800;
+}
+
+/* Select de categorías en la tabla */
+.category-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    background: white;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.category-select:focus {
+    outline: none;
+    border-color: #1877f2;
+}
+
+.category-select:hover {
+    border-color: #1877f2;
+}
+
+/* Mejorar apariencia de las miniaturas */
+.image-thumbnails {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.image-thumbnails img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.image-thumbnails img:hover {
+    border-color: #1877f2;
+}
+
+/* Ocultar miniaturas si no hay suficientes imágenes */
+.product-images:not(:has(.image-thumbnails)) .image-thumbnails {
+    display: none;
+}
