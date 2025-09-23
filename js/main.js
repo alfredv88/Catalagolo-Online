@@ -326,7 +326,10 @@ function toggleAdminPanel() {
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'flex';
         loadProductsManager();
-        initializeTableEditor();
+        // Inicializar editor de tabla después de un pequeño delay
+        setTimeout(() => {
+            initializeTableEditor();
+        }, 200);
     } else {
         panel.style.display = 'none';
     }
@@ -349,6 +352,13 @@ function showTab(tabName) {
     
     // Activar botón correspondiente
     event.target.classList.add('active');
+    
+    // Inicializar editor de tabla si es el tab activo
+    if (tabName === 'import') {
+        setTimeout(() => {
+            initializeTableEditor();
+        }, 100);
+    }
 }
 
 // Manejar subida de archivos Excel/CSV
@@ -822,12 +832,8 @@ function initializeTableEditor() {
     const tbody = document.getElementById('productsTableBody');
     if (!tbody) return;
     
-    // Agregar una fila inicial si no hay datos
-    if (tableData.length === 0) {
-        addNewRow();
-    } else {
-        renderTable();
-    }
+    // Siempre agregar una fila inicial
+    addNewRow();
 }
 
 // Agregar nueva fila
@@ -850,9 +856,18 @@ function addNewRow() {
 // Renderizar tabla
 function renderTable() {
     const tbody = document.getElementById('productsTableBody');
-    if (!tbody) return;
+    if (!tbody) {
+        console.log('No se encontró el tbody');
+        return;
+    }
     
+    console.log('Renderizando tabla con', tableData.length, 'filas');
     tbody.innerHTML = '';
+    
+    if (tableData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #666;">No hay productos. Haz clic en "Agregar Fila" para comenzar.</td></tr>';
+        return;
+    }
     
     tableData.forEach((row, index) => {
         const tr = document.createElement('tr');
