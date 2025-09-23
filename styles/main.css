@@ -330,25 +330,9 @@ body {
     margin-bottom: 8px;
 }
 
-.original-price {
-    text-decoration: line-through;
-    color: #999;
-    font-size: 14px;
-    margin-right: 8px;
-}
-
 .sale-price {
     color: #1877f2;
     font-weight: 700;
-}
-
-.discount {
-    background: #ff4444;
-    color: white;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 12px;
-    margin-left: 8px;
 }
 
 .product-shipping {
