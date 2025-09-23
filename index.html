@@ -23,6 +23,10 @@
                 </button>
             </div>
             <div class="header-actions">
+                <button class="admin-btn" onclick="toggleAdminPanel()">
+                    <i class="fas fa-cog"></i>
+                    Administrar
+                </button>
                 <button class="print-btn" onclick="window.print()">
                     <i class="fas fa-print"></i>
                     Imprimir PDF
@@ -30,6 +34,142 @@
             </div>
         </div>
     </header>
+
+    <!-- Panel de Administración -->
+    <div class="admin-panel" id="adminPanel" style="display: none;">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2><i class="fas fa-cog"></i> Panel de Administración</h2>
+                <button class="close-admin" onclick="toggleAdminPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" onclick="showTab('import')">
+                    <i class="fas fa-file-excel"></i> Importar Excel/CSV
+                </button>
+                <button class="tab-btn" onclick="showTab('add')">
+                    <i class="fas fa-plus"></i> Agregar Producto
+                </button>
+                <button class="tab-btn" onclick="showTab('manage')">
+                    <i class="fas fa-list"></i> Gestionar Productos
+                </button>
+            </div>
+            
+            <!-- Tab Importar -->
+            <div class="tab-content active" id="importTab">
+                <div class="import-section">
+                    <h3>Importar desde Hoja de Cálculo</h3>
+                    <p>Sube un archivo Excel (.xlsx) o CSV con los datos de los productos</p>
+                    
+                    <div class="file-upload">
+                        <input type="file" id="fileInput" accept=".xlsx,.csv" onchange="handleFileUpload(event)">
+                        <label for="fileInput" class="file-label">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <span>Seleccionar archivo Excel/CSV</span>
+                        </label>
+                    </div>
+                    
+                    <div class="import-preview" id="importPreview" style="display: none;">
+                        <h4>Vista previa de datos:</h4>
+                        <div class="preview-table" id="previewTable"></div>
+                        <button class="import-btn" onclick="importProducts()">
+                            <i class="fas fa-download"></i> Importar Productos
+                        </button>
+                    </div>
+                    
+                    <div class="import-template">
+                        <h4>Formato requerido:</h4>
+                        <p>Las columnas deben ser: <strong>Referencia, Descripción, Cantidad, Precio, Imagen Portada, Imagen 2, Imagen 3</strong></p>
+                        <div class="template-info">
+                            <p><strong>📸 Imágenes:</strong> Coloca el nombre del archivo de imagen (ej: producto1.jpg)</p>
+                            <p><strong>🎯 Imagen Portada:</strong> La primera imagen será la imagen principal del producto</p>
+                            <p><strong>📁 Ubicación:</strong> Las imágenes deben estar en la carpeta <code>images/productos/</code></p>
+                        </div>
+                        <button class="download-template" onclick="downloadTemplate()">
+                            <i class="fas fa-download"></i> Descargar Plantilla
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab Agregar Producto -->
+            <div class="tab-content" id="addTab">
+                <div class="add-product-section">
+                    <h3>Agregar Nuevo Producto</h3>
+                    
+                    <form class="product-form" id="productForm">
+                        <div class="form-group">
+                            <label for="productRef">Referencia:</label>
+                            <input type="text" id="productRef" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productBrand">Marca:</label>
+                            <input type="text" id="productBrand" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productName">Descripción:</label>
+                            <textarea id="productName" required></textarea>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productQuantity">Cantidad:</label>
+                                <input type="number" id="productQuantity" min="1" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="productPrice">Precio (US$):</label>
+                                <input type="number" id="productPrice" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="productCategory">Categoría:</label>
+                            <select id="productCategory" required>
+                                <option value="electrodomesticos">Electrodomésticos</option>
+                                <option value="hogar">Hogar y Decoración</option>
+                                <option value="limpieza">Limpieza</option>
+                                <option value="otros">Otros</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Imágenes del producto:</label>
+                            <div class="image-upload">
+                                <input type="file" id="productImages" multiple accept="image/*" onchange="previewImages(event)">
+                                <label for="productImages" class="image-label">
+                                    <i class="fas fa-images"></i>
+                                    <span>Seleccionar 2-3 imágenes</span>
+                                </label>
+                            </div>
+                            <div class="image-preview" id="imagePreview"></div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" onclick="clearForm()">Cancelar</button>
+                            <button type="submit" class="save-btn">
+                                <i class="fas fa-save"></i> Guardar Producto
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Tab Gestionar -->
+            <div class="tab-content" id="manageTab">
+                <div class="manage-section">
+                    <h3>Gestionar Productos Existentes</h3>
+                    <div class="products-manager" id="productsManager">
+                        <!-- Los productos se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Contenido principal -->
     <main class="main-container">
@@ -260,6 +400,8 @@
         </div>
     </footer>
 
+    <!-- Librerías para Excel/CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

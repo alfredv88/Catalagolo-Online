@@ -1,6 +1,10 @@
 // Funcionalidad del catálogo de liquidación
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Variables globales
+    let uploadedData = [];
+    let currentImages = [];
+    
     // Elementos del DOM
     const searchInput = document.getElementById('searchInput');
     const productsGrid = document.getElementById('productsGrid');
@@ -309,3 +313,507 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Producto agregado:', productData);
     };
 });
+
+// ===== FUNCIONES DEL PANEL DE ADMINISTRACIÓN =====
+
+// Toggle del panel de administración
+function toggleAdminPanel() {
+    const panel = document.getElementById('adminPanel');
+    if (panel.style.display === 'none' || panel.style.display === '') {
+        panel.style.display = 'flex';
+        loadProductsManager();
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+// Cambiar tabs del panel
+function showTab(tabName) {
+    // Ocultar todos los tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Remover active de todos los botones
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Mostrar tab seleccionado
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    
+    // Activar botón correspondiente
+    event.target.classList.add('active');
+}
+
+// Manejar subida de archivos Excel/CSV
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    
+    if (file.name.endsWith('.csv')) {
+        reader.onload = function(e) {
+            parseCSV(e.target.result);
+        };
+        reader.readAsText(file);
+    } else if (file.name.endsWith('.xlsx')) {
+        reader.onload = function(e) {
+            parseExcel(e.target.result);
+        };
+        reader.readAsArrayBuffer(file);
+    } else {
+        alert('Por favor selecciona un archivo Excel (.xlsx) o CSV (.csv)');
+    }
+}
+
+// Parsear archivo CSV
+function parseCSV(csvText) {
+    const lines = csvText.split('\n');
+    const headers = lines[0].split(',').map(h => h.trim());
+    
+    // Validar headers
+    const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Precio'];
+    const hasRequiredHeaders = requiredHeaders.every(header => 
+        headers.some(h => h.toLowerCase().includes(header.toLowerCase()))
+    );
+    
+    if (!hasRequiredHeaders) {
+        alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Precio');
+        return;
+    }
+    
+    uploadedData = [];
+    for (let i = 1; i < lines.length; i++) {
+        if (lines[i].trim()) {
+            const values = lines[i].split(',').map(v => v.trim());
+            if (values.length >= 4) {
+                uploadedData.push({
+                    referencia: values[0],
+                    descripcion: values[1],
+                    cantidad: parseInt(values[2]) || 1,
+                    precio: parseFloat(values[3]) || 0,
+                    imagen1: values[4] || '',
+                    imagen2: values[5] || '',
+                    imagen3: values[6] || ''
+                });
+            }
+        }
+    }
+    
+    showImportPreview();
+}
+
+// Parsear archivo Excel
+function parseExcel(arrayBuffer) {
+    try {
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        if (jsonData.length < 2) {
+            alert('El archivo Excel debe contener al menos una fila de datos');
+            return;
+        }
+        
+        const headers = jsonData[0];
+        const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Precio'];
+        const hasRequiredHeaders = requiredHeaders.every(header => 
+            headers.some(h => h && h.toLowerCase().includes(header.toLowerCase()))
+        );
+        
+        if (!hasRequiredHeaders) {
+            alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Precio');
+            return;
+        }
+        
+        uploadedData = [];
+        for (let i = 1; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            if (row && row.length >= 4) {
+                uploadedData.push({
+                    referencia: row[0] || '',
+                    descripcion: row[1] || '',
+                    cantidad: parseInt(row[2]) || 1,
+                    precio: parseFloat(row[3]) || 0,
+                    imagen1: row[4] || '',
+                    imagen2: row[5] || '',
+                    imagen3: row[6] || ''
+                });
+            }
+        }
+        
+        showImportPreview();
+    } catch (error) {
+        alert('Error al leer el archivo Excel: ' + error.message);
+    }
+}
+
+// Mostrar vista previa de datos importados
+function showImportPreview() {
+    const preview = document.getElementById('importPreview');
+    const table = document.getElementById('previewTable');
+    
+    if (uploadedData.length === 0) {
+        alert('No se encontraron datos válidos en el archivo');
+        return;
+    }
+    
+    let tableHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Referencia</th>
+                    <th>Descripción</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Imagen Portada</th>
+                    <th>Imagen 2</th>
+                    <th>Imagen 3</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    uploadedData.forEach(item => {
+        tableHTML += `
+            <tr>
+                <td>${item.referencia}</td>
+                <td>${item.descripcion}</td>
+                <td>${item.cantidad}</td>
+                <td>US$ ${item.precio.toFixed(2)}</td>
+                <td>${item.imagen1 ? '✅ ' + item.imagen1 : '❌ Sin imagen'}</td>
+                <td>${item.imagen2 ? '✅ ' + item.imagen2 : '❌ Sin imagen'}</td>
+                <td>${item.imagen3 ? '✅ ' + item.imagen3 : '❌ Sin imagen'}</td>
+            </tr>
+        `;
+    });
+    
+    tableHTML += '</tbody></table>';
+    table.innerHTML = tableHTML;
+    preview.style.display = 'block';
+}
+
+// Importar productos al catálogo
+function importProducts() {
+    if (uploadedData.length === 0) {
+        alert('No hay datos para importar');
+        return;
+    }
+    
+    console.log('Datos a importar:', uploadedData);
+    console.log('Productos antes de importar:', products.length);
+    
+    // Agregar productos importados
+    uploadedData.forEach((item, index) => {
+        // Procesar imágenes
+        const images = [];
+        if (item.imagen1) images.push(item.imagen1);
+        if (item.imagen2) images.push(item.imagen2);
+        if (item.imagen3) images.push(item.imagen3);
+        
+        const newProduct = {
+            id: Date.now() + index,
+            name: item.descripcion,
+            brand: 'IMPORTADO',
+            category: 'otros',
+            price: `US$ ${item.precio.toFixed(2)}`,
+            quantity: item.cantidad,
+            rating: 5,
+            reviews: 0,
+            shipping: 'Envío gratis',
+            description: item.descripcion,
+            referencia: item.referencia,
+            images: images
+        };
+        
+        products.push(newProduct);
+    });
+    
+    console.log('Productos después de importar:', products.length);
+    
+    // Actualizar la interfaz
+    updateProductsGrid();
+    updateCategoryCounts();
+    
+    // Guardar cantidad antes de limpiar
+    const importedCount = uploadedData.length;
+    
+    // Limpiar datos
+    uploadedData = [];
+    document.getElementById('importPreview').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    
+    alert(`Se importaron ${importedCount} productos exitosamente`);
+}
+
+// Descargar plantilla Excel
+function downloadTemplate() {
+    const templateData = [
+        ['Referencia', 'Descripción', 'Cantidad', 'Precio', 'Imagen Portada', 'Imagen 2', 'Imagen 3'],
+        ['REF001', 'Producto de ejemplo 1', '10', '25.99', 'producto1_portada.jpg', 'producto1_vista2.jpg', 'producto1_vista3.jpg'],
+        ['REF002', 'Producto de ejemplo 2', '5', '15.50', 'producto2_portada.jpg', 'producto2_vista2.jpg', ''],
+        ['REF003', 'Producto de ejemplo 3', '20', '8.75', 'producto3_portada.jpg', '', '']
+    ];
+    
+    const ws = XLSX.utils.aoa_to_sheet(templateData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Productos');
+    
+    XLSX.writeFile(wb, 'plantilla_productos.xlsx');
+}
+
+// Preview de imágenes seleccionadas
+function previewImages(event) {
+    const files = event.target.files;
+    const preview = document.getElementById('imagePreview');
+    
+    preview.innerHTML = '';
+    currentImages = [];
+    
+    if (files.length > 3) {
+        alert('Máximo 3 imágenes por producto');
+        event.target.value = '';
+        return;
+    }
+    
+    Array.from(files).forEach((file, index) => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = `Imagen ${index + 1}`;
+                preview.appendChild(img);
+                currentImages.push(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+// Limpiar formulario
+function clearForm() {
+    document.getElementById('productForm').reset();
+    document.getElementById('imagePreview').innerHTML = '';
+    currentImages = [];
+}
+
+// Manejar envío del formulario
+document.getElementById('productForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        referencia: document.getElementById('productRef').value,
+        brand: document.getElementById('productBrand').value,
+        name: document.getElementById('productName').value,
+        quantity: parseInt(document.getElementById('productQuantity').value),
+        price: parseFloat(document.getElementById('productPrice').value),
+        category: document.getElementById('productCategory').value,
+        images: currentImages
+    };
+    
+    // Validar datos
+    if (!formData.referencia || !formData.brand || !formData.name || !formData.price) {
+        alert('Por favor completa todos los campos obligatorios');
+        return;
+    }
+    
+    if (currentImages.length === 0) {
+        alert('Por favor selecciona al menos una imagen');
+        return;
+    }
+    
+    // Crear nuevo producto
+    const newProduct = {
+        id: Date.now(),
+        name: formData.name,
+        brand: formData.brand,
+        category: formData.category,
+        price: `US$ ${formData.price.toFixed(2)}`,
+        quantity: formData.quantity,
+        rating: 5,
+        reviews: 0,
+        shipping: 'Envío gratis',
+        description: formData.name,
+        referencia: formData.referencia,
+        images: currentImages
+    };
+    
+    // Agregar a la lista de productos
+    products.push(newProduct);
+    
+    // Actualizar interfaz
+    updateProductsGrid();
+    updateCategoryCounts();
+    loadProductsManager();
+    
+    // Limpiar formulario
+    clearForm();
+    
+    alert('Producto agregado exitosamente');
+});
+
+// Cargar productos en el manager
+function loadProductsManager() {
+    const manager = document.getElementById('productsManager');
+    
+    if (products.length === 0) {
+        manager.innerHTML = '<p>No hay productos para gestionar</p>';
+        return;
+    }
+    
+    let html = '';
+    products.forEach(product => {
+        html += `
+            <div class="product-manager-item">
+                <div class="product-manager-info">
+                    <h4>${product.name}</h4>
+                    <p>${product.brand} - ${product.price} - Ref: ${product.referencia || 'N/A'}</p>
+                </div>
+                <div class="product-manager-actions">
+                    <button class="edit-btn" onclick="editProduct(${product.id})">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="delete-btn" onclick="deleteProduct(${product.id})">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    
+    manager.innerHTML = html;
+}
+
+// Eliminar producto
+function deleteProduct(productId) {
+    if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+        const index = products.findIndex(p => p.id === productId);
+        if (index > -1) {
+            products.splice(index, 1);
+            updateProductsGrid();
+            updateCategoryCounts();
+            loadProductsManager();
+            alert('Producto eliminado exitosamente');
+        }
+    }
+}
+
+// Editar producto (función básica)
+function editProduct(productId) {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+        // Llenar formulario con datos del producto
+        document.getElementById('productRef').value = product.referencia || '';
+        document.getElementById('productBrand').value = product.brand;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productQuantity').value = product.quantity || 1;
+        document.getElementById('productPrice').value = parseFloat(product.price.replace('US$ ', ''));
+        document.getElementById('productCategory').value = product.category;
+        
+        // Cambiar a tab de agregar producto
+        showTab('add');
+        
+        alert('Producto cargado para edición. Modifica los datos y guarda los cambios.');
+    }
+}
+
+// Actualizar grid de productos
+function updateProductsGrid() {
+    const grid = document.getElementById('productsGrid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    products.forEach(product => {
+        const productCard = createProductCard(product);
+        grid.appendChild(productCard);
+    });
+    
+    // Reconfigurar eventos después de actualizar
+    setupImageThumbnails();
+    setupProductDetails();
+}
+
+// Crear tarjeta de producto
+function createProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.setAttribute('data-category', product.category);
+    
+    const mainImage = product.images && product.images.length > 0 
+        ? product.images[0] 
+        : 'https://via.placeholder.com/400x400/ffffff/333333?text=' + encodeURIComponent(product.name);
+    
+    const thumbnails = product.images && product.images.length > 1 
+        ? product.images.slice(1, 3).map((img, index) => 
+            `<img src="${img}" alt="Vista ${index + 2}" onclick="changeMainImage(this, '${mainImage}')">`
+          ).join('')
+        : '<img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1"><img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">';
+    
+    card.innerHTML = `
+        <div class="product-images">
+            <img src="${mainImage}" alt="${product.name}" class="main-image">
+            <div class="image-thumbnails">
+                ${thumbnails}
+            </div>
+        </div>
+        <div class="product-info">
+            <div class="product-brand">${product.brand}</div>
+            <h3 class="product-name">${product.name}</h3>
+            <div class="product-rating">
+                <div class="stars">
+                    ${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating))}
+                    ${product.rating % 1 !== 0 ? '<i class="fas fa-star-half-alt"></i>' : ''}
+                </div>
+                <span class="rating-count">(${product.reviews})</span>
+            </div>
+            <div class="product-price">${product.price}</div>
+            <div class="product-shipping">
+                <i class="fas fa-truck"></i>
+                ${product.shipping}
+            </div>
+            ${product.referencia ? `<div class="product-ref">Ref: ${product.referencia}</div>` : ''}
+        </div>
+    `;
+    
+    return card;
+}
+
+// Cambiar imagen principal
+function changeMainImage(thumbnail, currentMain) {
+    const mainImage = thumbnail.closest('.product-card').querySelector('.main-image');
+    const tempSrc = mainImage.src;
+    mainImage.src = thumbnail.src;
+    thumbnail.src = tempSrc;
+    
+    mainImage.style.opacity = '0';
+    setTimeout(() => {
+        mainImage.style.opacity = '1';
+    }, 150);
+}
+
+// Actualizar contadores de categorías
+function updateCategoryCounts() {
+    const categories = ['all', 'electrodomesticos', 'hogar', 'limpieza', 'otros'];
+    const counts = [
+        products.length,
+        products.filter(p => p.category === 'electrodomesticos').length,
+        products.filter(p => p.category === 'hogar').length,
+        products.filter(p => p.category === 'limpieza').length,
+        products.filter(p => p.category === 'otros').length
+    ];
+    
+    categories.forEach((category, index) => {
+        const categoryItem = document.querySelector(`[data-category="${category}"]`);
+        if (categoryItem) {
+            const countElement = categoryItem.querySelector('.count');
+            if (countElement) {
+                countElement.textContent = counts[index];
+            }
+        }
+    });
+}
