@@ -373,6 +373,25 @@ body {
     margin-top: 4px;
 }
 
+.product-quantity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #28a745;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.product-quantity i {
+    color: #28a745;
+    font-size: 14px;
+}
+
+.quantity-available {
+    color: #28a745;
+}
+
 /* Footer */
 .footer {
     background: #1877f2;
@@ -508,8 +527,10 @@ body {
     background: white;
     border-radius: 12px;
     width: 100%;
-    max-width: 800px;
-    max-height: 90vh;
+    max-width: 95vw;
+    width: 95vw;
+    max-height: 95vh;
+    height: 95vh;
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
@@ -652,17 +673,18 @@ body {
 .products-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    min-width: 1200px;
 }
 
 .products-table th {
     background: #1877f2;
     color: white;
-    padding: 12px 8px;
+    padding: 16px 12px;
     text-align: left;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     border-right: 1px solid rgba(255,255,255,0.2);
+    white-space: nowrap;
 }
 
 .products-table th:last-child {
@@ -670,10 +692,11 @@ body {
 }
 
 .products-table td {
-    padding: 8px;
+    padding: 12px;
     border-bottom: 1px solid #e0e0e0;
     border-right: 1px solid #f0f0f0;
     vertical-align: middle;
+    min-width: 120px;
 }
 
 .products-table td:last-child {
@@ -1126,6 +1149,8 @@ body {
     .admin-container {
         margin: 10px;
         max-height: 95vh;
+        width: 90vw;
+        max-width: 90vw;
     }
     
     .admin-tabs {
@@ -1143,5 +1168,15 @@ body {
     
     .form-actions {
         flex-direction: column;
+    }
+    
+    .products-table {
+        min-width: 800px;
+    }
+    
+    .products-table th,
+    .products-table td {
+        padding: 8px 6px;
+        font-size: 13px;
     }
 }

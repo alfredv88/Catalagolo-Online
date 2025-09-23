@@ -767,20 +767,12 @@ function createProductCard(product) {
             </div>
         </div>
         <div class="product-info">
-            <div class="product-brand">${product.brand}</div>
             <h3 class="product-name">${product.name}</h3>
-            <div class="product-rating">
-                <div class="stars">
-                    ${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating))}
-                    ${product.rating % 1 !== 0 ? '<i class="fas fa-star-half-alt"></i>' : ''}
-                </div>
-                <span class="rating-count">(${product.reviews})</span>
+            <div class="product-quantity">
+                <i class="fas fa-boxes"></i>
+                <span class="quantity-available">Cantidad disponible: ${product.quantity || 1}</span>
             </div>
             <div class="product-price">${product.price}</div>
-            <div class="product-shipping">
-                <i class="fas fa-truck"></i>
-                ${product.shipping}
-            </div>
             ${product.referencia ? `<div class="product-ref">Ref: ${product.referencia}</div>` : ''}
         </div>
     `;
