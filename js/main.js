@@ -13,66 +13,71 @@ function loadProductsFromStorage() {
             products = [];
         }
     } else {
-        // Si no hay productos guardados, agregar los 6 productos de ejemplo
-        products = [
-            {
-                id: 1,
-                referencia: "REF-001",
-                name: "Freidora Eléctrica Royal 20Lts - Ideal para restaurantes y cocinas comerciales",
-                category: "electrodomesticos",
-                quantity: 3,
-                price: 89.99,
-                images: []
-            },
-            {
-                id: 2,
-                referencia: "REF-002",
-                name: "Set de Ollas Premium Antiadherentes 6 Piezas - Acero Inoxidable",
-                category: "hogar",
-                quantity: 2,
-                price: 45.50,
-                images: []
-            },
-            {
-                id: 3,
-                referencia: "REF-003", 
-                name: "Aspiradora Industrial Karcher 2000W - Para uso comercial",
-                category: "limpieza",
-                quantity: 1,
-                price: 125.00,
-                images: []
-            },
-            {
-                id: 4,
-                referencia: "REF-004",
-                name: "Microondas Samsung 30Lts - Panel digital y grill",
-                category: "electrodomesticos", 
-                quantity: 2,
-                price: 75.99,
-                images: []
-            },
-            {
-                id: 5,
-                referencia: "REF-005",
-                name: "Juego de Sábanas Premium 4 Piezas - Algodón 100%",
-                category: "hogar",
-                quantity: 5,
-                price: 25.00,
-                images: []
-            },
-            {
-                id: 6,
-                referencia: "REF-006",
-                name: "Lavadora Automática Whirlpool 12Kg - Carga frontal",
-                category: "electrodomesticos",
-                quantity: 1,
-                price: 299.99,
-                images: []
-            }
-        ];
-        // Guardar los productos de ejemplo
-        saveProductsToStorage();
-        console.log('Productos de ejemplo agregados:', products.length);
+        const seedFlag = localStorage.getItem('catalogSeeded');
+        if (seedFlag === 'true') {
+            products = [];
+            console.log('Catálogo sin productos (seed deshabilitado)');
+        } else {
+            products = [
+                {
+                    id: 1,
+                    referencia: "REF-001",
+                    name: "Freidora Eléctrica Royal 20Lts - Ideal para restaurantes y cocinas comerciales",
+                    category: "ktm",
+                    quantity: 3,
+                    price: 89.99,
+                    images: []
+                },
+                {
+                    id: 2,
+                    referencia: "REF-002",
+                    name: "Set de Ollas Premium Antiadherentes 6 Piezas - Acero Inoxidable",
+                    category: "boutique",
+                    quantity: 2,
+                    price: 45.50,
+                    images: []
+                },
+                {
+                    id: 3,
+                    referencia: "REF-003",
+                    name: "Aspiradora Industrial Karcher 2000W - Para uso comercial",
+                    category: "frenos",
+                    quantity: 1,
+                    price: 125.00,
+                    images: []
+                },
+                {
+                    id: 4,
+                    referencia: "REF-004",
+                    name: "Microondas Samsung 30Lts - Panel digital y grill",
+                    category: "bujias",
+                    quantity: 2,
+                    price: 75.99,
+                    images: []
+                },
+                {
+                    id: 5,
+                    referencia: "REF-005",
+                    name: "Juego de Sábanas Premium 4 Piezas - Algodón 100%",
+                    category: "recgeneral",
+                    quantity: 5,
+                    price: 25.00,
+                    images: []
+                },
+                {
+                    id: 6,
+                    referencia: "REF-006",
+                    name: "Lavadora Automática Whirlpool 12Kg - Carga frontal",
+                    category: "ktm",
+                    quantity: 1,
+                    price: 299.99,
+                    images: []
+                }
+            ];
+            saveProductsToStorage();
+            localStorage.setItem('catalogSeeded', 'true');
+            console.log('Productos de ejemplo agregados:', products.length);
+        }
     }
 }
 
@@ -118,10 +123,12 @@ function saveTableDataToStorage() {
 
 // Categorías disponibles
 let availableCategories = [
-    { id: 'electrodomesticos', name: 'Electrodomésticos' },
-    { id: 'hogar', name: 'Hogar y Decoración' },
-    { id: 'limpieza', name: 'Limpieza' },
-    { id: 'otros', name: 'Otros' }
+    { id: 'all', name: 'Todas' },
+    { id: 'ktm', name: 'KTM' },
+    { id: 'boutique', name: 'Boutique' },
+    { id: 'frenos', name: 'Frenos' },
+    { id: 'bujias', name: 'Bujías' },
+    { id: 'recgeneral', name: 'Rec General' }
 ];
 
 // Cargar categorías desde localStorage
@@ -130,6 +137,15 @@ function loadCategoriesFromStorage() {
     if (savedCategories) {
         try {
             availableCategories = JSON.parse(savedCategories);
+            // Asegurar que la categoría "Todas" siempre exista
+            if (!availableCategories.some(cat => cat.id === 'all')) {
+                availableCategories.unshift({ id: 'all', name: 'Todas' });
+            } else {
+                availableCategories = availableCategories.map(cat =>
+                    cat.id === 'all' ? { id: 'all', name: 'Todas' } : cat
+                );
+            }
+
             console.log('Categorías cargadas desde localStorage:', availableCategories.length);
         } catch (error) {
             console.error('Error al cargar categorías desde localStorage:', error);
@@ -179,34 +195,54 @@ document.addEventListener('DOMContentLoaded', function() {
         setupImageThumbnails();
         setupProductDetails();
         
-        // Actualizar contador de productos visibles
-        updateProductCount(category, filteredProducts.length);
+        // Actualizar contador visible
+        const categoryItem = document.querySelector(`.category-item[data-category="${category}"]`);
+        if (categoryItem) {
+            const countElement = categoryItem.querySelector('.count');
+            if (countElement) {
+                countElement.textContent = filteredProducts.length;
+            }
+        }
+
+        const totalLabel = document.querySelector('.products-header p');
+        if (totalLabel) {
+            totalLabel.textContent = `${filteredProducts.length} productos encontrados`;
+        }
     }
     
     // Función para actualizar contador de productos
     function updateProductCount(category, count) {
-        // Actualizar el contador en el header si existe
-        const countElement = document.querySelector('.products-header p');
-        if (countElement) {
-            countElement.textContent = `${count} productos encontrados`;
+        const categoryItem = document.querySelector(`.category-item[data-category="${category}"]`);
+        if (categoryItem) {
+            const countElement = categoryItem.querySelector('.count');
+            if (countElement) {
+                countElement.textContent = count;
+            }
         }
     }
     
     // Función para buscar productos
     function searchProducts(query) {
         const searchTerm = query.toLowerCase().trim();
-        
-        productCards.forEach(card => {
-            const productName = card.querySelector('.product-name').textContent.toLowerCase();
-            const productBrand = card.querySelector('.product-brand').textContent.toLowerCase();
-            
-            if (productName.includes(searchTerm) || productBrand.includes(searchTerm)) {
+        const cards = document.querySelectorAll('.product-card');
+
+        cards.forEach(card => {
+            const productName = card.querySelector('.product-name')?.textContent.toLowerCase() || '';
+            const productReference = card.querySelector('.product-ref')?.textContent.toLowerCase() || '';
+
+            if (productName.includes(searchTerm) || productReference.includes(searchTerm)) {
                 card.style.display = 'block';
                 card.style.animation = 'fadeIn 0.3s ease-in';
             } else {
                 card.style.display = 'none';
             }
         });
+
+        const visibleCards = Array.from(cards).filter(card => card.style.display !== 'none');
+        const countLabel = document.querySelector('.products-header p');
+        if (countLabel) {
+            countLabel.textContent = `${visibleCards.length} productos encontrados`;
+        }
     }
     
     // Función para cambiar imagen principal al hacer clic en thumbnail
@@ -231,15 +267,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para mostrar/ocultar detalles del producto
     function setupProductDetails() {
-        productCards.forEach(card => {
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach(card => {
             card.addEventListener('click', function(e) {
-                // No hacer nada si se hace clic en una imagen thumbnail
                 if (e.target.closest('.image-thumbnails')) {
                     return;
                 }
-                
-                // Aquí se podría agregar un modal con más detalles
-                console.log('Producto seleccionado:', this.querySelector('.product-name').textContent);
+                console.log('Producto seleccionado:', this.querySelector('.product-name')?.textContent || '');
             });
         });
     }
@@ -299,16 +333,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Búsqueda en tiempo real
-    searchInput.addEventListener('input', function() {
-        const query = this.value;
-        if (query.length > 0) {
-            searchProducts(query);
-        } else {
-            // Mostrar todos los productos de la categoría activa
-            const activeCategory = document.querySelector('.category-item.active').dataset.category;
-            filterByCategory(activeCategory);
-        }
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            const query = this.value;
+            if (query.length > 0) {
+                searchProducts(query);
+            } else {
+                const activeCategory = document.querySelector('.category-item.active')?.dataset.category || 'all';
+                filterByCategory(activeCategory);
+            }
+        });
+    }
     
     // Función para manejar el botón de imprimir
     function setupPrintButton() {
@@ -349,22 +384,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Función para inicializar contadores de categorías
     function initializeCategoryCounts() {
-        const categories = ['all', 'electrodomesticos', 'hogar', 'limpieza'];
-        const counts = [
-            products.length,
-            products.filter(p => p.category === 'electrodomesticos').length,
-            products.filter(p => p.category === 'hogar').length,
-            products.filter(p => p.category === 'limpieza').length
-        ];
-        
-        console.log('Actualizando contadores:', counts);
-        
-        categories.forEach((category, index) => {
-            const categoryItem = document.querySelector(`[data-category="${category}"]`);
+        const categoryCounts = availableCategories.reduce((acc, category) => {
+            const count = category.id === 'all'
+                ? products.length
+                : products.filter(p => p.category === category.id).length;
+            acc[category.id] = count;
+            return acc;
+        }, {});
+
+        Object.entries(categoryCounts).forEach(([categoryId, count]) => {
+            const categoryItem = document.querySelector(`[data-category="${categoryId}"]`);
             if (categoryItem) {
                 const countElement = categoryItem.querySelector('.count');
                 if (countElement) {
-                    countElement.textContent = counts[index];
+                    countElement.textContent = count;
                 }
             }
         });
@@ -373,26 +406,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicialización
     function init() {
         // Cargar datos desde localStorage
-        loadProductsFromStorage();
-        loadCategoriesFromStorage();
-        loadTableDataFromStorage();
+    loadProductsFromStorage();
+    loadCategoriesFromStorage();
+    loadTableDataFromStorage();
+    
+    // Si la tabla está vacía pero hay productos guardados, precargar filas
+    if (tableData.length === 0 && products.length > 0) {
+        tableData = products.map(product => {
+            const images = (product.images || []).slice(0, 3);
+            return {
+                id: product.id || Date.now(),
+                referencia: product.referencia || '',
+                descripcion: product.name || '',
+                categoria: product.category || 'recgeneral',
+                cantidad: product.quantity || 0,
+                precio: product.price || 0,
+                loc: product.loc || '',
+                imagenes: images,
+                imagen1: images[0] || '',
+                imagen2: images[1] || '',
+                imagen3: images[2] || ''
+            };
+        });
+        saveTableDataToStorage();
+    }
         
-        setupImageThumbnails();
-        setupProductDetails();
-        animateStars();
-        addAnimations();
         setupPrintButton();
-        setupHoverEffects();
         initializeCategoryCounts();
         
-        // Actualizar sidebar con categorías dinámicas
-        updateSidebarCategories();
-        
-        // Renderizar todos los productos
-        renderAllProducts();
-        
-        // Mostrar todos los productos por defecto
-        filterByCategory('all');
+        // Renderizar productos y contadores sin duplicar eventos
+        updateProductsGrid();
+        updateCategoryCounts();
         
         console.log('Catálogo de liquidación inicializado correctamente');
         console.log('Total de productos:', products.length);
@@ -544,13 +588,13 @@ function parseCSV(csvText) {
     const headers = lines[0].split(',').map(h => h.trim());
     
     // Validar headers
-    const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Precio'];
+    const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'];
     const hasRequiredHeaders = requiredHeaders.every(header => 
         headers.some(h => h.toLowerCase().includes(header.toLowerCase()))
     );
     
     if (!hasRequiredHeaders) {
-        alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Precio');
+        alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Loc, Precio, Categoría');
         return;
     }
     
@@ -558,15 +602,14 @@ function parseCSV(csvText) {
     for (let i = 1; i < lines.length; i++) {
         if (lines[i].trim()) {
             const values = lines[i].split(',').map(v => v.trim());
-            if (values.length >= 4) {
+            if (values.length >= 6) {
                 uploadedData.push({
                     referencia: values[0],
                     descripcion: values[1],
                     cantidad: parseInt(values[2]) || 1,
-                    precio: parseFloat(values[3]) || 0,
-                    imagen1: values[4] || '',
-                    imagen2: values[5] || '',
-                    imagen3: values[6] || ''
+                    loc: values[3] || '',
+                    precio: parseFloat(values[4]) || 0,
+                    categoria: normalizeCategory(values[5])
                 });
             }
         }
@@ -581,40 +624,46 @@ function parseExcel(arrayBuffer) {
         const workbook = XLSX.read(arrayBuffer, { type: 'array' });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
         
         if (jsonData.length < 2) {
             alert('El archivo Excel debe contener al menos una fila de datos');
             return;
         }
         
-        const headers = jsonData[0];
-        const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Precio'];
+        const headers = jsonData[0].map(header => header.toString().trim());
+        const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'];
         const hasRequiredHeaders = requiredHeaders.every(header => 
             headers.some(h => h && h.toLowerCase().includes(header.toLowerCase()))
         );
         
         if (!hasRequiredHeaders) {
-            alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Precio');
+            alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Loc, Precio, Categoría');
             return;
         }
-        
-        uploadedData = [];
-        for (let i = 1; i < jsonData.length; i++) {
-            const row = jsonData[i];
-            if (row && row.length >= 4) {
-                uploadedData.push({
-                    referencia: row[0] || '',
-                    descripcion: row[1] || '',
-                    cantidad: parseInt(row[2]) || 1,
-                    precio: parseFloat(row[3]) || 0,
-                    imagen1: row[4] || '',
-                    imagen2: row[5] || '',
-                    imagen3: row[6] || ''
-                });
-            }
+        const dataRows = jsonData.slice(1);
+        const validationErrors = validateExcelData(dataRows);
+        if (validationErrors.length > 0) {
+            alert('Se encontraron errores en el archivo:\n\n' + validationErrors.join('\n'));
+            return;
         }
-        
+
+        uploadedData = dataRows
+            .filter(row => row && row.length >= 6)
+            .map(row => ({
+                referencia: row[0].toString().trim(),
+                descripcion: row[1].toString().trim(),
+                cantidad: parseInt(row[2]) || 1,
+                loc: row[3].toString().trim(),
+                precio: parseFloat(row[4]) || 0,
+                categoria: normalizeCategory(row[5])
+            }));
+
+        if (uploadedData.length === 0) {
+            alert('No se encontraron registros válidos para importar');
+            return;
+        }
+
         showImportPreview();
     } catch (error) {
         alert('Error al leer el archivo Excel: ' + error.message);
@@ -638,10 +687,9 @@ function showImportPreview() {
                     <th>Referencia</th>
                     <th>Descripción</th>
                     <th>Cantidad</th>
-                    <th>Precio</th>
-                    <th>Imagen Portada</th>
-                    <th>Imagen 2</th>
-                    <th>Imagen 3</th>
+                    <th>Loc</th>
+                    <th>Precio (US$)</th>
+                    <th>Categoría</th>
                 </tr>
             </thead>
             <tbody>
@@ -653,10 +701,9 @@ function showImportPreview() {
                 <td>${item.referencia}</td>
                 <td>${item.descripcion}</td>
                 <td>${item.cantidad}</td>
+                <td>${item.loc || '-'}</td>
                 <td>US$ ${item.precio.toFixed(2)}</td>
-                <td>${item.imagen1 ? '✅ ' + item.imagen1 : '❌ Sin imagen'}</td>
-                <td>${item.imagen2 ? '✅ ' + item.imagen2 : '❌ Sin imagen'}</td>
-                <td>${item.imagen3 ? '✅ ' + item.imagen3 : '❌ Sin imagen'}</td>
+                <td>${getCategoryName(item.categoria)}</td>
             </tr>
         `;
     });
@@ -678,25 +725,21 @@ function importProducts() {
     
     // Agregar productos importados
     uploadedData.forEach((item, index) => {
-        // Procesar imágenes
-        const images = [];
-        if (item.imagen1) images.push(item.imagen1);
-        if (item.imagen2) images.push(item.imagen2);
-        if (item.imagen3) images.push(item.imagen3);
-        
+        const categoryExists = availableCategories.some(cat => cat.id === item.categoria);
+        const categoryId = categoryExists ? item.categoria : 'recgeneral';
+
         const newProduct = {
             id: Date.now() + index,
-            name: item.descripcion,
-            brand: 'IMPORTADO',
-            category: 'otros',
-            price: `US$ ${item.precio.toFixed(2)}`,
-            quantity: item.cantidad,
-            rating: 5,
-            reviews: 0,
-            shipping: 'Envío gratis',
-            description: item.descripcion,
             referencia: item.referencia,
-            images: images
+            name: item.descripcion,
+            description: item.descripcion,
+            quantity: item.cantidad,
+            loc: item.loc || '',
+            price: item.precio,
+            category: categoryId,
+            images: [],
+            rating: 0,
+            reviews: 0
         };
         
         products.push(newProduct);
@@ -722,12 +765,12 @@ function importProducts() {
 // Descargar plantilla Excel
 function downloadTemplate() {
     const templateData = [
-        ['Referencia', 'Descripción', 'Cantidad', 'Precio', 'Imagen Portada', 'Imagen 2', 'Imagen 3'],
-        ['REF001', 'Producto de ejemplo 1', '10', '25.99', 'producto1_portada.jpg', 'producto1_vista2.jpg', 'producto1_vista3.jpg'],
-        ['REF002', 'Producto de ejemplo 2', '5', '15.50', 'producto2_portada.jpg', 'producto2_vista2.jpg', ''],
-        ['REF003', 'Producto de ejemplo 3', '20', '8.75', 'producto3_portada.jpg', '', '']
+        ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'],
+        ['REF001', 'Producto de ejemplo 1', '10', 'A1', '25.99', 'KTM'],
+        ['REF002', 'Producto de ejemplo 2', '5', 'B2', '15.50', 'Boutique'],
+        ['REF003', 'Producto de ejemplo 3', '20', 'C3', '8.75', 'Rec General']
     ];
-    
+
     const ws = XLSX.utils.aoa_to_sheet(templateData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Productos');
@@ -958,23 +1001,26 @@ function parseExcelData(data, fileName) {
         {
             referencia: "REF-007",
             descripcion: "Laptop HP Pavilion 15\" - Intel i5, 8GB RAM, 256GB SSD",
-            categoria: "electrodomesticos",
             cantidad: 2,
-            precio: 599.99
+            loc: "A1",
+            precio: 599.99,
+            categoria: "ktm"
         },
         {
             referencia: "REF-008",
             descripcion: "Mesa de Oficina Ejecutiva - Madera Roble, 120x80cm",
-            categoria: "hogar",
             cantidad: 3,
-            precio: 89.50
+            loc: "B2",
+            precio: 89.50,
+            categoria: "boutique"
         },
         {
             referencia: "REF-009",
             descripcion: "Detergente Industrial 5L - Para limpieza pesada",
-            categoria: "limpieza",
             cantidad: 10,
-            precio: 15.99
+            loc: "C3",
+            precio: 15.99,
+            categoria: "recgeneral"
         }
     ];
     
@@ -1085,9 +1131,9 @@ function cancelExcelImport() {
 function downloadExcelTemplate() {
     // Crear datos de ejemplo para la plantilla
     const templateData = [
-        ['Referencia', 'Descripción', 'Categoría', 'Cantidad', 'Precio (US$)'],
-        ['REF-001', 'Ejemplo de producto', 'electrodomesticos', '1', '99.99'],
-        ['REF-002', 'Otro producto de ejemplo', 'hogar', '2', '49.50']
+        ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'],
+        ['REF-001', 'Ejemplo de producto', '1', 'A1', '99.99', 'KTM'],
+        ['REF-002', 'Otro producto de ejemplo', '2', 'B2', '49.50', 'Boutique']
     ];
     
     // Crear CSV (formato más simple que Excel)
@@ -1113,32 +1159,30 @@ function downloadExcelTemplate() {
 // Limpiar todos los datos
 function clearAllData() {
     if (confirm('¿Estás seguro de que quieres limpiar TODOS los datos? Esta acción no se puede deshacer.')) {
-        // Limpiar arrays
         products = [];
         tableData = [];
-        
-        // Limpiar localStorage
+
         localStorage.removeItem('catalogProducts');
         localStorage.removeItem('catalogCategories');
         localStorage.removeItem('catalogTableData');
-        
-        // Resetear categorías a las por defecto
+        localStorage.setItem('catalogSeeded', 'true');
+
         availableCategories = [
-            { id: 'electrodomesticos', name: 'Electrodomésticos' },
-            { id: 'hogar', name: 'Hogar y Decoración' },
-            { id: 'limpieza', name: 'Limpieza' },
-            { id: 'otros', name: 'Otros' }
+            { id: 'all', name: 'Todas' },
+            { id: 'ktm', name: 'KTM' },
+            { id: 'boutique', name: 'Boutique' },
+            { id: 'frenos', name: 'Frenos' },
+            { id: 'bujias', name: 'Bujías' },
+            { id: 'recgeneral', name: 'Rec General' }
         ];
-        
-        // Actualizar interfaz
+
         updateProductsGrid();
         updateCategoryCounts();
         updateSidebarCategories();
         renderTable();
-        
-        // Cerrar panel
+
         closeAdminPanel();
-        
+
         showSuccessNotification('Todos los datos han sido limpiados');
     }
 }
@@ -1300,6 +1344,8 @@ function updateSidebarCategories() {
 
 // Función para mostrar notificación de éxito
 function showSuccessNotification(message) {
+    console.log('Mostrando notificación:', message);
+    
     // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = 'success-notification';
@@ -1312,21 +1358,24 @@ function showSuccessNotification(message) {
     
     // Agregar al body
     document.body.appendChild(notification);
+    console.log('Notificación agregada al DOM');
     
-    // Mostrar con animación
-    setTimeout(() => {
+    // Mostrar con animación inmediatamente
+    requestAnimationFrame(() => {
         notification.classList.add('show');
-    }, 100);
+        console.log('Clase show agregada');
+    });
     
-    // Ocultar después de 2 segundos
+    // Ocultar después de 3 segundos
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
+                console.log('Notificación removida del DOM');
             }
         }, 300);
-    }, 2000);
+    }, 3000);
 }
 
 // ===== FUNCIONES DEL EDITOR DE TABLA =====
@@ -1424,28 +1473,24 @@ function renderTable() {
                 </div>
             </td>
             <td class="image-upload-cell">
-                <button class="image-upload-btn ${row.imagen1 ? 'has-image' : ''}" onclick="uploadImage(${index}, 1)">
-                    <i class="fas fa-image"></i>
-                    ${row.imagen1 ? 'Cambiar' : 'Subir'}
-                </button>
-                ${row.imagen1 ? `<img src="${row.imagen1}" class="image-preview-small" alt="Imagen 1">` : ''}
-                <input type="file" id="image1_${index}" accept="image/*" style="display: none;" onchange="handleImageUpload(${index}, 1, this)">
-            </td>
-            <td class="image-upload-cell">
-                <button class="image-upload-btn ${row.imagen2 ? 'has-image' : ''}" onclick="uploadImage(${index}, 2)">
-                    <i class="fas fa-image"></i>
-                    ${row.imagen2 ? 'Cambiar' : 'Subir'}
-                </button>
-                ${row.imagen2 ? `<img src="${row.imagen2}" class="image-preview-small" alt="Imagen 2">` : ''}
-                <input type="file" id="image2_${index}" accept="image/*" style="display: none;" onchange="handleImageUpload(${index}, 2, this)">
-            </td>
-            <td class="image-upload-cell">
-                <button class="image-upload-btn ${row.imagen3 ? 'has-image' : ''}" onclick="uploadImage(${index}, 3)">
-                    <i class="fas fa-image"></i>
-                    ${row.imagen3 ? 'Cambiar' : 'Subir'}
-                </button>
-                ${row.imagen3 ? `<img src="${row.imagen3}" class="image-preview-small" alt="Imagen 3">` : ''}
-                <input type="file" id="image3_${index}" accept="image/*" style="display: none;" onchange="handleImageUpload(${index}, 3, this)">
+                <div class="image-upload-group">
+                    <button class="image-upload-btn ${row.imagenes && row.imagenes.length ? 'has-image' : ''}" onclick="triggerImagesUpload(${index})">
+                        <i class="fas fa-image"></i>
+                        ${row.imagenes && row.imagenes.length ? 'Cambiar' : 'Subir'}
+                    </button>
+                    <input type="file" id="images_${index}" accept="image/*" multiple style="display: none;" onchange="handleImagesUpload(${index}, this)">
+                    <div class="image-preview-list">
+                        ${(row.imagenes || []).map((img, imgIndex) => `
+                            <div class="image-slot ${imgIndex === 0 ? 'primary' : ''}">
+                                ${imgIndex === 0 ? '<span class="image-label">Portada</span>' : ''}
+                                <img src="${img}" class="image-preview-small" alt="Imagen ${imgIndex + 1}">
+                                <button type="button" class="image-remove-btn" onclick="removeImage(${index}, ${imgIndex})">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
             </td>
             <td>
                 <button class="delete-row-btn" onclick="deleteRow(${index})">
@@ -1520,6 +1565,7 @@ function deleteRow(rowIndex) {
 
 // Guardar todos los productos
 function saveAllProducts() {
+    alert('Función saveAllProducts ejecutada - ALERTA DE PRUEBA');
     console.log('Función saveAllProducts ejecutada');
     console.log('Datos de tabla:', tableData);
     
@@ -1534,81 +1580,194 @@ function saveAllProducts() {
     // Validar todos los productos primero
     for (let index = 0; index < tableData.length; index++) {
         const row = tableData[index];
-        if (!row.referencia || !row.descripcion || !row.precio) {
-            alert(`Fila ${index + 1}: Faltan datos obligatorios (Referencia, Descripción, Precio)`);
-            hasErrors = true;
-            break;
-        }
-        
-        // Verificar si ya existe un producto con la misma referencia
-        const existingProduct = products.find(p => p.referencia === row.referencia);
-        if (existingProduct) {
-            alert(`Fila ${index + 1}: Ya existe un producto con la referencia "${row.referencia}"\n\nProducto existente: "${existingProduct.name}"\nPrecio: ${existingProduct.price}\n\nPor favor cambia la referencia o edita el producto existente.`);
+        if (!row.referencia || !row.descripcion || row.precio === undefined || row.precio === null || isNaN(parseFloat(row.precio))) {
+            alert(`Fila ${index + 1}: Faltan datos obligatorios (Referencia, Descripción, Precio válido)`);
             hasErrors = true;
             break;
         }
     }
-    
-    // Si hay errores, no continuar
+
     if (hasErrors) {
         return;
     }
-    
-    // Crear una copia de los datos de la tabla para procesar
+
     const dataToProcess = [...tableData];
-    
+
     console.log('Procesando productos desde la tabla');
-    
-    // Guardar todos los productos usando la copia
+
     dataToProcess.forEach((row, index) => {
-        // Procesar imágenes
-        const images = [];
-        if (row.imagen1) images.push(row.imagen1);
-        if (row.imagen2) images.push(row.imagen2);
-        if (row.imagen3) images.push(row.imagen3);
-        
-        // Crear producto
-        const newProduct = {
-            id: Date.now() + index,
-            name: row.descripcion,
-            brand: 'EDITOR',
-            category: row.categoria || 'otros',
-            price: `US$ ${row.precio.toFixed(2)}`,
-            quantity: row.cantidad,
-            rating: 5,
-            reviews: 0,
-            shipping: 'Envío gratis',
-            description: row.descripcion,
+        const normalizedCategory = row.categoria || 'recgeneral';
+        const existingIndex = products.findIndex(p => p.referencia === row.referencia);
+        const payload = {
             referencia: row.referencia,
-            images: images
+            name: row.descripcion,
+            description: row.descripcion,
+            quantity: parseInt(row.cantidad, 10) || 0,
+            loc: row.loc || '',
+            price: parseFloat(row.precio) || 0,
+            category: normalizedCategory,
+            images: (row.imagenes && row.imagenes.length)
+                ? row.imagenes.slice(0, 3)
+                : [row.imagen1, row.imagen2, row.imagen3].filter(Boolean)
         };
-        
-        products.push(newProduct);
+
+        if (!row.imagenes || !row.imagenes.length) {
+            row.imagenes = payload.images;
+        }
+
+        if (existingIndex >= 0) {
+            products[existingIndex] = {
+                ...products[existingIndex],
+                ...payload
+            };
+        } else {
+            products.push({
+                id: Date.now() + index,
+                rating: 0,
+                reviews: 0,
+                ...payload
+            });
+        }
+
         savedCount++;
-        console.log('Producto agregado:', newProduct);
     });
-    
-    console.log('Productos guardados:', savedCount);
+
+    console.log('Productos guardados o actualizados:', savedCount);
     console.log('Total de productos en array:', products.length);
-    
-    // Guardar en localStorage
+
     saveProductsToStorage();
-    
-    // Actualizar interfaz
     updateProductsGrid();
     updateCategoryCounts();
     updateSidebarCategories();
-    
-    // LIMPIAR LA TABLA SOLO DESPUÉS DE GUARDAR EXITOSAMENTE
-    tableData = [];
     saveTableDataToStorage();
     renderTable();
+
+    // Debug: Forzar notificación visible
+    console.log('=== INICIANDO GUARDADO ===');
     
-    console.log('Tabla limpiada DESPUÉS de guardar exitosamente');
+    // Mostrar notificación INMEDIATAMENTE
+    showSuccessNotification('Cambios guardados');
     
-    // Mostrar notificación de éxito
-    showSuccessNotification(`Se guardaron ${savedCount} productos exitosamente`);
-    
-    // Cerrar panel de administración inmediatamente
-    closeAdminPanel();
+    // NO cerrar el panel por ahora para debuggear
+    console.log('=== GUARDADO COMPLETADO - PANEL ABIERTO ===');
+}
+
+function normalizeCategory(value) {
+    if (!value) return 'recgeneral';
+    const normalized = value.toString().trim().toLowerCase();
+
+    const mapping = {
+        'todas': 'all',
+        'all': 'all',
+        'ktm': 'ktm',
+        'boutique': 'boutique',
+        'frenos': 'frenos',
+        'freno': 'frenos',
+        'bujias': 'bujias',
+        'bujia': 'bujias',
+        'rec general': 'recgeneral',
+        'recgeneral': 'recgeneral',
+        'repuestos generales': 'recgeneral',
+        'general': 'recgeneral'
+    };
+
+    return mapping[normalized] || 'recgeneral';
+}
+
+function validateExcelData(rows) {
+    const errors = [];
+
+    rows.forEach((row, index) => {
+        const rowNumber = index + 2; // header = 1
+        const referencia = row[0] && row[0].toString().trim();
+        const descripcion = row[1] && row[1].toString().trim();
+        const cantidad = row[2];
+        const loc = row[3] && row[3].toString().trim();
+        const precio = row[4];
+        const categoria = row[5] && row[5].toString().trim();
+
+        if (!referencia) {
+            errors.push(`Fila ${rowNumber}: falta la referencia`);
+        }
+        if (!descripcion) {
+            errors.push(`Fila ${rowNumber}: falta la descripción`);
+        }
+        if (cantidad === undefined || cantidad === null || isNaN(parseFloat(cantidad))) {
+            errors.push(`Fila ${rowNumber}: cantidad inválida`);
+        }
+        if (!loc) {
+            errors.push(`Fila ${rowNumber}: falta el campo LOC`);
+        }
+        if (precio === undefined || precio === null || isNaN(parseFloat(precio))) {
+            errors.push(`Fila ${rowNumber}: precio inválido`);
+        }
+        if (!categoria) {
+            errors.push(`Fila ${rowNumber}: falta la categoría`);
+        } else {
+            const mapped = normalizeCategory(categoria);
+            const exists = availableCategories.some(cat => cat.id === mapped);
+            if (!exists) {
+                errors.push(`Fila ${rowNumber}: categoría "${categoria}" no reconocida. Usa KTM, Boutique, Frenos, Bujías o Rec General.`);
+            }
+        }
+    });
+
+    return errors;
+}
+
+function triggerImagesUpload(rowIndex) {
+    const input = document.getElementById(`images_${rowIndex}`);
+    if (input) {
+        input.click();
+    }
+}
+
+function handleImagesUpload(rowIndex, input) {
+    const files = Array.from(input.files || []).slice(0, 3);
+    if (files.length === 0) return;
+
+    const readers = files.map(file => {
+        return new Promise((resolve, reject) => {
+            if (!file.type.startsWith('image/')) {
+                reject(new Error('Archivo no válido'));
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+        });
+    });
+
+    Promise.all(readers)
+        .then(images => {
+            const existing = tableData[rowIndex].imagenes || [];
+            tableData[rowIndex].imagenes = images;
+            tableData[rowIndex].imagen1 = images[0] || existing[0] || '';
+            tableData[rowIndex].imagen2 = images[1] || '';
+            tableData[rowIndex].imagen3 = images[2] || '';
+            saveTableDataToStorage();
+            renderTable();
+        })
+        .catch(() => {
+            alert('Hubo un problema al leer las imágenes seleccionadas.');
+        })
+        .finally(() => {
+            input.value = '';
+        });
+}
+
+function removeImage(rowIndex, imageIndex) {
+    const row = tableData[rowIndex];
+    if (!row) return;
+
+    const images = row.imagenes || [];
+    images.splice(imageIndex, 1);
+    row.imagenes = images;
+    row.imagen1 = images[0] || '';
+    row.imagen2 = images[1] || '';
+    row.imagen3 = images[2] || '';
+
+    saveTableDataToStorage();
+    renderTable();
 }

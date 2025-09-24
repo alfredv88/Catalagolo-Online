@@ -13,7 +13,7 @@
     <header class="header">
         <div class="header-container">
             <div class="logo">
-                <i class="fas fa-tags"></i>
+                <img src="images/logo.png" alt="Ortis Motos" class="logo-img">
                 <span>Catálogo Liquidación</span>
             </div>
             <div class="search-bar">
@@ -97,9 +97,10 @@
                         <ul>
                             <li><strong>Columna A:</strong> Referencia (ej: REF-001)</li>
                             <li><strong>Columna B:</strong> Descripción del producto</li>
-                            <li><strong>Columna C:</strong> Categoría (electrodomesticos, hogar, limpieza, otros)</li>
-                            <li><strong>Columna D:</strong> Cantidad (número)</li>
+                            <li><strong>Columna C:</strong> Cantidad (número)</li>
+                            <li><strong>Columna D:</strong> Loc (ubicación o código interno)</li>
                             <li><strong>Columna E:</strong> Precio en US$ (número)</li>
+                            <li><strong>Columna F:</strong> Categoría (KTM, Boutique, Frenos, Bujías, Rec General)</li>
                             <li><strong>Fila 1:</strong> Debe contener los encabezados</li>
                         </ul>
                         <div class="excel-template">
@@ -123,7 +124,7 @@
                             <button class="categories-btn" onclick="toggleCategoriesManager()">
                                 <i class="fas fa-tags"></i> Gestionar Categorías
                             </button>
-                            <button class="save-all-btn" onclick="saveAllProducts()">
+                            <button class="save-all-btn" onclick="console.log('Botón clickeado'); saveAllProducts();">
                                 <i class="fas fa-save"></i> Guardar Todos
                             </button>
                             <button class="view-products-btn" onclick="showExistingProducts()" title="Ver productos existentes">
@@ -144,9 +145,7 @@
                                     <th>Categoría</th>
                                     <th>Cantidad</th>
                                     <th>Precio (US$)</th>
-                                    <th>Imagen 1 (Portada)</th>
-                                    <th>Imagen 2</th>
-                                    <th>Imagen 3</th>
+                                    <th>Imágenes (hasta 3)</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
@@ -208,20 +207,28 @@
             <h3>Categorías</h3>
             <ul class="categories">
                 <li class="category-item active" data-category="all">
-                    <span>Todos los productos</span>
-                    <span class="count">10</span>
+                    <span>Todas las categorías</span>
+                    <span class="count">0</span>
                 </li>
-                <li class="category-item" data-category="electrodomesticos">
-                    <span>Electrodomésticos</span>
-                    <span class="count">7</span>
+                <li class="category-item" data-category="ktm">
+                    <span>KTM</span>
+                    <span class="count">0</span>
                 </li>
-                <li class="category-item" data-category="hogar">
-                    <span>Hogar y Decoración</span>
-                    <span class="count">2</span>
+                <li class="category-item" data-category="boutique">
+                    <span>Boutique</span>
+                    <span class="count">0</span>
                 </li>
-                <li class="category-item" data-category="limpieza">
-                    <span>Limpieza</span>
-                    <span class="count">2</span>
+                <li class="category-item" data-category="frenos">
+                    <span>Frenos</span>
+                    <span class="count">0</span>
+                </li>
+                <li class="category-item" data-category="bujias">
+                    <span>Bujías</span>
+                    <span class="count">0</span>
+                </li>
+                <li class="category-item" data-category="recgeneral">
+                    <span>Rec General</span>
+                    <span class="count">0</span>
                 </li>
             </ul>
         </aside>
@@ -230,126 +237,11 @@
         <section class="products-section">
             <div class="products-header">
                 <h2>Productos en Liquidación</h2>
-                <p>Encuentra las mejores ofertas en nuestro catálogo</p>
+                <p class="products-count">0 productos encontrados</p>
             </div>
             
             <div class="products-grid" id="productsGrid">
-                <!-- Producto 1 -->
-                <div class="product-card" data-category="electrodomesticos">
-                    <div class="product-images">
-                        <img src="https://via.placeholder.com/400x400/ffffff/333333?text=Freidora+Royal+20L" alt="Freidora Eléctrica Royal 20L" class="main-image">
-                        <div class="image-thumbnails">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Freidora Eléctrica Royal 20 Lts</h3>
-                        <div class="product-quantity">
-                            <i class="fas fa-boxes"></i>
-                            <span class="quantity-available">Cantidad disponible: 15</span>
-                        </div>
-                        <div class="product-price">US$ 218.55</div>
-                    </div>
-                </div>
-
-                <!-- Producto 2 -->
-                <div class="product-card" data-category="electrodomesticos">
-                    <div class="product-images">
-                        <img src="https://via.placeholder.com/400x400/ffffff/333333?text=Licuadora+Oster+1500w" alt="Licuadora Oster 1500w" class="main-image">
-                        <div class="image-thumbnails">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Licuadora Oster 1500w 1.5L Vidrio 2 Accesorios</h3>
-                        <div class="product-quantity">
-                            <i class="fas fa-boxes"></i>
-                            <span class="quantity-available">Cantidad disponible: 8</span>
-                        </div>
-                        <div class="product-price">US$ 48.95</div>
-                        <div class="product-colors">Disponible en 3 colores</div>
-                    </div>
-                </div>
-
-                <!-- Producto 3 -->
-                <div class="product-card" data-category="electrodomesticos">
-                    <div class="product-images">
-                        <img src="https://via.placeholder.com/400x400/ffffff/333333?text=Procesador+Royal+1.5L" alt="Procesador Royal 1.5L" class="main-image">
-                        <div class="image-thumbnails">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Procesador De Alimento Eléctrico Picatodo 1.5 Tazas Original</h3>
-                        <div class="product-quantity">
-                            <i class="fas fa-boxes"></i>
-                            <span class="quantity-available">Cantidad disponible: 12</span>
-                        </div>
-                        <div class="product-price">US$ 23.95</div>
-                    </div>
-                </div>
-
-                <!-- Producto 4 -->
-                <div class="product-card" data-category="hogar">
-                    <div class="product-images">
-                        <img src="https://via.placeholder.com/400x400/ffffff/333333?text=Humificador+150ml" alt="Humificador Difusor 150ml" class="main-image">
-                        <div class="image-thumbnails">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Humificador Difusor De Aroma 150ml + Esencia Aromática 15ml</h3>
-                        <div class="product-quantity">
-                            <i class="fas fa-boxes"></i>
-                            <span class="quantity-available">Cantidad disponible: 25</span>
-                        </div>
-                        <div class="product-price">
-                            <span class="sale-price">US$ 7.44</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Producto 5 -->
-                <div class="product-card" data-category="limpieza">
-                    <div class="product-images">
-                        <img src="https://via.placeholder.com/400x400/ffffff/333333?text=Mini+Aspiradora+USB" alt="Mini Aspiradora Inalámbrica" class="main-image">
-                        <div class="image-thumbnails">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Mini Aspiradora Sopladora Inalámbrica Recargable 2 En 1 USB</h3>
-                        <div class="product-quantity">
-                            <i class="fas fa-boxes"></i>
-                            <span class="quantity-available">Cantidad disponible: 30</span>
-                        </div>
-                        <div class="product-price">US$ 6.99</div>
-                    </div>
-                </div>
-
-                <!-- Producto 6 -->
-                <div class="product-card" data-category="electrodomesticos">
-                    <div class="product-images">
-                        <img src="https://via.placeholder.com/400x400/ffffff/333333?text=Cuchilla+Oster+USA" alt="Cuchilla Oster + Acople" class="main-image">
-                        <div class="image-thumbnails">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=1" alt="Vista 1">
-                            <img src="https://via.placeholder.com/80x80/ffffff/333333?text=2" alt="Vista 2">
-                        </div>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Cuchilla Oster + Acople Completo Orig Made In USA</h3>
-                        <div class="product-quantity">
-                            <i class="fas fa-boxes"></i>
-                            <span class="quantity-available">Cantidad disponible: 5</span>
-                        </div>
-                        <div class="product-price">US$ 10.00</div>
-                    </div>
-                </div>
+                
             </div>
         </section>
     </main>
