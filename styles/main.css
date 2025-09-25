@@ -1358,20 +1358,6 @@ body {
     color: var(--primary-color);
 }
 
-.categories-manager .close-categories {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-.categories-manager .close-categories:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
 
 .categories-content {
     background: white;
