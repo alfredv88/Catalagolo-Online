@@ -1,0 +1,27 @@
+[
+    {
+        "id": "all",
+        "name": "Todas"
+    },
+    {
+        "id": "ktm",
+        "name": "KTM"
+    },
+    {
+        "id": "boutique",
+        "name": "Boutique"
+    },
+    {
+        "id": "frenos",
+        "name": "Frenos"
+    },
+    {
+        "id": "bujias",
+        "name": "Bujías"
+    },
+    {
+        "id": "recgeneral",
+        "name": "Rec General"
+    }
+]
+
