@@ -474,7 +474,40 @@ document.addEventListener('DOMContentLoaded', function() {
         products.push(productData);
         console.log('Producto agregado:', productData);
     };
+    
+    // Verificar si debe auto-abrir el panel de administración
+    checkAutoOpenAdmin();
 });
+
+// Función para verificar si debe auto-abrir el panel de administración
+async function checkAutoOpenAdmin() {
+    // Verificar si hay parámetro admin=true en la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('admin') === 'true') {
+        // Limpiar el parámetro de la URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+        
+        // Verificar autenticación y abrir panel
+        try {
+            const response = await fetch('/admin/status');
+            const result = await response.json();
+            
+            if (result.authenticated) {
+                // Auto-abrir el panel de administración
+                setTimeout(() => {
+                    toggleAdminPanel();
+                }, 500); // Pequeño delay para asegurar que todo esté cargado
+            } else {
+                // Si no está autenticado, redirigir al login
+                window.location.href = '/admin';
+            }
+        } catch (error) {
+            console.error('Error verificando autenticación:', error);
+            // En caso de error, redirigir al login por seguridad
+            window.location.href = '/admin';
+        }
+    }
+}
 
 // ===== FUNCIONES DEL PANEL DE ADMINISTRACIÓN =====
 
