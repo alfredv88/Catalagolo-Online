@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Liquidación - Productos en Oferta</title>
-    <!-- Cache busting: 2025-01-25-17:00-RECREATE -->
     <link rel="stylesheet" href="styles/main.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -173,24 +172,37 @@
                     </div>
                 </div>
                 
-                <!-- Modal de Producto -->
-                <div class="product-modal" id="productModal">
-                    <div class="product-overlay" onclick="closeProductModal()"></div>
-                    <div class="product-modal-content">
-                        <div class="product-modal-header">
-                            <h3 id="modalProductName">Detalle del Producto</h3>
-                            <button class="product-modal-close" onclick="closeProductModal()">×</button>
-                        </div>
-                        <div class="product-modal-body">
-                            <div class="product-modal-image">
-                                <img id="modalProductImage" src="" alt="Imagen del producto">
+                <!-- Modal de Detalles de Producto -->
+                <div id="productModal" class="product-modal" style="display: none;">
+                    <div class="modal-overlay" onclick="closeProductModal()"></div>
+                    <div class="modal-content">
+                        <button class="close-modal" onclick="closeProductModal()">×</button>
+                        <div class="modal-body">
+                            <img class="modal-image" id="modalImage" src="" alt="Producto">
+                            <h2 class="modal-title" id="modalTitle"></h2>
+                            <p class="modal-reference" id="modalReference"></p>
+                            <p class="modal-description" id="modalDescription"></p>
+                            
+                            <div class="modal-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Categoría</span>
+                                    <span class="detail-value" id="modalCategory"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Cantidad</span>
+                                    <span class="detail-value" id="modalQuantity"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Ubicación</span>
+                                    <span class="detail-value" id="modalLocation"></span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Referencia</span>
+                                    <span class="detail-value" id="modalRef"></span>
+                                </div>
                             </div>
-                            <div class="product-modal-info">
-                                <h4>Descripción</h4>
-                                <p id="modalProductDescription"></p>
-                                <div class="product-modal-price" id="modalProductPrice"></div>
-                                <div class="product-modal-category" id="modalProductCategory"></div>
-                            </div>
+                            
+                            <div class="modal-price" id="modalPrice"></div>
                         </div>
                     </div>
                 </div>

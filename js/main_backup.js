@@ -245,6 +245,38 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Función para cambiar imagen principal al hacer clic en thumbnail
+    function setupImageThumbnails() {
+        const thumbnails = document.querySelectorAll('.image-thumbnails img');
+        
+        thumbnails.forEach(thumbnail => {
+            thumbnail.addEventListener('click', function() {
+                const mainImage = this.closest('.product-card').querySelector('.main-image');
+                const tempSrc = mainImage.src;
+                mainImage.src = this.src;
+                this.src = tempSrc;
+                
+                // Efecto de transición
+                mainImage.style.opacity = '0';
+                setTimeout(() => {
+                    mainImage.style.opacity = '1';
+                }, 150);
+            });
+        });
+    }
+    
+    // Función para mostrar/ocultar detalles del producto
+    function setupProductDetails() {
+        const cards = document.querySelectorAll('.product-card');
+        cards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.closest('.image-thumbnails')) {
+                    return;
+                }
+                console.log('Producto seleccionado:', this.querySelector('.product-name')?.textContent || '');
+            });
+        });
+    }
     
     // Función para animar las estrellas de rating
     function animateStars() {
@@ -442,62 +474,12 @@ document.addEventListener('DOMContentLoaded', function() {
         products.push(productData);
         console.log('Producto agregado:', productData);
     };
-    
-    // Verificar si debe auto-abrir el panel de administración
-    checkAutoOpenAdmin();
 });
-
-// Función para verificar si debe auto-abrir el panel de administración
-async function checkAutoOpenAdmin() {
-    // Verificar si hay parámetro admin=true en la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('admin') === 'true') {
-        // Limpiar el parámetro de la URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-        
-        // Verificar autenticación y abrir panel
-        try {
-            const response = await fetch('/admin/status');
-            const result = await response.json();
-            
-            if (result.authenticated) {
-                // Auto-abrir el panel de administración
-                setTimeout(() => {
-                    toggleAdminPanel();
-                }, 500); // Pequeño delay para asegurar que todo esté cargado
-            } else {
-                // Si no está autenticado, redirigir al login
-                window.location.href = '/admin';
-            }
-        } catch (error) {
-            console.error('Error verificando autenticación:', error);
-            // En caso de error, redirigir al login por seguridad
-            window.location.href = '/admin';
-        }
-    }
-}
 
 // ===== FUNCIONES DEL PANEL DE ADMINISTRACIÓN =====
 
 // Toggle del panel de administración
-async function toggleAdminPanel() {
-    // Verificar autenticación antes de mostrar el panel
-    try {
-        const response = await fetch('/admin/status');
-        const result = await response.json();
-        
-        if (!result.authenticated) {
-            // Si no está autenticado, redirigir al login
-            window.location.href = '/admin';
-            return;
-        }
-    } catch (error) {
-        console.error('Error verificando autenticación:', error);
-        // En caso de error, redirigir al login por seguridad
-        window.location.href = '/admin';
-        return;
-    }
-    
+function toggleAdminPanel() {
     const panel = document.getElementById('adminPanel');
     if (panel.style.display === 'none' || panel.style.display === '') {
         // Resetear estilos y mostrar panel
@@ -538,38 +520,6 @@ function closeAdminPanel() {
         
     } else {
         console.log('No se encontró el panel de administración');
-    }
-}
-
-// Función para cerrar sesión de administración
-async function logoutAdmin() {
-    try {
-        const response = await fetch('/admin/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        });
-        
-        const result = await response.json();
-        
-        if (result.status === 'success') {
-            // Cerrar el panel de administración
-            closeAdminPanel();
-            
-            // Mostrar notificación de logout
-            showSuccessNotification('Sesión cerrada correctamente');
-            
-            // Redirigir a la página principal después de un momento
-            setTimeout(() => {
-                window.location.href = '/';
-            }, 1500);
-        } else {
-            showErrorNotification('Error al cerrar sesión');
-        }
-    } catch (error) {
-        console.error('Error al cerrar sesión:', error);
-        showErrorNotification('Error de conexión al cerrar sesión');
     }
 }
 
@@ -842,14 +792,6 @@ function toggleCategoriesManager() {
         panel.style.display = 'flex';
         loadCategoriesList();
     } else {
-        closeCategoriesManager();
-    }
-}
-
-// Función para cerrar el modal de categorías
-function closeCategoriesManager() {
-    const panel = document.getElementById('categoriesManager');
-    if (panel) {
         panel.style.display = 'none';
     }
 }
@@ -1185,39 +1127,30 @@ function cancelExcelImport() {
     excelData = [];
 }
 
-// Descargar plantilla de Excel o exportar datos actuales
-function exportTableToExcel() {
-    let dataForExport = [];
-    const headers = ['Referencia', 'Descripción', 'Categoría', 'Cantidad', 'Precio', 'Loc'];
-    dataForExport.push(headers);
-
-    if (tableData.length > 0) {
-        // Usar los datos de la tabla si existen
-        tableData.forEach(row => {
-            dataForExport.push([
-                row.referencia,
-                row.descripcion,
-                getCategoryName(row.categoria),
-                row.cantidad,
-                row.precio,
-                row.loc || ''
-            ]);
-        });
-        showSuccessNotification('Exportando datos actuales a Excel...');
-    } else {
-        // Usar datos de ejemplo si la tabla está vacía
-        dataForExport.push(['REF-001', 'Ejemplo de producto', 'KTM', '1', '99.99', 'A1']);
-        dataForExport.push(['REF-002', 'Otro producto de ejemplo', 'Boutique', '2', '49.50', 'B2']);
-        showSuccessNotification('La tabla está vacía. Descargando plantilla de ejemplo.');
-    }
-
-    const ws = XLSX.utils.aoa_to_sheet(dataForExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Productos');
+// Descargar plantilla de Excel
+function downloadExcelTemplate() {
+    // Crear datos de ejemplo para la plantilla
+    const templateData = [
+        ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'],
+        ['REF-001', 'Ejemplo de producto', '1', 'A1', '99.99', 'KTM'],
+        ['REF-002', 'Otro producto de ejemplo', '2', 'B2', '49.50', 'Boutique']
+    ];
     
-    // Generar nombre de archivo dinámico
-    const fileName = `catalogo_productos_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    // Crear CSV (formato más simple que Excel)
+    const csvContent = templateData.map(row => row.join(',')).join('\n');
+    
+    // Crear y descargar archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'plantilla_productos.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showSuccessNotification('Plantilla descargada exitosamente');
 }
 
 // La tabla se limpia automáticamente después de guardar exitosamente
@@ -1259,8 +1192,6 @@ function clearAllData() {
 // Actualizar grid de productos
 function updateProductsGrid() {
     const grid = document.getElementById('productsGrid');
-    const countLabel = document.querySelector('.products-header .products-count');
-
     if (!grid) {
         console.log('No se encontró el grid de productos');
         return;
@@ -1275,11 +1206,6 @@ function updateProductsGrid() {
         grid.appendChild(productCard);
     });
     
-    // Actualizar el contador de productos en el encabezado
-    if (countLabel) {
-        countLabel.textContent = `${products.length} productos encontrados`;
-    }
-
     // Reconfigurar eventos después de actualizar
     setupImageThumbnails();
     setupProductDetails();
@@ -1548,9 +1474,15 @@ function renderTable() {
             </td>
             <td class="image-upload-cell">
                 <div class="image-upload-group">
+                    <button class="image-upload-btn ${row.imagenes && row.imagenes.length ? 'has-image' : ''}" onclick="triggerImagesUpload(${index})">
+                        <i class="fas fa-image"></i>
+                        ${row.imagenes && row.imagenes.length ? 'Cambiar' : 'Subir'}
+                    </button>
+                    <input type="file" id="images_${index}" accept="image/*" multiple style="display: none;" onchange="handleImagesUpload(${index}, this)">
                     <div class="image-preview-list">
                         ${(row.imagenes || []).map((img, imgIndex) => `
                             <div class="image-slot ${imgIndex === 0 ? 'primary' : ''}">
+                                ${imgIndex === 0 ? '<span class="image-label">Portada</span>' : ''}
                                 <img src="${img}" class="image-preview-small" alt="Imagen ${imgIndex + 1}">
                                 <button type="button" class="image-remove-btn" onclick="removeImage(${index}, ${imgIndex})">
                                     <i class="fas fa-times"></i>
@@ -1558,10 +1490,6 @@ function renderTable() {
                             </div>
                         `).join('')}
                     </div>
-                    <button class="image-upload-btn" onclick="triggerImagesUpload(${index})">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <input type="file" id="images_${index}" accept="image/*" multiple style="display: none;" onchange="handleImagesUpload(${index}, this)">
                 </div>
             </td>
             <td>
@@ -1742,20 +1670,24 @@ function handleImagesUpload(rowIndex, input) {
         });
 }
 
-function removeImage(rowIndex, imageIndex) {
-    const row = tableData[rowIndex];
-    if (!row) return;
+    // ===== FUNCIONES INTERNAS =====
 
-    const images = row.imagenes || [];
-    images.splice(imageIndex, 1);
-    row.imagenes = images;
-    row.imagen1 = images[0] || '';
-    row.imagen2 = images[1] || '';
-    row.imagen3 = images[2] || '';
+    function removeImage(rowIndex, imageIndex) {
+        const row = tableData[rowIndex];
+        if (!row) return;
 
-    saveTableDataToStorage();
-    renderTable();
-}
+        const images = row.imagenes || [];
+        images.splice(imageIndex, 1);
+        row.imagenes = images;
+        row.imagen1 = images[0] || '';
+        row.imagen2 = images[1] || '';
+        row.imagen3 = images[2] || '';
+
+        saveTableDataToStorage();
+        renderTable();
+    }
+
+}); // FIN DOMContentLoaded
 
 // ===== FUNCIONES GLOBALES =====
 
@@ -1844,121 +1776,4 @@ function saveAllProducts() {
     setTimeout(() => {
         closeAdminPanel();
     }, 2000);
-}
-
-// ===== FUNCIONES GLOBALES PARA IMÁGENES =====
-
-// Función para cambiar imagen principal al hacer clic en thumbnail
-function setupImageThumbnails() {
-    const thumbnails = document.querySelectorAll('.image-thumbnails img');
-    
-    thumbnails.forEach(thumbnail => {
-        thumbnail.addEventListener('click', function() {
-            const mainImage = this.closest('.product-card').querySelector('.main-image');
-            const tempSrc = mainImage.src;
-            mainImage.src = this.src;
-            this.src = tempSrc;
-            
-            // Efecto de transición
-            mainImage.style.opacity = '0';
-            setTimeout(() => {
-                mainImage.style.opacity = '1';
-            }, 150);
-        });
-    });
-}
-
-// Función para mostrar/ocultar detalles del producto
-function setupProductDetails() {
-    const cards = document.querySelectorAll('.product-card');
-    cards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.closest('.image-thumbnails')) {
-                return;
-            }
-            
-            // Obtener datos del producto desde la tarjeta
-            const productData = getProductDataFromCard(this);
-            if (productData) {
-                showProductModal(productData);
-            }
-        });
-    });
-}
-
-// Función para extraer datos del producto desde la tarjeta
-function getProductDataFromCard(card) {
-    const name = card.querySelector('.product-name')?.textContent || '';
-    const reference = card.querySelector('.product-ref')?.textContent || '';
-    const price = card.querySelector('.product-price')?.textContent || '';
-    const category = card.getAttribute('data-category') || '';
-    const image = card.querySelector('.main-image')?.src || '';
-    
-    // Buscar el producto completo en el array de productos
-    const product = products.find(p => p.referencia === reference || p.name === name);
-    
-    if (product) {
-        return product;
-    }
-    
-    // Si no se encuentra, crear objeto con datos de la tarjeta
-    return {
-        name: name,
-        referencia: reference,
-        price: parseFloat(price.replace(/[^0-9.-]+/g, '')) || 0,
-        category: category,
-        images: image ? [image] : [],
-        description: name, // Usar nombre como descripción por defecto
-        quantity: 0,
-        loc: ''
-    };
-}
-
-// Función para mostrar el modal de producto
-function showProductModal(product) {
-    const modal = document.getElementById('productModal');
-    if (!modal) return;
-    
-    // Llenar datos del modal
-    document.getElementById('modalTitle').textContent = product.name || product.description || 'Producto';
-    document.getElementById('modalReference').textContent = `Ref: ${product.referencia || 'N/A'}`;
-    document.getElementById('modalDescription').textContent = product.description || product.name || 'Sin descripción disponible';
-    document.getElementById('modalCategory').textContent = getCategoryName(product.category) || 'Sin categoría';
-    document.getElementById('modalQuantity').textContent = product.quantity || 0;
-    document.getElementById('modalLocation').textContent = product.loc || 'No especificada';
-    document.getElementById('modalRef').textContent = product.referencia || 'N/A';
-    document.getElementById('modalPrice').textContent = `$${(product.price || 0).toLocaleString('es-ES', {minimumFractionDigits: 2})}`;
-    
-    // Configurar imagen
-    const modalImage = document.getElementById('modalImage');
-    if (product.images && product.images.length > 0) {
-        modalImage.src = product.images[0];
-        modalImage.alt = product.name || 'Producto';
-    } else {
-        // Imagen placeholder si no hay imagen
-        modalImage.src = `https://via.placeholder.com/400x300/ffffff/333333?text=${encodeURIComponent(product.name || 'Producto')}`;
-        modalImage.alt = product.name || 'Producto';
-    }
-    
-    // Mostrar modal
-    modal.style.display = 'flex';
-    
-    // Prevenir scroll del body
-    document.body.style.overflow = 'hidden';
-}
-
-// Función para cerrar el modal de producto
-function closeProductModal() {
-    const modal = document.getElementById('productModal');
-    if (modal) {
-        modal.style.display = 'none';
-        // Restaurar scroll del body
-        document.body.style.overflow = 'auto';
-    }
-}
-
-// Función para obtener nombre de categoría
-function getCategoryName(categoryId) {
-    const category = availableCategories.find(cat => cat.id === categoryId);
-    return category ? category.name : categoryId;
 }
