@@ -592,9 +592,9 @@ async function logoutAdmin() {
             // Mostrar notificación de logout
             showSuccessNotification('Sesión cerrada correctamente');
             
-            // Redirigir al login después de un momento
+            // Redirigir a la página principal después de un momento
             setTimeout(() => {
-                window.location.href = '/admin';
+                window.location.href = '/';
             }, 1500);
         } else {
             showErrorNotification('Error al cerrar sesión');

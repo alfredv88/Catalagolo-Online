@@ -56,6 +56,12 @@ body {
     font-weight: 700;
     color: var(--surface-color);
     text-shadow: 0 2px 4px rgba(0,0,0,0.35);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+}
+
+.logo:hover {
+    opacity: 0.8;
 }
 
 .logo-img {
