@@ -873,23 +873,7 @@ function toggleCategoriesManager() {
     if (panel.style.display === 'none' || panel.style.display === '') {
         panel.style.display = 'flex';
         loadCategoriesList();
-        
-        // Agregar event listener para cerrar al hacer click fuera
-        setTimeout(() => {
-            document.addEventListener('click', handleCategoriesClickOutside);
-        }, 100);
     } else {
-        closeCategoriesManager();
-    }
-}
-
-// Función para manejar clicks fuera del modal de categorías
-function handleCategoriesClickOutside(event) {
-    const panel = document.getElementById('categoriesManager');
-    const categoriesBtn = document.querySelector('.categories-btn');
-    
-    // Verificar si el click fue fuera del modal y no en el botón que lo abre
-    if (panel && !panel.contains(event.target) && (!categoriesBtn || !categoriesBtn.contains(event.target))) {
         closeCategoriesManager();
     }
 }
@@ -899,8 +883,6 @@ function closeCategoriesManager() {
     const panel = document.getElementById('categoriesManager');
     if (panel) {
         panel.style.display = 'none';
-        // Remover el event listener
-        document.removeEventListener('click', handleCategoriesClickOutside);
     }
 }
 
