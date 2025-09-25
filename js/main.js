@@ -1109,33 +1109,27 @@ function processRealExcelData(jsonData, fileName) {
         }
     }
     
-    // Procesar solo datos válidos (filtrar filas con errores)
+    // Procesar filas con datos básicos (solo omitir filas completamente vacías)
     excelData = dataRows
         .filter(row => {
-            // Verificar que la fila tenga datos básicos
+            // Verificar que la fila tenga al menos datos básicos
             if (!row || row.length < 6) return false;
             
             const referencia = row[0] && row[0].toString().trim();
             const descripcion = row[1] && row[1].toString().trim();
-            const stock = row[2];
-            const loc = row[3] && row[3].toString().trim();
-            const pvp = row[4];
-            const categoria = row[5] && row[5].toString().trim();
             
-            // Solo incluir filas con datos mínimos válidos
-            return referencia && descripcion && 
-                   !isNaN(parseInt(stock)) && parseInt(stock) >= 0 &&
-                   loc && pvp && categoria;
+            // Solo incluir filas que tengan al menos referencia O descripción
+            return referencia || descripcion;
         })
         .map(row => ({
-            referencia: row[0].toString().trim(),
-            descripcion: row[1].toString().trim(),
-            stock: parseInt(row[2]) || 1,
-            cantidad: parseInt(row[2]) || 1, // Compatibilidad
-            loc: row[3].toString().trim(),
-            pvp: row[4].toString().trim(),
-            precio: parseEuropeanPrice(row[4].toString()),
-            categoria: normalizeCategory(row[5])
+            referencia: (row[0] && row[0].toString().trim()) || '',
+            descripcion: (row[1] && row[1].toString().trim()) || '',
+            stock: parseInt(row[2]) || 0,
+            cantidad: parseInt(row[2]) || 0, // Compatibilidad
+            loc: (row[3] && row[3].toString().trim()) || '',
+            pvp: (row[4] && row[4].toString().trim()) || '0',
+            precio: parseEuropeanPrice((row[4] && row[4].toString()) || '0'),
+            categoria: normalizeCategory(row[5] || 'recgeneral')
         }));
     
     console.log('Datos procesados:', excelData);
@@ -1776,28 +1770,23 @@ function validateExcelData(rows) {
         const pvp = row[4];
         const categoria = row[5] && row[5].toString().trim();
 
-        if (!referencia) {
-            errors.push(`Fila ${rowNumber}: falta la referencia`);
+        // Solo validar campos críticos, advertir sobre campos opcionales
+        if (!referencia && !descripcion) {
+            errors.push(`Fila ${rowNumber}: debe tener al menos referencia o descripción`);
         }
-        if (!descripcion) {
-            errors.push(`Fila ${rowNumber}: falta la descripción`);
+        
+        // Advertencias para campos opcionales (no bloquean importación)
+        if (stock !== undefined && stock !== null && stock !== '' && (isNaN(parseInt(stock)) || parseInt(stock) < 0)) {
+            errors.push(`Fila ${rowNumber}: Stock inválido, se usará 0`);
         }
-        if (stock === undefined || stock === null || isNaN(parseInt(stock)) || parseInt(stock) < 0) {
-            errors.push(`Fila ${rowNumber}: Stock debe ser un número entero positivo`);
+        if (pvp && pvp !== '' && (isNaN(parseEuropeanPrice(pvp.toString())) || parseEuropeanPrice(pvp.toString()) < 0)) {
+            errors.push(`Fila ${rowNumber}: PVP inválido, se usará 0`);
         }
-        if (!loc) {
-            errors.push(`Fila ${rowNumber}: falta el campo LOC`);
-        }
-        if (!pvp || isNaN(parseEuropeanPrice(pvp.toString())) || parseEuropeanPrice(pvp.toString()) <= 0) {
-            errors.push(`Fila ${rowNumber}: PVP debe ser un precio válido (formatos: 1,30 € o 1,30)`);
-        }
-        if (!categoria) {
-            errors.push(`Fila ${rowNumber}: falta la categoría`);
-        } else {
+        if (categoria && categoria !== '') {
             const mapped = normalizeCategory(categoria);
             const exists = availableCategories.some(cat => cat.id === mapped);
             if (!exists) {
-                errors.push(`Fila ${rowNumber}: categoría "${categoria}" no reconocida. Usa KTM, Boutique, Frenos, Bujías o Rec General.`);
+                errors.push(`Fila ${rowNumber}: categoría "${categoria}" no válida, se usará "Rec General"`);
             }
         }
     });
