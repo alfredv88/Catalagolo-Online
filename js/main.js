@@ -819,7 +819,7 @@ function downloadTemplate() {
     const templateData = [
         ['Referencia', 'Descripción', 'Stock', 'Loc', 'PVP', 'CATEGORIA'],
         ['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30 €', 'KTM'],
-        ['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3 RUEDA TRASERA', '2', 'MB1', '9,60 €', 'KTM'],
+        ['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3 RUEDA TRASERA', '2', 'MB1', '9,60', 'KTM'],
         ['11/59009062016', 'TORNILLO KTM M6X16 SW=8 10.9', '3', 'MB4', '1,25 €', 'KTM']
     ];
 
@@ -986,7 +986,7 @@ function getCategoryName(categoryId) {
 // Variable para almacenar datos de Excel
 let excelData = [];
 
-// Función para parsear precios en formato europeo (1,30 €)
+// Función para parsear precios en formato europeo (1,30 € o 1,30)
 function parseEuropeanPrice(priceStr) {
     if (!priceStr || typeof priceStr !== 'string') return 0;
     
@@ -1312,7 +1312,7 @@ function exportTableToExcel() {
     } else {
         // Usar datos de ejemplo si la tabla está vacía
         dataForExport.push(['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30 €', 'KTM']);
-        dataForExport.push(['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3', '2', 'MB1', '9,60 €', 'KTM']);
+        dataForExport.push(['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3', '2', 'MB1', '9,60', 'KTM']);
         showSuccessNotification('La tabla está vacía. Descargando plantilla de ejemplo.');
     }
 
@@ -1789,7 +1789,7 @@ function validateExcelData(rows) {
             errors.push(`Fila ${rowNumber}: falta el campo LOC`);
         }
         if (!pvp || isNaN(parseEuropeanPrice(pvp.toString())) || parseEuropeanPrice(pvp.toString()) <= 0) {
-            errors.push(`Fila ${rowNumber}: PVP debe ser un precio válido (formato: 1,30 €)`);
+            errors.push(`Fila ${rowNumber}: PVP debe ser un precio válido (formatos: 1,30 € o 1,30)`);
         }
         if (!categoria) {
             errors.push(`Fila ${rowNumber}: falta la categoría`);
