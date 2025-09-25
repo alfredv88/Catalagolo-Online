@@ -1,11 +1,13 @@
 {
   "name": "catalogo-online",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Catálogo de productos con panel de administración",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "build": "echo 'No build step required'",
+    "deploy": "node server.js"
   },
   "dependencies": {
     "express": "^4.18.2"

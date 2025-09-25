@@ -593,4 +593,8 @@ warning: in the working copy of 'styles/main.css', LF will be replaced by CRLF t
  }[m
  [m
 [36m@@ -1170,7 +1200,7 @@[m [mbody {[m
-  
+  [33m059f617[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m FORZAR REDEPLOYMENT: agregar cache busting, railway.json y headers anti-cache
+[33mb2c46fc[m Corregir configuración del servidor: mejorar manejo de archivos estáticos y agregar logging
+[33m1e5998d[m Forzar redeployment en Railway para actualizar index.html
+[33m6c8abbd[m Corregir click en tarjetas: agregar event listeners directamente en createProductCard
+[33m98afd35[m Implementar layout de 3 columnas y modal de producto con vista ampliada
