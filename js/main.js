@@ -1333,6 +1333,16 @@ function createProductCard(product) {
         </div>
     `;
     
+    // Agregar event listener para click en la tarjeta
+    card.addEventListener('click', function(e) {
+        if (e.target.closest('.image-thumbnails')) {
+            return; // No abrir modal si se hace click en thumbnails
+        }
+        
+        // Abrir modal con datos del producto
+        openProductModal(product);
+    });
+    
     return card;
 }
 
@@ -1868,41 +1878,11 @@ function setupImageThumbnails() {
     });
 }
 
-// Función para mostrar/ocultar detalles del producto
+// Función para mostrar/ocultar detalles del producto (OBSOLETA - ahora se maneja en createProductCard)
 function setupProductDetails() {
-    const cards = document.querySelectorAll('.product-card');
-    cards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            if (e.target.closest('.image-thumbnails')) {
-                return;
-            }
-            
-            // Obtener datos del producto desde la tarjeta
-            const productName = this.querySelector('.product-name')?.textContent || '';
-            const productRef = this.querySelector('.product-ref')?.textContent || '';
-            const productPrice = this.querySelector('.product-price')?.textContent || '';
-            const productCategory = this.querySelector('.product-category')?.textContent || '';
-            const productImage = this.querySelector('.main-image')?.src || '';
-            
-            // Buscar el producto completo en el array
-            const product = products.find(p => p.name === productName || p.referencia === productRef);
-            
-            if (product) {
-                openProductModal(product);
-            } else {
-                // Si no se encuentra en el array, usar datos de la tarjeta
-                const productData = {
-                    name: productName,
-                    referencia: productRef,
-                    price: productPrice,
-                    category: productCategory,
-                    images: [productImage],
-                    description: productName // Usar el nombre como descripción por defecto
-                };
-                openProductModal(productData);
-            }
-        });
-    });
+    // Esta función ya no es necesaria porque los event listeners
+    // se agregan directamente en createProductCard()
+    console.log('setupProductDetails: Función obsoleta, event listeners se agregan en createProductCard');
 }
 
 // Función para abrir modal de producto
