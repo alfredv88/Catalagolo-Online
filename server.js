@@ -7,14 +7,31 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware básico
 app.use(express.json());
-app.use(express.static('.'));
+
+// Servir archivos estáticos desde la raíz del proyecto
+app.use(express.static(__dirname));
+
+// Middleware para logging de requests
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
+    next();
+});
 
 // Simular autenticación simple
 let isAuthenticated = false;
 
 // Ruta principal
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    const indexPath = path.join(__dirname, 'index.html');
+    
+    // Verificar que el archivo existe
+    if (fs.existsSync(indexPath)) {
+        console.log('Sirviendo index.html desde:', indexPath);
+        res.sendFile(indexPath);
+    } else {
+        console.error('ERROR: index.html no encontrado en:', indexPath);
+        res.status(500).send('Error: Archivo index.html no encontrado');
+    }
 });
 
 // Health check
@@ -24,6 +41,19 @@ app.get('/health', (req, res) => {
         timestamp: new Date().toISOString(),
         port: PORT,
         environment: process.env.NODE_ENV || 'development'
+    });
+});
+
+// Debug: Verificar archivos del proyecto
+app.get('/debug/files', (req, res) => {
+    const files = fs.readdirSync(__dirname);
+    const indexExists = fs.existsSync(path.join(__dirname, 'index.html'));
+    
+    res.json({
+        workingDirectory: __dirname,
+        files: files,
+        indexHtmlExists: indexExists,
+        indexHtmlPath: path.join(__dirname, 'index.html')
     });
 });
 
