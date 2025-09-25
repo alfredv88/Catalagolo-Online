@@ -104,8 +104,8 @@
                             <li><strong>Fila 1:</strong> Debe contener los encabezados</li>
                         </ul>
                         <div class="excel-template">
-                            <button class="download-template-btn" onclick="downloadExcelTemplate()">
-                                <i class="fas fa-download"></i> Descargar Plantilla Excel
+                            <button class="download-template-btn" onclick="exportTableToExcel()">
+                                <i class="fas fa-download"></i> Exportar / Descargar Plantilla
                             </button>
                         </div>
                     </div>
@@ -257,5 +257,92 @@
     <!-- Librerías para Excel/CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="js/main.js"></script>
+    <script>
+        function saveAllProducts() {
+            console.log('Función saveAllProducts ejecutada desde SCRIPT INLINE');
+            console.log('Datos de tabla:', tableData);
+            
+            if (tableData.length === 0) {
+                alert('No hay productos para guardar');
+                return;
+            }
+            
+            let savedCount = 0;
+            let hasErrors = false;
+            
+            // Validar todos los productos primero
+            for (let index = 0; index < tableData.length; index++) {
+                const row = tableData[index];
+                if (!row.referencia || !row.descripcion || row.precio === undefined || row.precio === null || isNaN(parseFloat(row.precio))) {
+                    alert(`Fila ${index + 1}: Faltan datos obligatorios (Referencia, Descripción, Precio válido)`);
+                    hasErrors = true;
+                    break;
+                }
+            }
+
+            if (hasErrors) {
+                return;
+            }
+
+            const dataToProcess = [...tableData];
+
+            console.log('Procesando productos desde la tabla');
+
+            dataToProcess.forEach((row, index) => {
+                const normalizedCategory = row.categoria || 'recgeneral';
+                const existingIndex = products.findIndex(p => p.referencia === row.referencia);
+                const payload = {
+                    referencia: row.referencia,
+                    name: row.descripcion,
+                    description: row.descripcion,
+                    quantity: parseInt(row.cantidad, 10) || 0,
+                    loc: row.loc || '',
+                    price: parseFloat(row.precio) || 0,
+                    category: normalizedCategory,
+                    images: (row.imagenes && row.imagenes.length)
+                        ? row.imagenes.slice(0, 3)
+                        : [row.imagen1, row.imagen2, row.imagen3].filter(Boolean)
+                };
+
+                if (!row.imagenes || !row.imagenes.length) {
+                    row.imagenes = payload.images;
+                }
+
+                if (existingIndex >= 0) {
+                    products[existingIndex] = {
+                        ...products[existingIndex],
+                        ...payload
+                    };
+                } else {
+                    products.push({
+                        id: Date.now() + index,
+                        rating: 0,
+                        reviews: 0,
+                        ...payload
+                    });
+                }
+
+                savedCount++;
+            });
+
+            console.log('Productos guardados o actualizados:', savedCount);
+            console.log('Total de productos en array:', products.length);
+
+            saveProductsToStorage();
+            updateProductsGrid();
+            updateCategoryCounts();
+            updateSidebarCategories();
+            saveTableDataToStorage();
+            renderTable();
+
+            // Mostrar notificación INMEDIATAMENTE
+            showSuccessNotification('Cambios guardados');
+            
+            // Cerrar panel después de un breve delay para ver la notificación
+            setTimeout(() => {
+                closeAdminPanel();
+            }, 2000);
+        }
+    </script>
 </body>
 </html>

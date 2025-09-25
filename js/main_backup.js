@@ -1127,39 +1127,30 @@ function cancelExcelImport() {
     excelData = [];
 }
 
-// Descargar plantilla de Excel o exportar datos actuales
-function exportTableToExcel() {
-    let dataForExport = [];
-    const headers = ['Referencia', 'Descripción', 'Categoría', 'Cantidad', 'Precio', 'Loc'];
-    dataForExport.push(headers);
-
-    if (tableData.length > 0) {
-        // Usar los datos de la tabla si existen
-        tableData.forEach(row => {
-            dataForExport.push([
-                row.referencia,
-                row.descripcion,
-                getCategoryName(row.categoria),
-                row.cantidad,
-                row.precio,
-                row.loc || ''
-            ]);
-        });
-        showSuccessNotification('Exportando datos actuales a Excel...');
-    } else {
-        // Usar datos de ejemplo si la tabla está vacía
-        dataForExport.push(['REF-001', 'Ejemplo de producto', 'KTM', '1', '99.99', 'A1']);
-        dataForExport.push(['REF-002', 'Otro producto de ejemplo', 'Boutique', '2', '49.50', 'B2']);
-        showSuccessNotification('La tabla está vacía. Descargando plantilla de ejemplo.');
-    }
-
-    const ws = XLSX.utils.aoa_to_sheet(dataForExport);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Productos');
+// Descargar plantilla de Excel
+function downloadExcelTemplate() {
+    // Crear datos de ejemplo para la plantilla
+    const templateData = [
+        ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'],
+        ['REF-001', 'Ejemplo de producto', '1', 'A1', '99.99', 'KTM'],
+        ['REF-002', 'Otro producto de ejemplo', '2', 'B2', '49.50', 'Boutique']
+    ];
     
-    // Generar nombre de archivo dinámico
-    const fileName = `catalogo_productos_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
+    // Crear CSV (formato más simple que Excel)
+    const csvContent = templateData.map(row => row.join(',')).join('\n');
+    
+    // Crear y descargar archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'plantilla_productos.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showSuccessNotification('Plantilla descargada exitosamente');
 }
 
 // La tabla se limpia automáticamente después de guardar exitosamente
@@ -1201,8 +1192,6 @@ function clearAllData() {
 // Actualizar grid de productos
 function updateProductsGrid() {
     const grid = document.getElementById('productsGrid');
-    const countLabel = document.querySelector('.products-header .products-count');
-
     if (!grid) {
         console.log('No se encontró el grid de productos');
         return;
@@ -1217,11 +1206,6 @@ function updateProductsGrid() {
         grid.appendChild(productCard);
     });
     
-    // Actualizar el contador de productos en el encabezado
-    if (countLabel) {
-        countLabel.textContent = `${products.length} productos encontrados`;
-    }
-
     // Reconfigurar eventos después de actualizar
     setupImageThumbnails();
     setupProductDetails();
@@ -1490,9 +1474,15 @@ function renderTable() {
             </td>
             <td class="image-upload-cell">
                 <div class="image-upload-group">
+                    <button class="image-upload-btn ${row.imagenes && row.imagenes.length ? 'has-image' : ''}" onclick="triggerImagesUpload(${index})">
+                        <i class="fas fa-image"></i>
+                        ${row.imagenes && row.imagenes.length ? 'Cambiar' : 'Subir'}
+                    </button>
+                    <input type="file" id="images_${index}" accept="image/*" multiple style="display: none;" onchange="handleImagesUpload(${index}, this)">
                     <div class="image-preview-list">
                         ${(row.imagenes || []).map((img, imgIndex) => `
                             <div class="image-slot ${imgIndex === 0 ? 'primary' : ''}">
+                                ${imgIndex === 0 ? '<span class="image-label">Portada</span>' : ''}
                                 <img src="${img}" class="image-preview-small" alt="Imagen ${imgIndex + 1}">
                                 <button type="button" class="image-remove-btn" onclick="removeImage(${index}, ${imgIndex})">
                                     <i class="fas fa-times"></i>
@@ -1500,10 +1490,6 @@ function renderTable() {
                             </div>
                         `).join('')}
                     </div>
-                    <button class="image-upload-btn" onclick="triggerImagesUpload(${index})">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <input type="file" id="images_${index}" accept="image/*" multiple style="display: none;" onchange="handleImagesUpload(${index}, this)">
                 </div>
             </td>
             <td>
@@ -1684,20 +1670,24 @@ function handleImagesUpload(rowIndex, input) {
         });
 }
 
-function removeImage(rowIndex, imageIndex) {
-    const row = tableData[rowIndex];
-    if (!row) return;
+    // ===== FUNCIONES INTERNAS =====
 
-    const images = row.imagenes || [];
-    images.splice(imageIndex, 1);
-    row.imagenes = images;
-    row.imagen1 = images[0] || '';
-    row.imagen2 = images[1] || '';
-    row.imagen3 = images[2] || '';
+    function removeImage(rowIndex, imageIndex) {
+        const row = tableData[rowIndex];
+        if (!row) return;
 
-    saveTableDataToStorage();
-    renderTable();
-}
+        const images = row.imagenes || [];
+        images.splice(imageIndex, 1);
+        row.imagenes = images;
+        row.imagen1 = images[0] || '';
+        row.imagen2 = images[1] || '';
+        row.imagen3 = images[2] || '';
+
+        saveTableDataToStorage();
+        renderTable();
+    }
+
+}); // FIN DOMContentLoaded
 
 // ===== FUNCIONES GLOBALES =====
 

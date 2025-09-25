@@ -273,12 +273,16 @@ body {
     background: #f8f9fa;
     padding: 16px;
     text-align: center;
+    height: 220px; /* Altura fija para el contenedor de la imagen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .main-image {
     width: 100%;
-    height: 200px;
-    object-fit: contain;
+    height: 100%; /* La imagen ocupa toda la altura del contenedor */
+    object-fit: contain; /* La imagen se ajusta sin deformarse */
     border-radius: 4px;
     background: white;
 }
@@ -695,11 +699,12 @@ body {
 }
 
 .products-table td {
-    padding: 12px;
+    padding: 8px 12px; /* Reducido padding vertical */
     border-bottom: 1px solid #e0e0e0;
     border-right: 1px solid #f0f0f0;
     vertical-align: middle;
     min-width: 120px;
+    text-align: left; /* Asegurar alineación a la izquierda */
 }
 
 .products-table td:last-child {
@@ -718,110 +723,110 @@ body {
     align-items: center;
 }
 
-.editable-cell input, .editable-cell textarea {
+.editable-cell input, .editable-cell textarea, .editable-cell select {
     width: 100%;
     border: none;
     background: transparent;
     padding: 4px 8px;
-    font-size: 14px;
+    font-size: 13px; /* Reducido tamaño de fuente */
     outline: none;
     resize: none;
 }
 
-.editable-cell input:focus, .editable-cell textarea:focus {
+.editable-cell input:focus, .editable-cell textarea:focus, .editable-cell select:focus {
     background: rgba(255,102,0,0.12);
     border-radius: 4px;
 }
 
 .editable-cell textarea {
-    min-height: 60px;
+    height: 35px; /* Altura fija para textarea */
+    min-height: 35px; /* Altura mínima */
     font-family: inherit;
+    line-height: 1.4;
 }
 
 .image-upload-cell {
-    text-align: center;
+    text-align: left; /* Cambiar alineación para el nuevo layout */
 }
 
 .image-upload-group {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 8px;
-}
-
-.image-slot {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    gap: 10px;
+    min-height: 45px; /* Asegurar altura mínima consistente */
 }
 
 .image-preview-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 12px;
-    margin-top: 8px;
+    display: flex; /* Cambiado a flex para layout horizontal */
+    flex-direction: row;
+    gap: 8px;
+    margin-top: 0;
+}
+
+.image-slot {
+    position: relative; /* Para posicionar la etiqueta y el botón de eliminar */
+    flex-shrink: 0;
+}
+
+.image-remove-btn {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    background: var(--danger-color);
+    color: white;
+    border: 1px solid white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    line-height: 1;
+}
+
+.image-remove-btn:hover {
+    transform: scale(1.1);
+    background: #c82333;
+}
+
+.image-upload-btn {
+    background: transparent;
+    border: 2px dashed var(--muted-color);
+    color: var(--muted-color);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 18px;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+.image-upload-btn:hover {
+    background: var(--highlight-color);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.image-preview-small {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 2px solid #e0e0e0;
+    display: block; /* Cambiado a block */
 }
 
 .image-slot.primary .image-preview-small {
     border-color: var(--primary-color);
-}
-
-.image-label {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--primary-color);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.image-remove-btn {
-    background: transparent;
-    border: none;
-    color: #999;
-    cursor: pointer;
-    font-size: 12px;
-    transition: color 0.2s;
-}
-
-.image-remove-btn:hover {
-    color: var(--danger-color);
-}
-
-.image-upload-btn {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    transition: background-color 0.3s;
-}
-
-.image-upload-btn:hover {
-    background: #5a6268;
-}
-
-.image-upload-btn.has-image {
-    background: var(--success-color);
-}
-
-.image-upload-btn.has-image:hover {
-    background: #218838;
-}
-
-.image-preview-small {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
-    border-radius: 4px;
-    border: 2px solid #e0e0e0;
-    margin: 0 auto;
-    display: block;
 }
 
 .delete-row-btn {
