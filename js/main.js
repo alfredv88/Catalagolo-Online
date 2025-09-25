@@ -682,13 +682,13 @@ function parseExcel(arrayBuffer) {
         }
         
         const headers = jsonData[0].map(header => header.toString().trim());
-        const requiredHeaders = ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'];
+        const requiredHeaders = ['Referencia', 'Descripción', 'Stock', 'Loc', 'PVP', 'CATEGORIA'];
         const hasRequiredHeaders = requiredHeaders.every(header => 
             headers.some(h => h && h.toLowerCase().includes(header.toLowerCase()))
         );
         
         if (!hasRequiredHeaders) {
-            alert('El archivo debe contener las columnas: Referencia, Descripción, Cantidad, Loc, Precio, Categoría');
+            alert('El archivo debe contener las columnas: Referencia, Descripción, Stock, Loc, PVP, CATEGORIA');
             return;
         }
         const dataRows = jsonData.slice(1);
@@ -703,9 +703,11 @@ function parseExcel(arrayBuffer) {
             .map(row => ({
                 referencia: row[0].toString().trim(),
                 descripcion: row[1].toString().trim(),
-                cantidad: parseInt(row[2]) || 1,
+                stock: parseInt(row[2]) || 1,
+                cantidad: parseInt(row[2]) || 1, // Compatibilidad
                 loc: row[3].toString().trim(),
-                precio: parseFloat(row[4]) || 0,
+                pvp: row[4].toString().trim(),
+                precio: parseEuropeanPrice(row[4].toString()), // Convertir a número
                 categoria: normalizeCategory(row[5])
             }));
 
@@ -815,10 +817,10 @@ function importProducts() {
 // Descargar plantilla Excel
 function downloadTemplate() {
     const templateData = [
-        ['Referencia', 'Descripción', 'Cantidad', 'Loc', 'Precio', 'Categoría'],
-        ['REF001', 'Producto de ejemplo 1', '10', 'A1', '25.99', 'KTM'],
-        ['REF002', 'Producto de ejemplo 2', '5', 'B2', '15.50', 'Boutique'],
-        ['REF003', 'Producto de ejemplo 3', '20', 'C3', '8.75', 'Rec General']
+        ['Referencia', 'Descripción', 'Stock', 'Loc', 'PVP', 'CATEGORIA'],
+        ['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30 €', 'KTM'],
+        ['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3 RUEDA TRASERA', '2', 'MB1', '9,60 €', 'KTM'],
+        ['11/59009062016', 'TORNILLO KTM M6X16 SW=8 10.9', '3', 'MB4', '1,25 €', 'KTM']
     ];
 
     const ws = XLSX.utils.aoa_to_sheet(templateData);
@@ -984,6 +986,17 @@ function getCategoryName(categoryId) {
 // Variable para almacenar datos de Excel
 let excelData = [];
 
+// Función para parsear precios en formato europeo (1,30 €)
+function parseEuropeanPrice(priceStr) {
+    if (!priceStr || typeof priceStr !== 'string') return 0;
+    
+    // Remover símbolo € y espacios, reemplazar coma por punto
+    const cleanPrice = priceStr.replace(/€/g, '').replace(/\s/g, '').replace(',', '.');
+    const price = parseFloat(cleanPrice);
+    
+    return isNaN(price) ? 0 : price;
+}
+
 // Inicializar funcionalidad de importación de Excel
 function initializeExcelImport() {
     const fileInput = document.getElementById('excelFileInput');
@@ -1117,9 +1130,10 @@ function showExcelPreview() {
                 tr.innerHTML = `
                     <td>${row.referencia}</td>
                     <td>${row.descripcion}</td>
+                    <td>${row.stock || row.cantidad}</td>
+                    <td>${row.loc}</td>
+                    <td>${row.pvp || row.precio}</td>
                     <td>${getCategoryName(row.categoria)}</td>
-                    <td>${row.cantidad}</td>
-                    <td>$${row.precio}</td>
                 `;
                 tableBody.appendChild(tr);
             });
@@ -1141,8 +1155,9 @@ function importExcelData() {
             referencia: row.referencia,
             descripcion: row.descripcion,
             categoria: row.categoria,
-            cantidad: row.cantidad,
-            precio: row.precio,
+            cantidad: row.stock || row.cantidad,
+            loc: row.loc || '',
+            precio: parseEuropeanPrice(row.pvp || row.precio),
             imagen1: '',
             imagen2: '',
             imagen3: ''
@@ -1188,7 +1203,7 @@ function cancelExcelImport() {
 // Descargar plantilla de Excel o exportar datos actuales
 function exportTableToExcel() {
     let dataForExport = [];
-    const headers = ['Referencia', 'Descripción', 'Categoría', 'Cantidad', 'Precio', 'Loc'];
+    const headers = ['Referencia', 'Descripción', 'Stock', 'Loc', 'PVP', 'CATEGORIA'];
     dataForExport.push(headers);
 
     if (tableData.length > 0) {
@@ -1206,8 +1221,8 @@ function exportTableToExcel() {
         showSuccessNotification('Exportando datos actuales a Excel...');
     } else {
         // Usar datos de ejemplo si la tabla está vacía
-        dataForExport.push(['REF-001', 'Ejemplo de producto', 'KTM', '1', '99.99', 'A1']);
-        dataForExport.push(['REF-002', 'Otro producto de ejemplo', 'Boutique', '2', '49.50', 'B2']);
+        dataForExport.push(['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30 €', 'KTM']);
+        dataForExport.push(['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3', '2', 'MB1', '9,60 €', 'KTM']);
         showSuccessNotification('La tabla está vacía. Descargando plantilla de ejemplo.');
     }
 
@@ -1666,9 +1681,9 @@ function validateExcelData(rows) {
         const rowNumber = index + 2; // header = 1
         const referencia = row[0] && row[0].toString().trim();
         const descripcion = row[1] && row[1].toString().trim();
-        const cantidad = row[2];
+        const stock = row[2];
         const loc = row[3] && row[3].toString().trim();
-        const precio = row[4];
+        const pvp = row[4];
         const categoria = row[5] && row[5].toString().trim();
 
         if (!referencia) {
@@ -1677,14 +1692,14 @@ function validateExcelData(rows) {
         if (!descripcion) {
             errors.push(`Fila ${rowNumber}: falta la descripción`);
         }
-        if (cantidad === undefined || cantidad === null || isNaN(parseFloat(cantidad))) {
-            errors.push(`Fila ${rowNumber}: cantidad inválida`);
+        if (stock === undefined || stock === null || isNaN(parseInt(stock)) || parseInt(stock) < 0) {
+            errors.push(`Fila ${rowNumber}: Stock debe ser un número entero positivo`);
         }
         if (!loc) {
             errors.push(`Fila ${rowNumber}: falta el campo LOC`);
         }
-        if (precio === undefined || precio === null || isNaN(parseFloat(precio))) {
-            errors.push(`Fila ${rowNumber}: precio inválido`);
+        if (!pvp || isNaN(parseEuropeanPrice(pvp.toString())) || parseEuropeanPrice(pvp.toString()) <= 0) {
+            errors.push(`Fila ${rowNumber}: PVP debe ser un precio válido (formato: 1,30 €)`);
         }
         if (!categoria) {
             errors.push(`Fila ${rowNumber}: falta la categoría`);
