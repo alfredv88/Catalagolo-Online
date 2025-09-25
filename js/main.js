@@ -1876,7 +1876,56 @@ function setupProductDetails() {
             if (e.target.closest('.image-thumbnails')) {
                 return;
             }
-            console.log('Producto seleccionado:', this.querySelector('.product-name')?.textContent || '');
+            
+            // Obtener datos del producto desde la tarjeta
+            const productName = this.querySelector('.product-name')?.textContent || '';
+            const productRef = this.querySelector('.product-ref')?.textContent || '';
+            const productPrice = this.querySelector('.product-price')?.textContent || '';
+            const productCategory = this.querySelector('.product-category')?.textContent || '';
+            const productImage = this.querySelector('.main-image')?.src || '';
+            
+            // Buscar el producto completo en el array
+            const product = products.find(p => p.name === productName || p.referencia === productRef);
+            
+            if (product) {
+                openProductModal(product);
+            } else {
+                // Si no se encuentra en el array, usar datos de la tarjeta
+                const productData = {
+                    name: productName,
+                    referencia: productRef,
+                    price: productPrice,
+                    category: productCategory,
+                    images: [productImage],
+                    description: productName // Usar el nombre como descripción por defecto
+                };
+                openProductModal(productData);
+            }
         });
     });
+}
+
+// Función para abrir modal de producto
+function openProductModal(product) {
+    document.getElementById('modalProductName').textContent = product.name || 'Producto';
+    document.getElementById('modalProductDescription').textContent = product.description || product.name || 'Sin descripción disponible';
+    document.getElementById('modalProductPrice').textContent = product.price ? `$${product.price}` : 'Precio no disponible';
+    document.getElementById('modalProductCategory').textContent = product.category || 'Sin categoría';
+    
+    // Configurar imagen
+    const modalImage = document.getElementById('modalProductImage');
+    if (product.images && product.images.length > 0 && product.images[0]) {
+        modalImage.src = product.images[0];
+        modalImage.alt = product.name || 'Imagen del producto';
+    } else {
+        modalImage.src = 'https://via.placeholder.com/400x400/ffffff/333333?text=Sin+Imagen';
+        modalImage.alt = 'Imagen no disponible';
+    }
+    
+    document.getElementById('productModal').style.display = 'flex';
+}
+
+// Función para cerrar modal de producto
+function closeProductModal() {
+    document.getElementById('productModal').style.display = 'none';
 }

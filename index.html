@@ -172,6 +172,28 @@
                     </div>
                 </div>
                 
+                <!-- Modal de Producto -->
+                <div class="product-modal" id="productModal">
+                    <div class="product-overlay" onclick="closeProductModal()"></div>
+                    <div class="product-modal-content">
+                        <div class="product-modal-header">
+                            <h3 id="modalProductName">Detalle del Producto</h3>
+                            <button class="product-modal-close" onclick="closeProductModal()">×</button>
+                        </div>
+                        <div class="product-modal-body">
+                            <div class="product-modal-image">
+                                <img id="modalProductImage" src="" alt="Imagen del producto">
+                            </div>
+                            <div class="product-modal-info">
+                                <h4>Descripción</h4>
+                                <p id="modalProductDescription"></p>
+                                <div class="product-modal-price" id="modalProductPrice"></div>
+                                <div class="product-modal-category" id="modalProductCategory"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Panel de Gestión de Categorías -->
                 <div class="categories-manager" id="categoriesManager" style="display: none;">
                     <div class="categories-overlay" onclick="closeCategoriesManager()"></div>
