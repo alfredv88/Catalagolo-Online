@@ -1,0 +1,5 @@
+# Forzar rebuild completo
+node_modules/
+.git/
+*.log
+.env

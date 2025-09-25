@@ -8,6 +8,16 @@ const PORT = process.env.PORT || 3000;
 // Middleware básico
 app.use(express.json());
 
+// Headers para evitar cache
+app.use((req, res, next) => {
+    res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+    });
+    next();
+});
+
 // Servir archivos estáticos desde la raíz del proyecto
 app.use(express.static(__dirname));
 
