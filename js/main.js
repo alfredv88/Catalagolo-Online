@@ -479,7 +479,24 @@ document.addEventListener('DOMContentLoaded', function() {
 // ===== FUNCIONES DEL PANEL DE ADMINISTRACIÓN =====
 
 // Toggle del panel de administración
-function toggleAdminPanel() {
+async function toggleAdminPanel() {
+    // Verificar autenticación antes de mostrar el panel
+    try {
+        const response = await fetch('/admin/status');
+        const result = await response.json();
+        
+        if (!result.authenticated) {
+            // Si no está autenticado, redirigir al login
+            window.location.href = '/admin';
+            return;
+        }
+    } catch (error) {
+        console.error('Error verificando autenticación:', error);
+        // En caso de error, redirigir al login por seguridad
+        window.location.href = '/admin';
+        return;
+    }
+    
     const panel = document.getElementById('adminPanel');
     if (panel.style.display === 'none' || panel.style.display === '') {
         // Resetear estilos y mostrar panel
@@ -520,6 +537,38 @@ function closeAdminPanel() {
         
     } else {
         console.log('No se encontró el panel de administración');
+    }
+}
+
+// Función para cerrar sesión de administración
+async function logoutAdmin() {
+    try {
+        const response = await fetch('/admin/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+            // Cerrar el panel de administración
+            closeAdminPanel();
+            
+            // Mostrar notificación de logout
+            showSuccessNotification('Sesión cerrada correctamente');
+            
+            // Redirigir al login después de un momento
+            setTimeout(() => {
+                window.location.href = '/admin';
+            }, 1500);
+        } else {
+            showErrorNotification('Error al cerrar sesión');
+        }
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error);
+        showErrorNotification('Error de conexión al cerrar sesión');
     }
 }
 

@@ -29,10 +29,15 @@ app.get('/health', (req, res) => {
 
 // Ruta de login (simula PHP)
 app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'login.html'));
+});
+
+// Ruta protegida para el panel de administración
+app.get('/admin/dashboard', (req, res) => {
     if (isAuthenticated) {
         res.sendFile(path.join(__dirname, 'index.html'));
     } else {
-        res.sendFile(path.join(__dirname, 'admin', 'login.html'));
+        res.status(401).json({ status: 'error', message: 'No autorizado' });
     }
 });
 
@@ -42,10 +47,15 @@ app.post('/admin/login', (req, res) => {
     
     if (username === 'admin' && password === 'catalogo2024') {
         isAuthenticated = true;
-        res.json({ status: 'success', message: 'Login exitoso' });
+        res.json({ status: 'success', message: 'Login exitoso', redirect: '/admin/dashboard' });
     } else {
         res.status(401).json({ status: 'error', message: 'Credenciales incorrectas' });
     }
+});
+
+// Verificar estado de autenticación
+app.get('/admin/status', (req, res) => {
+    res.json({ authenticated: isAuthenticated });
 });
 
 // Ruta de logout
