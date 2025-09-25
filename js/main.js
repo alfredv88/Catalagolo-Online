@@ -886,10 +886,10 @@ function toggleCategoriesManager() {
 // Función para manejar clicks fuera del modal de categorías
 function handleCategoriesClickOutside(event) {
     const panel = document.getElementById('categoriesManager');
-    const categoriesBtn = document.querySelector('[onclick="toggleCategoriesManager()"]');
+    const categoriesBtn = document.querySelector('.categories-btn');
     
     // Verificar si el click fue fuera del modal y no en el botón que lo abre
-    if (panel && !panel.contains(event.target) && !categoriesBtn.contains(event.target)) {
+    if (panel && !panel.contains(event.target) && (!categoriesBtn || !categoriesBtn.contains(event.target))) {
         closeCategoriesManager();
     }
 }
