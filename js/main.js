@@ -1052,9 +1052,19 @@ function handleExcelFile(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         try {
-            // Para archivos Excel, necesitamos usar una librería como SheetJS
-            // Por ahora, vamos a simular la lectura con datos de ejemplo
-            parseExcelData(e.target.result, file.name);
+            // Usar SheetJS para leer el archivo Excel real
+            const workbook = XLSX.read(e.target.result, { type: 'array' });
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+            
+            if (jsonData.length === 0) {
+                alert('El archivo Excel está vacío o no contiene datos válidos');
+                return;
+            }
+            
+            // Procesar datos reales del Excel
+            processRealExcelData(jsonData, file.name);
         } catch (error) {
             console.error('Error al leer el archivo Excel:', error);
             alert('Error al leer el archivo Excel. Asegúrate de que el formato sea correcto.');
@@ -1064,7 +1074,56 @@ function handleExcelFile(event) {
     reader.readAsArrayBuffer(file);
 }
 
-// Parsear datos de Excel (simulado por ahora)
+// Procesar datos reales de Excel
+function processRealExcelData(jsonData, fileName) {
+    console.log('Procesando archivo Excel real:', fileName);
+    console.log('Datos del Excel:', jsonData);
+    
+    if (jsonData.length < 2) {
+        alert('El archivo Excel debe contener al menos una fila de encabezados y una fila de datos');
+        return;
+    }
+    
+    const headers = jsonData[0].map(header => header.toString().trim());
+    const requiredHeaders = ['Referencia', 'Descripción', 'Stock', 'Loc', 'PVP', 'CATEGORIA'];
+    
+    // Verificar que tenga los encabezados requeridos
+    const hasRequiredHeaders = requiredHeaders.every(header => 
+        headers.some(h => h && h.toLowerCase().includes(header.toLowerCase()))
+    );
+    
+    if (!hasRequiredHeaders) {
+        alert('El archivo debe contener las columnas: Referencia, Descripción, Stock, Loc, PVP, CATEGORIA');
+        return;
+    }
+    
+    const dataRows = jsonData.slice(1);
+    const validationErrors = validateExcelData(dataRows);
+    
+    if (validationErrors.length > 0) {
+        alert('Se encontraron errores en el archivo:\n\n' + validationErrors.join('\n'));
+        return;
+    }
+    
+    // Procesar datos válidos
+    excelData = dataRows
+        .filter(row => row && row.length >= 6)
+        .map(row => ({
+            referencia: row[0].toString().trim(),
+            descripcion: row[1].toString().trim(),
+            stock: parseInt(row[2]) || 1,
+            cantidad: parseInt(row[2]) || 1, // Compatibilidad
+            loc: row[3].toString().trim(),
+            pvp: row[4].toString().trim(),
+            precio: parseEuropeanPrice(row[4].toString()),
+            categoria: normalizeCategory(row[5])
+        }));
+    
+    console.log('Datos procesados:', excelData);
+    showExcelPreview();
+}
+
+// Parsear datos de Excel (simulado por ahora) - MANTENER PARA COMPATIBILIDAD
 function parseExcelData(data, fileName) {
     // Por ahora, vamos a usar datos de ejemplo
     // En una implementación real, usarías SheetJS para leer Excel
