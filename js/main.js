@@ -1101,13 +1101,32 @@ function processRealExcelData(jsonData, fileName) {
     const validationErrors = validateExcelData(dataRows);
     
     if (validationErrors.length > 0) {
-        alert('Se encontraron errores en el archivo:\n\n' + validationErrors.join('\n'));
-        return;
+        const errorCount = validationErrors.length;
+        const proceed = confirm(`Se encontraron ${errorCount} errores en el archivo.\n\n¿Deseas continuar importando solo las filas válidas?\n\nErrores encontrados:\n${validationErrors.slice(0, 10).join('\n')}${errorCount > 10 ? '\n... y más errores' : ''}`);
+        
+        if (!proceed) {
+            return;
+        }
     }
     
-    // Procesar datos válidos
+    // Procesar solo datos válidos (filtrar filas con errores)
     excelData = dataRows
-        .filter(row => row && row.length >= 6)
+        .filter(row => {
+            // Verificar que la fila tenga datos básicos
+            if (!row || row.length < 6) return false;
+            
+            const referencia = row[0] && row[0].toString().trim();
+            const descripcion = row[1] && row[1].toString().trim();
+            const stock = row[2];
+            const loc = row[3] && row[3].toString().trim();
+            const pvp = row[4];
+            const categoria = row[5] && row[5].toString().trim();
+            
+            // Solo incluir filas con datos mínimos válidos
+            return referencia && descripcion && 
+                   !isNaN(parseInt(stock)) && parseInt(stock) >= 0 &&
+                   loc && pvp && categoria;
+        })
         .map(row => ({
             referencia: row[0].toString().trim(),
             descripcion: row[1].toString().trim(),
@@ -1120,6 +1139,18 @@ function processRealExcelData(jsonData, fileName) {
         }));
     
     console.log('Datos procesados:', excelData);
+    
+    // Mostrar resumen de importación
+    const totalRows = dataRows.length;
+    const validRows = excelData.length;
+    const invalidRows = totalRows - validRows;
+    
+    if (invalidRows > 0) {
+        alert(`Importación completada:\n\n✅ ${validRows} filas válidas procesadas\n❌ ${invalidRows} filas omitidas (datos incompletos)\n\nTotal: ${totalRows} filas en el archivo`);
+    } else {
+        alert(`✅ Todas las ${validRows} filas fueron procesadas correctamente`);
+    }
+    
     showExcelPreview();
 }
 
