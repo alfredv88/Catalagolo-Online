@@ -245,38 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // Función para cambiar imagen principal al hacer clic en thumbnail
-    function setupImageThumbnails() {
-        const thumbnails = document.querySelectorAll('.image-thumbnails img');
-        
-        thumbnails.forEach(thumbnail => {
-            thumbnail.addEventListener('click', function() {
-                const mainImage = this.closest('.product-card').querySelector('.main-image');
-                const tempSrc = mainImage.src;
-                mainImage.src = this.src;
-                this.src = tempSrc;
-                
-                // Efecto de transición
-                mainImage.style.opacity = '0';
-                setTimeout(() => {
-                    mainImage.style.opacity = '1';
-                }, 150);
-            });
-        });
-    }
-    
-    // Función para mostrar/ocultar detalles del producto
-    function setupProductDetails() {
-        const cards = document.querySelectorAll('.product-card');
-        cards.forEach(card => {
-            card.addEventListener('click', function(e) {
-                if (e.target.closest('.image-thumbnails')) {
-                    return;
-                }
-                console.log('Producto seleccionado:', this.querySelector('.product-name')?.textContent || '');
-            });
-        });
-    }
     
     // Función para animar las estrellas de rating
     function animateStars() {
@@ -1876,4 +1844,39 @@ function saveAllProducts() {
     setTimeout(() => {
         closeAdminPanel();
     }, 2000);
+}
+
+// ===== FUNCIONES GLOBALES PARA IMÁGENES =====
+
+// Función para cambiar imagen principal al hacer clic en thumbnail
+function setupImageThumbnails() {
+    const thumbnails = document.querySelectorAll('.image-thumbnails img');
+    
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', function() {
+            const mainImage = this.closest('.product-card').querySelector('.main-image');
+            const tempSrc = mainImage.src;
+            mainImage.src = this.src;
+            this.src = tempSrc;
+            
+            // Efecto de transición
+            mainImage.style.opacity = '0';
+            setTimeout(() => {
+                mainImage.style.opacity = '1';
+            }, 150);
+        });
+    });
+}
+
+// Función para mostrar/ocultar detalles del producto
+function setupProductDetails() {
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('.image-thumbnails')) {
+                return;
+            }
+            console.log('Producto seleccionado:', this.querySelector('.product-name')?.textContent || '');
+        });
+    });
 }
