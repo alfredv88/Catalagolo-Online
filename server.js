@@ -5,6 +5,10 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configuración para Railway
+const isProduction = process.env.NODE_ENV === 'production';
+const isRailway = process.env.RAILWAY_ENVIRONMENT === 'production';
+
 // Middleware básico
 app.use(express.json());
 app.use(express.static('.'));
@@ -17,13 +21,17 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Health check
+// Health check para Railway
 app.get('/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         timestamp: new Date().toISOString(),
         port: PORT,
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'development',
+        railway: isRailway,
+        production: isProduction,
+        version: '1.0.0',
+        service: 'Catálogo Digital - AMS Desarrollos'
     });
 });
 
@@ -90,9 +98,17 @@ app.get('/admin/api.php', (req, res) => {
 // Iniciar servidor
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor iniciado en puerto ${PORT}`);
-    console.log(`📱 Catálogo: http://localhost:${PORT}`);
-    console.log(`🔧 Admin: http://localhost:${PORT}/admin`);
-    console.log(`💚 Health: http://localhost:${PORT}/health`);
+    console.log(`📱 Catálogo Digital - AMS Desarrollos`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`🚂 Railway: ${isRailway ? 'YES' : 'NO'}`);
+    console.log(`💚 Health Check: /health`);
+    
+    if (isRailway) {
+        console.log(`🔗 Railway URL: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'Configurando...'}`);
+    } else {
+        console.log(`📱 Local: http://localhost:${PORT}`);
+        console.log(`🔧 Admin: http://localhost:${PORT}/admin`);
+    }
 });
 
 // Manejo de errores

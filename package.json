@@ -1,26 +1,34 @@
 {
-  "name": "catalogo-online",
+  "name": "catalogo-digital-ams",
   "version": "1.0.0",
-  "description": "Catálogo de productos con panel de administración",
+  "description": "Catálogo Digital con panel de administración - AMS Desarrollos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "build": "echo 'No build step required'",
+    "postinstall": "echo 'Installation completed'"
   },
   "dependencies": {
     "express": "^4.18.2"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   },
   "keywords": [
     "catalogo",
     "productos",
     "admin",
-    "php",
-    "nodejs"
+    "ams-desarrollos",
+    "nodejs",
+    "railway"
   ],
-  "author": "Desarrollador Senior",
-  "license": "MIT"
+  "author": "AMS Desarrollos",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ams-desarrollos/catalogo-digital"
+  }
 }
 

@@ -1,20 +1,57 @@
 <?php
 // Configuración de email para recuperación y cambios de credenciales
 class EmailConfig {
-    // Configuración SMTP
+    // Configuración SMTP (desde variables de entorno)
     const SMTP_HOST = 'smtp.gmail.com';
     const SMTP_PORT = 587;
-    const SMTP_USERNAME = 'tu-email@gmail.com'; // Cambiar por tu email
-    const SMTP_PASSWORD = 'tu-password-app'; // Cambiar por tu contraseña de aplicación
+    const SMTP_USERNAME = 'tu-email@gmail.com'; // Se sobrescribe con getenv()
+    const SMTP_PASSWORD = 'tu-password-app'; // Se sobrescribe con getenv()
     const SMTP_ENCRYPTION = 'tls';
     
-    // Configuración del remitente
-    const FROM_EMAIL = 'tu-email@gmail.com';
+    // Configuración del remitente (desde variables de entorno)
+    const FROM_EMAIL = 'tu-email@gmail.com'; // Se sobrescribe con getenv()
     const FROM_NAME = 'Catálogo Digital - AMS Desarrollos';
     
-    // Configuración de la aplicación
+    // Configuración de la aplicación (desde variables de entorno)
     const APP_NAME = 'Catálogo Digital';
-    const APP_URL = 'http://localhost:8000'; // Cambiar por tu URL
+    const APP_URL = 'http://localhost:8000'; // Se sobrescribe con getenv()
+    
+    // Métodos para obtener configuración desde variables de entorno
+    public static function getSmtpHost() {
+        return getenv('SMTP_HOST') ?: self::SMTP_HOST;
+    }
+    
+    public static function getSmtpPort() {
+        return getenv('SMTP_PORT') ?: self::SMTP_PORT;
+    }
+    
+    public static function getSmtpUsername() {
+        return getenv('SMTP_USERNAME') ?: self::SMTP_USERNAME;
+    }
+    
+    public static function getSmtpPassword() {
+        return getenv('SMTP_PASSWORD') ?: self::SMTP_PASSWORD;
+    }
+    
+    public static function getSmtpEncryption() {
+        return getenv('SMTP_ENCRYPTION') ?: self::SMTP_ENCRYPTION;
+    }
+    
+    public static function getFromEmail() {
+        return getenv('FROM_EMAIL') ?: self::FROM_EMAIL;
+    }
+    
+    public static function getFromName() {
+        return getenv('FROM_NAME') ?: self::FROM_NAME;
+    }
+    
+    public static function getAppName() {
+        return getenv('APP_NAME') ?: self::APP_NAME;
+    }
+    
+    public static function getAppUrl() {
+        return getenv('APP_URL') ?: self::APP_URL;
+    }
     
     // Configuración de códigos
     const CODE_LENGTH = 6;
@@ -31,15 +68,15 @@ function sendEmail($to, $subject, $body, $isHTML = true) {
         
         // Configuración SMTP
         $mail->isSMTP();
-        $mail->Host = EmailConfig::SMTP_HOST;
+        $mail->Host = EmailConfig::getSmtpHost();
         $mail->SMTPAuth = true;
-        $mail->Username = EmailConfig::SMTP_USERNAME;
-        $mail->Password = EmailConfig::SMTP_PASSWORD;
-        $mail->SMTPSecure = EmailConfig::SMTP_ENCRYPTION;
-        $mail->Port = EmailConfig::SMTP_PORT;
+        $mail->Username = EmailConfig::getSmtpUsername();
+        $mail->Password = EmailConfig::getSmtpPassword();
+        $mail->SMTPSecure = EmailConfig::getSmtpEncryption();
+        $mail->Port = EmailConfig::getSmtpPort();
         
         // Remitente y destinatario
-        $mail->setFrom(EmailConfig::FROM_EMAIL, EmailConfig::FROM_NAME);
+        $mail->setFrom(EmailConfig::getFromEmail(), EmailConfig::getFromName());
         $mail->addAddress($to);
         
         // Contenido

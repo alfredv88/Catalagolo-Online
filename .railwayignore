@@ -1,0 +1,49 @@
+# Archivos de desarrollo
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos de configuración local
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de backup
+*.backup
+*.bak
+*.tmp
+
+# Archivos de logs
+logs/
+*.log
+
+# Archivos de datos sensibles (se crearán en Railway)
+data/admin.json
+data/recovery_codes.json
+data/verification_codes.json
+data/attempts.json
+
+# Archivos de configuración de email (configurar en Railway)
+config/email.php
+
+# Archivos de documentación
+README.md
+CONFIGURACION_EMAIL.md
+*.md
+
+# Archivos de Git
+.git/
+.gitignore
