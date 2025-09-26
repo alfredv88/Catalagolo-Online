@@ -1856,7 +1856,7 @@ function validateExcelData(rows) {
         }
         
         // Advertencias para campos opcionales (no bloquean importación)
-        if (stock !== undefined && stock !== null && stock !== '' && (isNaN(parseInt(stock)) || parseInt(stock) < 0)) {
+        if (stock !== undefined && stock !== null && stock !== '' && isNaN(parseInt(stock))) {
             errors.push(`Fila ${rowNumber}: Stock inválido, se usará 0`);
         }
         if (pvp && pvp !== '' && (isNaN(parseEuropeanPrice(pvp.toString())) || parseEuropeanPrice(pvp.toString()) < 0)) {
