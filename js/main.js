@@ -398,13 +398,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         saveTableDataToStorage();
     }
+    
+    // ACTUALIZAR CONTADORES INMEDIATAMENTE después de cargar datos
+    updateCategoryCounts();
         
-        setupPrintButton();
-        initializeCategoryCounts();
-        
-        // Renderizar productos y contadores sin duplicar eventos
-        updateProductsGrid();
-        updateCategoryCounts();
+    setupPrintButton();
+    initializeCategoryCounts();
+    
+    // Renderizar productos
+    updateProductsGrid();
         
         console.log('Catálogo de liquidación inicializado correctamente');
         console.log('Total de productos:', products.length);
