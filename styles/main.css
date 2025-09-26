@@ -574,7 +574,22 @@ body {
     .header {
         background: white !important;
         box-shadow: none !important;
-        border-bottom: 2px solid var(--primary-color);
+        border-bottom: 1px solid var(--primary-color);
+        min-height: 40px !important;
+        padding: 4px 0 !important;
+    }
+    
+    .header-container {
+        padding: 4px 8px !important;
+    }
+    
+    .logo-img {
+        height: 24px !important;
+        max-width: 80px !important;
+    }
+    
+    .logo {
+        font-size: 14px !important;
     }
     
     .search-bar,
@@ -595,18 +610,58 @@ body {
     .products-section {
         box-shadow: none !important;
         border: none !important;
-        padding: 0 !important;
+        padding: 8px !important;
+    }
+    
+    .products-header h2 {
+        font-size: 18px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .products-header p {
+        font-size: 12px !important;
+        margin-bottom: 8px !important;
     }
     
     .products-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 16px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 8px !important;
     }
     
     .product-card {
         break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid #ddd !important;
+        height: 180px !important;
+        overflow: hidden !important;
+    }
+    
+    .product-images {
+        height: 120px !important;
+    }
+    
+    .product-info {
+        padding: 8px !important;
+    }
+    
+    .product-name {
+        font-size: 12px !important;
+        margin-bottom: 4px !important;
+        min-height: 24px !important;
+    }
+    
+    .product-price {
+        font-size: 16px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .product-quantity {
+        font-size: 10px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .product-ref {
+        font-size: 10px !important;
     }
     
     .product-card:hover {
@@ -614,7 +669,18 @@ body {
     }
     
     .footer {
-        display: none !important;
+        display: block !important;
+        background: white !important;
+        color: #666 !important;
+        padding: 4px 8px !important;
+        margin-top: 8px !important;
+        font-size: 10px !important;
+        text-align: center !important;
+        border-top: 1px solid #ddd !important;
+    }
+    
+    .footer-content p {
+        margin: 2px 0 !important;
     }
     
     body {
