@@ -2019,7 +2019,7 @@ function closeCheckoutModal() {
 
 // Inicializar EmailJS
 function initEmailJS() {
-    emailjs.init("YOUR_PUBLIC_KEY"); // Reemplazar con tu clave pública de EmailJS
+    emailjs.init("iv11F2B5kZQYQx6A8"); // Clave pública de EmailJS
 }
 
 // Enviar pedido
@@ -2056,7 +2056,7 @@ function submitOrder() {
     };
     
     // Enviar email usando EmailJS
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailData)
+    emailjs.send('service_30ko4qz', 'template_613ci5v', emailData)
         .then(function(response) {
             console.log('Email enviado exitosamente:', response);
             showSuccessNotification('¡Pedido enviado exitosamente! Te contactaremos pronto.');
