@@ -2032,7 +2032,6 @@ function showProductModal(product) {
     
     // Llenar datos del modal
     document.getElementById('modalTitle').textContent = product.name || product.description || 'Producto';
-    document.getElementById('modalReference').textContent = `Ref: ${product.referencia || 'N/A'}`;
     document.getElementById('modalDescription').textContent = product.description || product.name || 'Sin descripción disponible';
     document.getElementById('modalCategory').textContent = getCategoryName(product.category) || 'Sin categoría';
     document.getElementById('modalQuantity').textContent = product.quantity || 0;
@@ -2060,8 +2059,8 @@ function showProductModal(product) {
             modalThumbnails.appendChild(thumbnail);
         });
     } else {
-        // Imagen placeholder si no hay imagen
-        const placeholderSrc = `https://via.placeholder.com/400x300/ffffff/333333?text=${encodeURIComponent(product.name || 'Producto')}`;
+        // Imagen placeholder mejorada si no hay imagen
+        const placeholderSrc = `https://via.placeholder.com/400x300/f8f9fa/6c757d?text=${encodeURIComponent((product.name || 'Producto').substring(0, 15))}`;
         modalMainImage.src = placeholderSrc;
         modalMainImage.alt = product.name || 'Producto';
         modalThumbnails.innerHTML = '';
