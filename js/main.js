@@ -1794,18 +1794,15 @@ function autoCreateNewCategories(excelData) {
         // Actualizar contadores de productos por categoría
         updateCategoryCounts();
         
-        // Actualizar la UI de categorías si está visible
-        if (document.getElementById('categoriesList')) {
-            renderCategoriesList();
-        }
+        // Actualizar sidebar de categorías
+        updateSidebarCategories();
         
         // Si el panel de administración está abierto, refrescar
         if (document.getElementById('adminPanel') && document.getElementById('adminPanel').style.display !== 'none') {
             // Forzar actualización del panel de categorías
             setTimeout(() => {
-                if (typeof renderCategoriesList === 'function') {
-                    renderCategoriesList();
-                }
+                updateSidebarCategories();
+                updateCategoryCounts();
             }, 100);
         }
     }
