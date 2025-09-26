@@ -1355,7 +1355,7 @@ body {
     z-index: 3001;
     background: white;
     border-radius: 12px;
-    max-width: 800px;
+    max-width: 1000px;
     max-height: 90vh;
     width: 95%;
     overflow-y: auto;
@@ -1390,14 +1390,75 @@ body {
     padding: 25px;
 }
 
-.product-modal .modal-image {
+.product-modal .modal-content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    align-items: start;
+}
+
+.product-modal .modal-images-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.product-modal .modal-main-image {
     width: 100%;
-    max-width: 400px;
-    height: 250px;
+    height: 300px;
     object-fit: cover;
     border-radius: 8px;
-    margin: 0 auto 20px;
-    display: block;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-modal .modal-thumbnails {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.product-modal .modal-thumbnails img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.product-modal .modal-thumbnails img:hover {
+    border-color: #007bff;
+    transform: scale(1.05);
+}
+
+.product-modal .modal-thumbnails img.active {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.product-modal .modal-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 768px) {
+    .product-modal .modal-content-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .product-modal .modal-content {
+        max-width: 95%;
+        margin: 10px;
+    }
+    
+    .product-modal .modal-main-image {
+        height: 250px;
+    }
 }
 
 .product-modal .modal-title {

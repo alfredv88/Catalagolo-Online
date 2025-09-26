@@ -354,31 +354,39 @@
         <div class="modal-content">
             <button class="close-modal" onclick="closeProductModal()">×</button>
             <div class="modal-body">
-                <img class="modal-image" id="modalImage" src="" alt="Producto">
-                <h2 class="modal-title" id="modalTitle"></h2>
-                <p class="modal-reference" id="modalReference"></p>
-                <p class="modal-description" id="modalDescription"></p>
-                
-                <div class="modal-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Categoría</span>
-                        <span class="detail-value" id="modalCategory"></span>
+                <div class="modal-content-grid">
+                    <div class="modal-images-section">
+                        <img class="modal-main-image" id="modalMainImage" src="" alt="Producto">
+                        <div class="modal-thumbnails" id="modalThumbnails"></div>
                     </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Cantidad</span>
-                        <span class="detail-value" id="modalQuantity"></span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Ubicación</span>
-                        <span class="detail-value" id="modalLocation"></span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Referencia</span>
-                        <span class="detail-value" id="modalRef"></span>
+                    
+                    <div class="modal-info-section">
+                        <h2 class="modal-title" id="modalTitle"></h2>
+                        <p class="modal-reference" id="modalReference"></p>
+                        <p class="modal-description" id="modalDescription"></p>
+                        
+                        <div class="modal-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Categoría</span>
+                                <span class="detail-value" id="modalCategory"></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cantidad</span>
+                                <span class="detail-value" id="modalQuantity"></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Ubicación</span>
+                                <span class="detail-value" id="modalLocation"></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Referencia</span>
+                                <span class="detail-value" id="modalRef"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-price" id="modalPrice"></div>
                     </div>
                 </div>
-                
-                <div class="modal-price" id="modalPrice"></div>
             </div>
         </div>
     </div>

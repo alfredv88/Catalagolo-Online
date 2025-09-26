@@ -2038,15 +2038,31 @@ function showProductModal(product) {
     document.getElementById('modalRef').textContent = product.referencia || 'N/A';
     document.getElementById('modalPrice').textContent = `$${(product.price || 0).toLocaleString('es-ES', {minimumFractionDigits: 2})}`;
     
-    // Configurar imagen
-    const modalImage = document.getElementById('modalImage');
+    // Configurar galería de imágenes
+    const modalMainImage = document.getElementById('modalMainImage');
+    const modalThumbnails = document.getElementById('modalThumbnails');
+    
     if (product.images && product.images.length > 0) {
-        modalImage.src = product.images[0];
-        modalImage.alt = product.name || 'Producto';
+        // Imagen principal
+        modalMainImage.src = product.images[0];
+        modalMainImage.alt = product.name || 'Producto';
+        
+        // Miniaturas
+        modalThumbnails.innerHTML = '';
+        product.images.forEach((image, index) => {
+            const thumbnail = document.createElement('img');
+            thumbnail.src = image;
+            thumbnail.alt = `${product.name || 'Producto'} - Imagen ${index + 1}`;
+            thumbnail.className = index === 0 ? 'active' : '';
+            thumbnail.onclick = () => changeModalMainImage(image, thumbnail);
+            modalThumbnails.appendChild(thumbnail);
+        });
     } else {
         // Imagen placeholder si no hay imagen
-        modalImage.src = `https://via.placeholder.com/400x300/ffffff/333333?text=${encodeURIComponent(product.name || 'Producto')}`;
-        modalImage.alt = product.name || 'Producto';
+        const placeholderSrc = `https://via.placeholder.com/400x300/ffffff/333333?text=${encodeURIComponent(product.name || 'Producto')}`;
+        modalMainImage.src = placeholderSrc;
+        modalMainImage.alt = product.name || 'Producto';
+        modalThumbnails.innerHTML = '';
     }
     
     // Mostrar modal
@@ -2054,6 +2070,19 @@ function showProductModal(product) {
     
     // Prevenir scroll del body
     document.body.style.overflow = 'hidden';
+}
+
+// Función para cambiar imagen principal en el modal
+function changeModalMainImage(imageSrc, clickedThumbnail) {
+    const modalMainImage = document.getElementById('modalMainImage');
+    if (modalMainImage) {
+        modalMainImage.src = imageSrc;
+        
+        // Actualizar clase activa en miniaturas
+        const thumbnails = document.querySelectorAll('.modal-thumbnails img');
+        thumbnails.forEach(thumb => thumb.classList.remove('active'));
+        clickedThumbnail.classList.add('active');
+    }
 }
 
 // Función para cerrar el modal de producto
