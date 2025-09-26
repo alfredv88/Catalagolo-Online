@@ -660,8 +660,8 @@ body {
     
     .product-name {
         font-size: 13px !important;
-        margin-bottom: 6px !important;
-        min-height: 28px !important;
+        margin-bottom: 8px !important;
+        min-height: 60px !important;
         flex-grow: 1 !important;
         overflow: visible !important;
         white-space: normal !important;
