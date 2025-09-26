@@ -135,21 +135,23 @@ body {
 }
 
 .admin-btn {
-    background: var(--secondary-color);
+    background: #000000;
     color: white;
     border: none;
-    padding: 10px 16px;
+    padding: 10px;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
     transition: background-color 0.3s;
 }
 
 .admin-btn:hover {
-    background: var(--secondary-dark);
+    background: #333333;
 }
 
 /* Contenedor principal */
