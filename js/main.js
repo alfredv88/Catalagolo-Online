@@ -742,7 +742,7 @@ function showImportPreview() {
                     <th>Descripción</th>
                     <th>Cantidad</th>
                     <th>Loc</th>
-                    <th>Precio (US$)</th>
+                    <th>Precio (€)</th>
                     <th>Categoría</th>
                 </tr>
             </thead>
@@ -1134,6 +1134,9 @@ function processRealExcelData(jsonData, fileName) {
             categoria: normalizeCategory(row[5] || 'recgeneral')
         }));
     
+    // Auto-crear categorías nuevas encontradas en el Excel
+    autoCreateNewCategories(excelData);
+    
     console.log('Datos procesados:', excelData);
     
     // Mostrar resumen de importación
@@ -1205,7 +1208,7 @@ function showExcelPreview() {
                     <th>Descripción</th>
                     <th>Categoría</th>
                     <th>Cantidad</th>
-                    <th>Precio (US$)</th>
+                    <th>Precio (€)</th>
                 </tr>
             `;
             
@@ -1758,6 +1761,56 @@ function formatPrice(price) {
     return `${numPrice.toFixed(2)}€`;
 }
 
+// Función para auto-crear categorías nuevas durante la importación
+function autoCreateNewCategories(excelData) {
+    const newCategories = [];
+    const existingCategoryIds = availableCategories.map(cat => cat.id);
+    
+    // Recopilar categorías únicas del Excel
+    const uniqueCategories = [...new Set(excelData.map(row => row.categoria))];
+    
+    uniqueCategories.forEach(categoryId => {
+        // Si la categoría no existe, crear una nueva
+        if (!existingCategoryIds.includes(categoryId)) {
+            const categoryName = getCategoryDisplayName(categoryId);
+            const newCategory = {
+                id: categoryId,
+                name: categoryName,
+                count: 0
+            };
+            
+            availableCategories.push(newCategory);
+            newCategories.push(categoryName);
+        }
+    });
+    
+    // Si se crearon categorías nuevas, guardar y notificar
+    if (newCategories.length > 0) {
+        saveCategoriesToStorage();
+        showSuccessNotification(`✅ Se crearon ${newCategories.length} categorías nuevas: ${newCategories.join(', ')}`);
+        
+        // Actualizar la UI de categorías si está visible
+        if (document.getElementById('categoriesList')) {
+            updateCategoryCounts();
+            renderCategoriesList();
+        }
+    }
+}
+
+// Función para obtener nombre de display de categoría
+function getCategoryDisplayName(categoryId) {
+    const displayNames = {
+        'all': 'Todas',
+        'ktm': 'KTM',
+        'boutique': 'Boutique',
+        'frenos': 'Frenos',
+        'bujias': 'Bujías',
+        'recgeneral': 'Rec General'
+    };
+    
+    return displayNames[categoryId] || categoryId.charAt(0).toUpperCase() + categoryId.slice(1);
+}
+
 function normalizeCategory(value) {
     if (!value) return 'recgeneral';
     const normalized = normalizeText(value.toString());
@@ -1779,7 +1832,8 @@ function normalizeCategory(value) {
         'general': 'recgeneral'
     };
 
-    return mapping[normalized] || 'recgeneral';
+    // Si no está en el mapeo, usar el valor normalizado como ID de categoría
+    return mapping[normalized] || normalized;
 }
 
 function validateExcelData(rows) {
