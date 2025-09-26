@@ -1418,9 +1418,14 @@ function createProductCard(product) {
         thumbnails = '';
     }
     
+    // Contador de imágenes
+    const imageCount = product.images ? product.images.length : 0;
+    const imageCountDisplay = imageCount > 1 ? `<div class="image-count">${imageCount} fotos</div>` : '';
+
     card.innerHTML = `
         <div class="product-images">
             <img src="${mainImage}" alt="${product.name}" class="main-image">
+            ${imageCountDisplay}
             ${thumbnails ? `<div class="image-thumbnails">${thumbnails}</div>` : ''}
         </div>
         <div class="product-info">
