@@ -624,24 +624,29 @@ body {
     }
     
     .products-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 8px !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 6px !important;
     }
     
     .product-card {
         break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid #ddd !important;
-        height: 200px !important;
+        height: 120px !important;
         overflow: hidden !important;
+        padding: 8px !important;
     }
     
     .product-images {
-        height: 130px !important;
+        display: none !important;
     }
     
     .product-info {
-        padding: 10px !important;
+        padding: 12px !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
     }
     
     .product-name {
