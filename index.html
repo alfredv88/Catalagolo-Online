@@ -23,9 +23,9 @@
                 </button>
             </div>
             <div class="header-actions">
-                <button class="cart-btn" onclick="toggleCartModal()" title="Carrito de Compras">
+                <button class="cart-btn" onclick="toggleCartModal()" title="Ver carrito">
                     <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count" id="cartCount">0</span>
+                    <span id="cartCount">0</span>
                 </button>
                 <button class="print-btn" onclick="window.print()">
                     <i class="fas fa-print"></i>
@@ -33,9 +33,6 @@
                 </button>
                 <button class="admin-btn" onclick="toggleAdminPanel()">
                     <i class="fas fa-cog"></i>
-                </button>
-                <button class="test-btn" onclick="testEmailJS()" title="Probar Email" style="background: #28a745; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-left: 10px;">
-                    <i class="fas fa-envelope"></i> Probar Email
                 </button>
             </div>
         </div>
@@ -265,7 +262,6 @@
 
     <!-- Librerías para Excel/CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="js/main.js"></script>
     <script>
         function saveAllProducts() {
@@ -355,75 +351,6 @@
         }
     </script>
     
-    <!-- Modal del Carrito de Compras -->
-    <div class="cart-modal" id="cartModal" style="display: none;">
-        <div class="cart-modal-content">
-            <div class="cart-modal-header">
-                <h3>Carrito de Compras</h3>
-                <button class="cart-close-btn" onclick="closeCartModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="cart-modal-body">
-                <div class="cart-items" id="cartItems">
-                    <!-- Los productos del carrito se cargarán aquí -->
-                </div>
-                <div class="cart-total">
-                    <strong>Total: <span id="cartTotal">0.00€</span></strong>
-                </div>
-            </div>
-            <div class="cart-modal-footer">
-                <button class="cart-checkout-btn" onclick="showCheckoutForm()">
-                    <i class="fas fa-credit-card"></i>
-                    Proceder al Pedido
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Formulario de Pedido -->
-    <div class="checkout-modal" id="checkoutModal" style="display: none;">
-        <div class="checkout-modal-content">
-            <div class="checkout-modal-header">
-                <h3>Información del Pedido</h3>
-                <button class="checkout-close-btn" onclick="closeCheckoutModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="checkout-modal-body">
-                <form id="checkoutForm">
-                    <div class="form-group">
-                        <label for="firstName">Nombre *</label>
-                        <input type="text" id="firstName" name="firstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="lastName">Apellido *</label>
-                        <input type="text" id="lastName" name="lastName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Correo Electrónico *</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Teléfono (Opcional)</label>
-                        <input type="tel" id="phone" name="phone">
-                    </div>
-                    <div class="form-group">
-                        <label for="message">Comentarios Adicionales</label>
-                        <textarea id="message" name="message" rows="3" placeholder="Información adicional sobre el pedido..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="checkout-modal-footer">
-                <button class="checkout-cancel-btn" onclick="closeCheckoutModal()">Cancelar</button>
-                <button class="checkout-submit-btn" onclick="submitOrder()">
-                    <i class="fas fa-paper-plane"></i>
-                    Enviar Pedido
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Modal de Detalles de Producto -->
     <div id="productModal" class="product-modal" style="display: none;">
         <div class="modal-overlay" onclick="closeProductModal()"></div>
@@ -466,5 +393,68 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal del Carrito -->
+    <div class="modal" id="cartModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Carrito de Compras</h3>
+                <button class="close-btn" onclick="closeCartModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="cartItems"></div>
+                <div class="cart-total">
+                    <strong>Total: <span id="cartTotal">0.00€</span></strong>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCartModal()">Seguir Comprando</button>
+                <button class="btn btn-primary" onclick="showCheckoutForm()" id="checkoutBtn" disabled>Proceder al Pago</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Checkout -->
+    <div class="modal" id="checkoutModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Información de Contacto</h3>
+                <button class="close-btn" onclick="closeCheckoutModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="checkoutForm">
+                    <div class="form-group">
+                        <label for="firstName">Nombre *</label>
+                        <input type="text" id="firstName" name="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Apellido *</label>
+                        <input type="text" id="lastName" name="lastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Correo Electrónico *</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Teléfono (Opcional)</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Mensaje Adicional (Opcional)</label>
+                        <textarea id="message" name="message" rows="3" placeholder="Comentarios adicionales sobre tu pedido..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCheckoutModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="submitOrder()">Enviar Pedido</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>

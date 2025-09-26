@@ -1941,10 +1941,12 @@ function updateCartCount() {
 // Renderizar items del carrito
 function renderCartItems() {
     const cartItems = document.getElementById('cartItems');
+    const checkoutBtn = document.getElementById('checkoutBtn');
     if (!cartItems) return;
     
     if (cart.length === 0) {
         cartItems.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">El carrito está vacío</p>';
+        if (checkoutBtn) checkoutBtn.disabled = true;
         return;
     }
     
@@ -1967,6 +1969,7 @@ function renderCartItems() {
         </div>
     `).join('');
     
+    if (checkoutBtn) checkoutBtn.disabled = false;
     updateCartTotal();
 }
 
@@ -2076,36 +2079,6 @@ function formatOrderItems(items) {
     return items.map(item => 
         `• ${item.name} (Ref: ${item.referencia || 'N/A'}) - ${item.quantity}x ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}`
     ).join('\n');
-}
-
-// Función de prueba para enviar email
-function testEmailJS() {
-    console.log('🧪 Iniciando prueba de EmailJS...');
-    
-    // Usar un template más simple
-    const templateParams = {
-        to_email: 'alfredv88@gmail.com',
-        from_name: 'Sistema de Prueba',
-        from_email: 'desarrollador883@gmail.com',
-        message: 'Este es un email de prueba del sistema de pedidos. Productos: Producto de Prueba (Ref: TEST-001) - 2x 25.00€ = 50.00€, Otro Producto (Ref: TEST-002) - 1x 15.50€ = 15.50€. Total: 65.50€'
-    };
-    
-    console.log('📧 Datos de prueba:', templateParams);
-    
-    // Intentar con un template más simple
-    emailjs.send('service_30ko4qz', 'template_613ci5v', {
-        to_email: 'alfredv88@gmail.com',
-        from_name: 'Sistema de Prueba',
-        from_email: 'desarrollador883@gmail.com',
-        message: 'Este es un email de prueba del sistema de pedidos. Productos: Producto de Prueba (Ref: TEST-001) - 2x 25.00€ = 50.00€, Otro Producto (Ref: TEST-002) - 1x 15.50€ = 15.50€. Total: 65.50€'
-    })
-        .then(function(response) {
-            console.log('✅ Email de prueba enviado exitosamente:', response);
-            alert('✅ ¡Email de prueba enviado exitosamente! Revisa tu correo en alfredv88@gmail.com');
-        }, function(error) {
-            console.error('❌ Error al enviar email de prueba:', error);
-            alert('❌ Error al enviar email de prueba: ' + error.text);
-        });
 }
 
 function normalizeCategory(value) {
