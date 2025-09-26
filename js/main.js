@@ -1429,7 +1429,7 @@ function createProductCard(product) {
                 <i class="fas fa-boxes"></i>
                 <span class="quantity-available">Disponibles: ${product.quantity || 1}</span>
             </div>
-            <div class="product-price">${product.price}</div>
+            <div class="product-price">€${product.price}</div>
             ${product.referencia ? `<div class="product-ref">Ref: ${product.referencia}</div>` : ''}
         </div>
     `;
