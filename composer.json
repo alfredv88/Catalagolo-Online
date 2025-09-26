@@ -1,0 +1,16 @@
+{
+    "name": "ams-desarrollos/catalogo-digital",
+    "description": "Sistema de catálogo digital con panel de administración",
+    "type": "project",
+    "require": {
+        "phpmailer/phpmailer": "^6.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "AMS\\": "src/"
+        }
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}
