@@ -1965,16 +1965,26 @@ function setupImageThumbnails() {
 // Función para mostrar/ocultar detalles del producto
 function setupProductDetails() {
     const cards = document.querySelectorAll('.product-card');
-    cards.forEach(card => {
+    console.log(`Configurando eventos para ${cards.length} tarjetas`);
+    
+    cards.forEach((card, index) => {
         card.addEventListener('click', function(e) {
+            console.log(`Click en tarjeta ${index + 1}`);
+            
             if (e.target.closest('.image-thumbnails')) {
+                console.log('Click en thumbnail, ignorando');
                 return;
             }
             
             // Obtener datos del producto desde la tarjeta
             const productData = getProductDataFromCard(this);
+            console.log('Datos del producto:', productData);
+            
             if (productData) {
+                console.log('Mostrando modal...');
                 showProductModal(productData);
+            } else {
+                console.log('No se encontraron datos del producto');
             }
         });
     });
@@ -2010,8 +2020,13 @@ function getProductDataFromCard(card) {
 
 // Función para mostrar el modal de producto
 function showProductModal(product) {
+    console.log('showProductModal llamada con:', product);
     const modal = document.getElementById('productModal');
-    if (!modal) return;
+    console.log('Modal encontrado:', modal);
+    if (!modal) {
+        console.error('Modal productModal no encontrado en el DOM');
+        return;
+    }
     
     // Llenar datos del modal
     document.getElementById('modalTitle').textContent = product.name || product.description || 'Producto';
@@ -2051,8 +2066,3 @@ function closeProductModal() {
     }
 }
 
-// Función para obtener nombre de categoría
-function getCategoryName(categoryId) {
-    const category = availableCategories.find(cat => cat.id === categoryId);
-    return category ? category.name : categoryId;
-}
