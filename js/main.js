@@ -1489,9 +1489,34 @@ function updateSidebarCategories() {
     const sidebar = document.querySelector('.categories');
     if (!sidebar) return;
     
-    // Limpiar sidebar (excepto "Todos los productos")
-    const existingCategories = sidebar.querySelectorAll('.category-item:not([data-category="all"])');
+    // Limpiar TODAS las categorías existentes
+    const existingCategories = sidebar.querySelectorAll('.category-item');
     existingCategories.forEach(item => item.remove());
+    
+    // Recrear "Todas las categorías" manualmente
+    const allItem = document.createElement('li');
+    allItem.className = 'category-item active';
+    allItem.setAttribute('data-category', 'all');
+    allItem.innerHTML = `
+        <span>Todas las categorías</span>
+        <span class="count">${products.length}</span>
+    `;
+    
+    // Agregar evento de clic para "Todas las categorías"
+    allItem.addEventListener('click', function() {
+        // Remover active de todos
+        document.querySelectorAll('.category-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        
+        // Agregar active al seleccionado
+        this.classList.add('active');
+        
+        // Filtrar productos
+        filterByCategory('all');
+    });
+    
+    sidebar.appendChild(allItem);
     
     // Agregar categorías dinámicas
     availableCategories.forEach(category => {
