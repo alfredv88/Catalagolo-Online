@@ -372,13 +372,13 @@ body {
 /* Indicador de cantidad de imágenes */
 .image-count {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 6px;
+    right: 6px;
     background: rgba(0, 0, 0, 0.7);
     color: white;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 12px;
+    padding: 2px 4px;
+    border-radius: 8px;
+    font-size: 10px;
     font-weight: 500;
     backdrop-filter: blur(10px);
 }
