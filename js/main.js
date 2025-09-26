@@ -2082,19 +2082,17 @@ function formatOrderItems(items) {
 function testEmailJS() {
     console.log('🧪 Iniciando prueba de EmailJS...');
     
-    const testData = {
+    // Usar un template más simple
+    const templateParams = {
         to_email: 'alfredv88@gmail.com',
         from_name: 'Sistema de Prueba',
         from_email: 'desarrollador883@gmail.com',
-        phone: '04128685710',
-        message: 'Este es un email de prueba del sistema de pedidos. Productos: Producto de Prueba (Ref: TEST-001) - 2x 25.00€ = 50.00€, Otro Producto (Ref: TEST-002) - 1x 15.50€ = 15.50€. Total: 65.50€',
-        order_items: '• Producto de Prueba (Ref: TEST-001) - 2x 25.00€ = 50.00€\n• Otro Producto (Ref: TEST-002) - 1x 15.50€ = 15.50€',
-        order_total: '65.50€',
-        order_date: new Date().toLocaleString('es-ES')
+        message: 'Este es un email de prueba del sistema de pedidos. Productos: Producto de Prueba (Ref: TEST-001) - 2x 25.00€ = 50.00€, Otro Producto (Ref: TEST-002) - 1x 15.50€ = 15.50€. Total: 65.50€'
     };
     
-    console.log('📧 Datos de prueba:', testData);
+    console.log('📧 Datos de prueba:', templateParams);
     
+    // Intentar con un template más simple
     emailjs.send('service_30ko4qz', 'template_613ci5v', {
         to_email: 'alfredv88@gmail.com',
         from_name: 'Sistema de Prueba',
