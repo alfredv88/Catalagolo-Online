@@ -1791,10 +1791,22 @@ function autoCreateNewCategories(excelData) {
         saveCategoriesToStorage();
         showSuccessNotification(`✅ Se crearon ${newCategories.length} categorías nuevas: ${newCategories.join(', ')}`);
         
+        // Actualizar contadores de productos por categoría
+        updateCategoryCounts();
+        
         // Actualizar la UI de categorías si está visible
         if (document.getElementById('categoriesList')) {
-            updateCategoryCounts();
             renderCategoriesList();
+        }
+        
+        // Si el panel de administración está abierto, refrescar
+        if (document.getElementById('adminPanel') && document.getElementById('adminPanel').style.display !== 'none') {
+            // Forzar actualización del panel de categorías
+            setTimeout(() => {
+                if (typeof renderCategoriesList === 'function') {
+                    renderCategoriesList();
+                }
+            }, 100);
         }
     }
 }
