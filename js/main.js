@@ -1100,16 +1100,6 @@ function processRealExcelData(jsonData, fileName) {
     }
     
     const dataRows = jsonData.slice(1);
-    const validationErrors = validateExcelData(dataRows);
-    
-    if (validationErrors.length > 0) {
-        const errorCount = validationErrors.length;
-        const proceed = confirm(`Se encontraron ${errorCount} errores en el archivo.\n\n¿Deseas continuar importando solo las filas válidas?\n\nErrores encontrados:\n${validationErrors.slice(0, 10).join('\n')}${errorCount > 10 ? '\n... y más errores' : ''}`);
-        
-        if (!proceed) {
-            return;
-        }
-    }
     
     // Procesar filas con datos básicos (solo omitir filas completamente vacías)
     excelData = dataRows
@@ -1134,8 +1124,20 @@ function processRealExcelData(jsonData, fileName) {
             categoria: normalizeCategory(row[5] || 'recgeneral')
         }));
     
-    // Auto-crear categorías nuevas encontradas en el Excel
+    // Auto-crear categorías nuevas ANTES de la validación
     autoCreateNewCategories(excelData);
+    
+    // Validar datos después de crear categorías
+    const validationErrors = validateExcelData(dataRows);
+    
+    if (validationErrors.length > 0) {
+        const errorCount = validationErrors.length;
+        const proceed = confirm(`Se encontraron ${errorCount} errores en el archivo.\n\n¿Deseas continuar importando solo las filas válidas?\n\nErrores encontrados:\n${validationErrors.slice(0, 10).join('\n')}${errorCount > 10 ? '\n... y más errores' : ''}`);
+        
+        if (!proceed) {
+            return;
+        }
+    }
     
     console.log('Datos procesados:', excelData);
     
