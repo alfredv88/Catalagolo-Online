@@ -756,7 +756,7 @@ function showImportPreview() {
                 <td>${item.descripcion}</td>
                 <td>${item.cantidad}</td>
                 <td>${item.loc || '-'}</td>
-                <td>US$ ${item.precio.toFixed(2)}</td>
+                <td>${formatPrice(item.precio)}</td>
                 <td>${getCategoryName(item.categoria)}</td>
             </tr>
         `;
@@ -820,9 +820,9 @@ function importProducts() {
 function downloadTemplate() {
     const templateData = [
         ['Referencia', 'Descripción', 'Stock', 'Loc', 'PVP', 'CATEGORIA'],
-        ['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30 €', 'KTM'],
-        ['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3 RUEDA TRASERA', '2', 'MB1', '9,60', 'KTM'],
-        ['11/59009062016', 'TORNILLO KTM M6X16 SW=8 10.9', '3', 'MB4', '1,25 €', 'KTM']
+        ['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30€', 'KTM'],
+        ['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3 RUEDA TRASERA', '2', 'MB1', '9,60€', 'KTM'],
+        ['11/59009062016', 'TORNILLO KTM M6X16 SW=8 10.9', '3', 'MB4', '1,25€', 'KTM']
     ];
 
     const ws = XLSX.utils.aoa_to_sheet(templateData);
@@ -968,7 +968,7 @@ function showExistingProducts() {
     products.forEach((product, index) => {
         message += `${index + 1}. Ref: "${product.referencia}"\n`;
         message += `   Nombre: ${product.name}\n`;
-        message += `   Precio: ${product.price}\n`;
+        message += `   Precio: ${formatPrice(product.price)}\n`;
         message += `   Categoría: ${getCategoryName(product.category)}\n\n`;
     });
     
@@ -1218,7 +1218,7 @@ function showExcelPreview() {
                     <td>${row.descripcion}</td>
                     <td>${row.stock || row.cantidad}</td>
                     <td>${row.loc}</td>
-                    <td>${row.pvp || row.precio}</td>
+                    <td>${formatPrice(row.precio)}</td>
                     <td>${getCategoryName(row.categoria)}</td>
                 `;
                 tableBody.appendChild(tr);
@@ -1300,15 +1300,15 @@ function exportTableToExcel() {
                 row.descripcion,
                 getCategoryName(row.categoria),
                 row.cantidad,
-                row.precio,
+                formatPrice(row.precio),
                 row.loc || ''
             ]);
         });
         showSuccessNotification('Exportando datos actuales a Excel...');
     } else {
         // Usar datos de ejemplo si la tabla está vacía
-        dataForExport.push(['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30 €', 'KTM']);
-        dataForExport.push(['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3', '2', 'MB1', '9,60', 'KTM']);
+        dataForExport.push(['11/0402041580', 'PASADOR NRB4X15,8 G2 KTM LC8', '1', '4H8', '1,30€', 'KTM']);
+        dataForExport.push(['11/0625060058', 'RODAMIENTO KTM 6005 2RS C3', '2', 'MB1', '9,60€', 'KTM']);
         showSuccessNotification('La tabla está vacía. Descargando plantilla de ejemplo.');
     }
 
@@ -1434,7 +1434,7 @@ function createProductCard(product) {
                 <i class="fas fa-boxes"></i>
                 <span class="quantity-available">Disponibles: ${product.quantity || 1}</span>
             </div>
-            <div class="product-price">€${product.price}</div>
+            <div class="product-price">${formatPrice(product.price)}</div>
             ${product.referencia ? `<div class="product-ref">Ref: ${product.referencia}</div>` : ''}
         </div>
     `;
@@ -1752,6 +1752,12 @@ function normalizeText(text) {
                .trim();
 }
 
+// Función para formatear precio en Euros
+function formatPrice(price) {
+    const numPrice = parseFloat(price) || 0;
+    return `${numPrice.toFixed(2)}€`;
+}
+
 function normalizeCategory(value) {
     if (!value) return 'recgeneral';
     const normalized = normalizeText(value.toString());
@@ -2053,7 +2059,7 @@ function showProductModal(product) {
     document.getElementById('modalQuantity').textContent = product.quantity || 0;
     document.getElementById('modalLocation').textContent = product.loc || 'No especificada';
     document.getElementById('modalRef').textContent = product.referencia || 'N/A';
-    document.getElementById('modalPrice').textContent = `$${(product.price || 0).toLocaleString('es-ES', {minimumFractionDigits: 2})}`;
+    document.getElementById('modalPrice').textContent = formatPrice(product.price);
     
     // Configurar galería de imágenes
     const modalMainImage = document.getElementById('modalMainImage');
