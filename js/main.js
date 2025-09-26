@@ -1518,8 +1518,10 @@ function updateSidebarCategories() {
     
     sidebar.appendChild(allItem);
     
-    // Agregar categorías dinámicas
-    availableCategories.forEach(category => {
+    // Agregar categorías dinámicas (excluyendo 'all' que es especial)
+    availableCategories
+        .filter(category => category.id !== 'all')
+        .forEach(category => {
         const count = products.filter(p => p.category === category.id).length;
         
         const categoryItem = document.createElement('li');
