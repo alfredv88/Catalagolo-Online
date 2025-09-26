@@ -1743,9 +1743,18 @@ function deleteRow(rowIndex) {
 
 // Mover después del DOMContentLoaded para que sea global
 
+// Función para normalizar texto (quitar acentos)
+function normalizeText(text) {
+    if (!text) return '';
+    return text.normalize('NFD')
+               .replace(/[\u0300-\u036f]/g, '')
+               .toLowerCase()
+               .trim();
+}
+
 function normalizeCategory(value) {
     if (!value) return 'recgeneral';
-    const normalized = value.toString().trim().toLowerCase();
+    const normalized = normalizeText(value.toString());
 
     const mapping = {
         'todas': 'all',
@@ -1756,6 +1765,8 @@ function normalizeCategory(value) {
         'freno': 'frenos',
         'bujias': 'bujias',
         'bujia': 'bujias',
+        'bujía': 'bujias',
+        'bujías': 'bujias',
         'rec general': 'recgeneral',
         'recgeneral': 'recgeneral',
         'repuestos generales': 'recgeneral',
