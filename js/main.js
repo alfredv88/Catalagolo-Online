@@ -406,6 +406,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar carrito
     loadCartFromStorage();
     updateCartCount();
+    
+    // Inicializar EmailJS
+    initEmailJS();
         
     setupPrintButton();
     initializeCategoryCounts();
@@ -2014,6 +2017,11 @@ function closeCheckoutModal() {
     }
 }
 
+// Inicializar EmailJS
+function initEmailJS() {
+    emailjs.init("YOUR_PUBLIC_KEY"); // Reemplazar con tu clave pública de EmailJS
+}
+
 // Enviar pedido
 function submitOrder() {
     const form = document.getElementById('checkoutForm');
@@ -2035,31 +2043,39 @@ function submitOrder() {
         return;
     }
     
-    // Enviar pedido por email
-    fetch('send-order.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(orderData)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+    // Preparar datos para EmailJS
+    const emailData = {
+        to_email: 'alfredv88@gmail.com',
+        from_name: `${orderData.firstName} ${orderData.lastName}`,
+        from_email: orderData.email,
+        phone: orderData.phone,
+        message: orderData.message,
+        order_items: formatOrderItems(orderData.items),
+        order_total: formatPrice(orderData.total),
+        order_date: new Date().toLocaleString('es-ES')
+    };
+    
+    // Enviar email usando EmailJS
+    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', emailData)
+        .then(function(response) {
+            console.log('Email enviado exitosamente:', response);
             showSuccessNotification('¡Pedido enviado exitosamente! Te contactaremos pronto.');
             // Limpiar carrito
             cart = [];
             saveCartToStorage();
             updateCartCount();
             closeCheckoutModal();
-        } else {
-            alert('Error al enviar el pedido: ' + data.message);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Error al enviar el pedido. Por favor, inténtalo de nuevo.');
-    });
+        }, function(error) {
+            console.error('Error al enviar email:', error);
+            alert('Error al enviar el pedido. Por favor, inténtalo de nuevo.');
+        });
+}
+
+// Formatear items del pedido para el email
+function formatOrderItems(items) {
+    return items.map(item => 
+        `• ${item.name} (Ref: ${item.referencia || 'N/A'}) - ${item.quantity}x ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}`
+    ).join('\n');
 }
 
 function normalizeCategory(value) {
