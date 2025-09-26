@@ -2078,6 +2078,33 @@ function formatOrderItems(items) {
     ).join('\n');
 }
 
+// Función de prueba para enviar email
+function testEmailJS() {
+    console.log('🧪 Iniciando prueba de EmailJS...');
+    
+    const testData = {
+        to_email: 'alfredv88@gmail.com',
+        from_name: 'Sistema de Prueba',
+        from_email: 'desarrollador883@gmail.com',
+        phone: '04128685710',
+        message: 'Este es un email de prueba del sistema de pedidos.',
+        order_items: '• Producto de Prueba (Ref: TEST-001) - 2x 25.00€ = 50.00€\n• Otro Producto (Ref: TEST-002) - 1x 15.50€ = 15.50€',
+        order_total: '65.50€',
+        order_date: new Date().toLocaleString('es-ES')
+    };
+    
+    console.log('📧 Datos de prueba:', testData);
+    
+    emailjs.send('service_30ko4qz', 'template_613ci5v', testData)
+        .then(function(response) {
+            console.log('✅ Email de prueba enviado exitosamente:', response);
+            alert('✅ ¡Email de prueba enviado exitosamente! Revisa tu correo en alfredv88@gmail.com');
+        }, function(error) {
+            console.error('❌ Error al enviar email de prueba:', error);
+            alert('❌ Error al enviar email de prueba: ' + error.text);
+        });
+}
+
 function normalizeCategory(value) {
     if (!value) return 'recgeneral';
     const normalized = normalizeText(value.toString());
