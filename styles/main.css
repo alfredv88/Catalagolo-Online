@@ -1355,9 +1355,9 @@ body {
     z-index: 3001;
     background: white;
     border-radius: 12px;
-    max-width: 600px;
-    max-height: 80vh;
-    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    width: 95%;
     overflow-y: auto;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
@@ -1387,13 +1387,13 @@ body {
 }
 
 .product-modal .modal-body {
-    padding: 30px;
+    padding: 25px;
 }
 
 .product-modal .modal-image {
     width: 100%;
-    max-width: 300px;
-    height: 200px;
+    max-width: 400px;
+    height: 250px;
     object-fit: cover;
     border-radius: 8px;
     margin: 0 auto 20px;
