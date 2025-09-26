@@ -172,40 +172,6 @@
                     </div>
                 </div>
                 
-                <!-- Modal de Detalles de Producto -->
-                <div id="productModal" class="product-modal" style="display: none;">
-                    <div class="modal-overlay" onclick="closeProductModal()"></div>
-                    <div class="modal-content">
-                        <button class="close-modal" onclick="closeProductModal()">×</button>
-                        <div class="modal-body">
-                            <img class="modal-image" id="modalImage" src="" alt="Producto">
-                            <h2 class="modal-title" id="modalTitle"></h2>
-                            <p class="modal-reference" id="modalReference"></p>
-                            <p class="modal-description" id="modalDescription"></p>
-                            
-                            <div class="modal-details">
-                                <div class="detail-item">
-                                    <span class="detail-label">Categoría</span>
-                                    <span class="detail-value" id="modalCategory"></span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Cantidad</span>
-                                    <span class="detail-value" id="modalQuantity"></span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Ubicación</span>
-                                    <span class="detail-value" id="modalLocation"></span>
-                                </div>
-                                <div class="detail-item">
-                                    <span class="detail-label">Referencia</span>
-                                    <span class="detail-value" id="modalRef"></span>
-                                </div>
-                            </div>
-                            
-                            <div class="modal-price" id="modalPrice"></div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Panel de Gestión de Categorías -->
                 <div class="categories-manager" id="categoriesManager" style="display: none;">
@@ -381,5 +347,40 @@
             }, 2000);
         }
     </script>
+    
+    <!-- Modal de Detalles de Producto -->
+    <div id="productModal" class="product-modal" style="display: none;">
+        <div class="modal-overlay" onclick="closeProductModal()"></div>
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeProductModal()">×</button>
+            <div class="modal-body">
+                <img class="modal-image" id="modalImage" src="" alt="Producto">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <p class="modal-reference" id="modalReference"></p>
+                <p class="modal-description" id="modalDescription"></p>
+                
+                <div class="modal-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Categoría</span>
+                        <span class="detail-value" id="modalCategory"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Cantidad</span>
+                        <span class="detail-value" id="modalQuantity"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Ubicación</span>
+                        <span class="detail-value" id="modalLocation"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Referencia</span>
+                        <span class="detail-value" id="modalRef"></span>
+                    </div>
+                </div>
+                
+                <div class="modal-price" id="modalPrice"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
