@@ -1486,7 +1486,7 @@ function updateCategoryCounts() {
 
 // Actualizar sidebar con categorías dinámicas
 function updateSidebarCategories() {
-    const sidebar = document.querySelector('.categories-list');
+    const sidebar = document.querySelector('.categories');
     if (!sidebar) return;
     
     // Limpiar sidebar (excepto "Todos los productos")
