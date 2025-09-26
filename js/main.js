@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const totalLabel = document.querySelector('.products-header p');
         if (totalLabel) {
-            totalLabel.textContent = `${filteredProducts.length} productos encontrados`;
+            totalLabel.textContent = `${filteredProducts.length} existentes`;
         }
     }
     
@@ -241,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const visibleCards = Array.from(cards).filter(card => card.style.display !== 'none');
         const countLabel = document.querySelector('.products-header p');
         if (countLabel) {
-            countLabel.textContent = `${visibleCards.length} productos encontrados`;
+            countLabel.textContent = `${visibleCards.length} existentes`;
         }
     }
     
@@ -1376,7 +1376,7 @@ function updateProductsGrid() {
     
     // Actualizar el contador de productos en el encabezado
     if (countLabel) {
-        countLabel.textContent = `${products.length} productos encontrados`;
+        countLabel.textContent = `${products.length} existentes`;
     }
 
     // Reconfigurar eventos después de actualizar
@@ -1425,7 +1425,7 @@ function createProductCard(product) {
             <h3 class="product-name">${product.name}</h3>
             <div class="product-quantity">
                 <i class="fas fa-boxes"></i>
-                <span class="quantity-available">Cantidad disponible: ${product.quantity || 1}</span>
+                <span class="quantity-available">Disponibles: ${product.quantity || 1}</span>
             </div>
             <div class="product-price">${product.price}</div>
             ${product.referencia ? `<div class="product-ref">Ref: ${product.referencia}</div>` : ''}
