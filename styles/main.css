@@ -632,36 +632,36 @@ body {
         break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid #ddd !important;
-        height: 180px !important;
+        height: 200px !important;
         overflow: hidden !important;
     }
     
     .product-images {
-        height: 120px !important;
+        height: 130px !important;
     }
     
     .product-info {
-        padding: 8px !important;
+        padding: 10px !important;
     }
     
     .product-name {
-        font-size: 12px !important;
-        margin-bottom: 4px !important;
-        min-height: 24px !important;
+        font-size: 13px !important;
+        margin-bottom: 6px !important;
+        min-height: 28px !important;
     }
     
     .product-price {
-        font-size: 16px !important;
-        margin-bottom: 4px !important;
+        font-size: 18px !important;
+        margin-bottom: 6px !important;
     }
     
     .product-quantity {
-        font-size: 10px !important;
-        margin-bottom: 4px !important;
+        font-size: 11px !important;
+        margin-bottom: 6px !important;
     }
     
     .product-ref {
-        font-size: 10px !important;
+        font-size: 11px !important;
     }
     
     .product-card:hover {
