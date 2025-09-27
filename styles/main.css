@@ -116,74 +116,225 @@ body {
 }
 
 
+/* Botón de imprimir PDF moderno */
 .print-btn {
-    background: var(--primary-color);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.9) 0%, rgba(41, 128, 185, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: background-color 0.3s;
+    padding: 12px 20px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 4px 20px rgba(52, 152, 219, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.print-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s;
 }
 
 .print-btn:hover {
-    background: var(--primary-dark);
+    background: linear-gradient(135deg, rgba(52, 152, 219, 1) 0%, rgba(41, 128, 185, 1) 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+        0 8px 30px rgba(52, 152, 219, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
+.print-btn:hover::before {
+    left: 100%;
+}
+
+.print-btn:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* Botón de administrar moderno */
 .admin-btn {
-    background: #000000;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(51, 51, 51, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 6px;
+    border-radius: 12px;
     cursor: pointer;
     font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    transition: background-color 0.3s;
+    width: 45px;
+    height: 45px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
 }
 
 .admin-btn:hover {
-    background: #333333;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 1) 0%, rgba(51, 51, 51, 1) 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
-/* Estilos para el botón del carrito */
+.admin-btn:hover::before {
+    left: 100%;
+}
+
+.admin-btn:active {
+    transform: translateY(0px) scale(0.98);
+}
+
+/* Estilos modernos para el botón del carrito */
 .cart-btn {
-    background: var(--primary-color);
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: 20px;
+    width: 70px;
+    height: 70px;
+    font-size: 22px;
     cursor: pointer;
-    font-size: 14px;
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 6px;
-    transition: all 0.3s ease;
-    position: relative;
+    justify-content: center;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: cartFloat 3s ease-in-out infinite;
 }
 
 .cart-btn:hover {
-    background: var(--primary-dark);
-    transform: translateY(-1px);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 12px 40px rgba(102, 126, 234, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 1) 0%, rgba(118, 75, 162, 1) 100%);
+}
+
+.cart-btn:active {
+    transform: translateY(-1px) scale(0.98);
 }
 
 .cart-btn #cartCount {
-    background: #ff4444;
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3838 100%);
     color: white;
     border-radius: 50%;
-    padding: 2px 6px;
+    width: 28px;
+    height: 28px;
     font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: bold;
-    min-width: 18px;
-    text-align: center;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+    animation: cartPulse 2s ease-in-out infinite;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Animaciones para el carrito */
+@keyframes cartFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-2px); }
+}
+
+@keyframes cartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Responsive para botones modernos */
+@media (max-width: 768px) {
+    .cart-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 20px;
+        top: 15px;
+        right: 15px;
+    }
+    
+    .cart-btn #cartCount {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+        top: -6px;
+        right: -6px;
+    }
+    
+    .admin-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .print-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cart-btn {
+        width: 55px;
+        height: 55px;
+        font-size: 18px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .cart-btn #cartCount {
+        width: 22px;
+        height: 22px;
+        font-size: 10px;
+        top: -5px;
+        right: -5px;
+    }
+    
+    .admin-btn {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .print-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
 }
 
 /* Estilos para modales del carrito */
