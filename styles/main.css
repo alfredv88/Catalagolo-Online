@@ -116,124 +116,74 @@ body {
 }
 
 
-/* Botón Imprimir PDF moderno */
 .print-btn {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 10px;
+    padding: 10px 16px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s;
 }
 
 .print-btn:hover {
-    background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+    background: var(--primary-dark);
 }
 
-.print-btn:active {
-    transform: translateY(0);
-    transition: all 0.1s ease;
-}
-
-/* Botón Administrar moderno */
 .admin-btn {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: #000000;
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 44px;
-    height: 44px;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.3s;
 }
 
 .admin-btn:hover {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-    transform: translateY(-2px) rotate(5deg);
-    box-shadow: 0 8px 25px rgba(44, 62, 80, 0.4);
-}
-
-.admin-btn:active {
-    transform: translateY(0) rotate(0deg);
-    transition: all 0.1s ease;
+    background: #333333;
 }
 
 /* Estilos para el botón del carrito */
-/* Botón de carrito moderno con diseño cuadrado suave */
 .cart-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 12px;
-    width: 64px;
-    height: 64px;
-    font-size: 22px;
+    padding: 8px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 1000;
+    font-size: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 6px;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .cart-btn:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-}
-
-.cart-btn:active {
-    transform: translateY(-1px) scale(1.02);
-    transition: all 0.1s ease;
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
 .cart-btn #cartCount {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    background: #ff4444;
     color: white;
-    border-radius: 8px;
-    width: 28px;
-    height: 28px;
-    font-size: 13px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
 }
 
 /* Estilos para modales del carrito */
@@ -437,134 +387,22 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Botones modernos con diseño cuadrado suave */
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
     color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
-    transition: all 0.1s ease;
+    background: var(--primary-dark);
 }
 
 .btn-secondary {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    color: #495057;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: #f0f0f0;
+    color: #333;
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    border-color: rgba(0, 0, 0, 0.2);
-}
-
-.btn-secondary:active {
-    transform: translateY(0);
-    transition: all 0.1s ease;
-}
-
-/* Botón Agregar al Carrito en tarjetas de productos */
-.add-to-cart-btn {
-    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    width: 100%;
-    margin-top: 12px;
-}
-
-.add-to-cart-btn:hover {
-    background: linear-gradient(135deg, #20c997 0%, #28a745 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
-}
-
-.add-to-cart-btn:active {
-    transform: translateY(0);
-    transition: all 0.1s ease;
-}
-
-.add-to-cart-btn:disabled {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: 0 2px 5px rgba(108, 117, 125, 0.2);
-}
-
-/* Botones de control de cantidad en el carrito */
-.quantity-btn {
-    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-    color: white;
-    border: none;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.quantity-btn:hover {
-    background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
-    transform: scale(1.1);
-}
-
-.quantity-btn:active {
-    transform: scale(0.95);
-}
-
-.remove-item-btn {
-    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 12px;
-    transition: all 0.2s ease;
-}
-
-.remove-item-btn:hover {
-    background: linear-gradient(135deg, #c82333 0%, #bd2130 100%);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(220, 53, 69, 0.3);
+    background: #e0e0e0;
 }
 
 /* Contenedor principal */
@@ -984,6 +822,11 @@ body {
 
 /* Estilos para impresión (PDF) */
 @media print {
+    /* Ocultar botón del carrito en impresión */
+    .cart-btn {
+        display: none !important;
+    }
+    
     .header {
         background: white !important;
         box-shadow: none !important;
