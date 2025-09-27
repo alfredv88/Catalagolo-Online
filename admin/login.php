@@ -3,15 +3,18 @@
  * Sistema de autenticación básico para administrador
  * Compatible con cualquier hosting PHP
  * 
- * @author Desarrollador Senior
+ * @author AMS Desarrollos
  * @since 1.0.0
  */
 
+// Incluir configuración centralizada
+require_once '../config/config.php';
+
 session_start();
 
-// Configuración de credenciales (cambiar en producción)
-$ADMIN_USER = 'admin';
-$ADMIN_PASS = 'catalogo2024'; // Cambiar por contraseña segura
+// Configuración de credenciales desde config.php
+$ADMIN_USER = ADMIN_USER;
+$ADMIN_PASS = ADMIN_PASS;
 
 // Verificar si ya está logueado
 if (isset($_SESSION['admin_logged']) && $_SESSION['admin_logged'] === true) {

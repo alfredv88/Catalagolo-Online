@@ -3,9 +3,12 @@
  * API REST para gestión de productos
  * Endpoints seguros con autenticación de administrador
  * 
- * @author Desarrollador Senior
+ * @author AMS Desarrollos
  * @since 1.0.0
  */
+
+// Incluir configuración centralizada
+require_once '../config/config.php';
 
 session_start();
 header('Content-Type: application/json');
@@ -20,16 +23,16 @@ function requireAuth() {
 }
 
 // Verificar timeout de sesión
-if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > 7200) {
+if (isset($_SESSION['login_time']) && (time() - $_SESSION['login_time']) > SESSION_TIMEOUT) {
     session_destroy();
     http_response_code(401);
     echo json_encode(['error' => 'Sesión expirada']);
     exit;
 }
 
-// Configuración de archivos
-$productsFile = '../data/products.json';
-$categoriesFile = '../data/categories.json';
+// Configuración de archivos desde config.php
+$productsFile = PRODUCTS_FILE;
+$categoriesFile = CATEGORIES_FILE;
 
 // Crear directorio data si no existe
 if (!file_exists('../data')) {
