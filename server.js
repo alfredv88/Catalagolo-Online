@@ -18,7 +18,30 @@ let isAuthenticated = false;
 
 // Ruta principal - servir index.php como HTML
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.php'));
+    try {
+        res.sendFile(path.join(__dirname, 'index.php'));
+    } catch (error) {
+        console.error('Error serving index.php:', error);
+        res.status(200).send(`
+            <!DOCTYPE html>
+            <html lang="es">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Catálogo Digital - Motos Ortiz</title>
+            </head>
+            <body>
+                <h1>🚀 Catálogo Digital - Motos Ortiz</h1>
+                <p>✅ Servidor funcionando correctamente</p>
+                <p>🌍 Environment: ${process.env.NODE_ENV || 'development'}</p>
+                <p>🚂 Railway: ${isRailway ? 'YES' : 'NO'}</p>
+                <p>⏰ Timestamp: ${new Date().toISOString()}</p>
+                <p>🔗 Health Check: <a href="/health">/health</a></p>
+                <p>🔧 Admin: <a href="/admin">/admin</a></p>
+            </body>
+            </html>
+        `);
+    }
 });
 
 // Health check para Railway
@@ -138,6 +161,7 @@ app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚂 Railway: ${isRailway ? 'YES' : 'NO'}`);
     console.log(`💚 Health Check: /health`);
     console.log(`🔧 FASE 3: Testing en Railway`);
+    console.log(`✅ Servidor listo para recibir requests`);
     
     if (isRailway) {
         console.log(`🔗 Railway URL: ${process.env.RAILWAY_PUBLIC_DOMAIN || 'Configurando...'}`);
@@ -145,6 +169,22 @@ app.listen(PORT, '0.0.0.0', () => {
         console.log(`📱 Local: http://localhost:${PORT}`);
         console.log(`🔧 Admin: http://localhost:${PORT}/admin`);
     }
+});
+
+// Manejo de errores del servidor
+app.on('error', (err) => {
+    console.error('❌ Error del servidor:', err);
+});
+
+// Manejo de errores no capturados
+process.on('uncaughtException', (err) => {
+    console.error('❌ Error no capturado:', err);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('❌ Promesa rechazada no manejada:', reason);
+    process.exit(1);
 });
 
 // Manejo de errores
