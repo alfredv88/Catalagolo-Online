@@ -4,6 +4,10 @@ FROM php:8.2-apache
 # Habilitar mod_rewrite (opcional)
 RUN a2enmod rewrite
 
+# Suprimir warning de ServerName en Apache
+RUN echo "ServerName localhost" > /etc/apache2/conf-available/servername.conf \
+    && a2enconf servername
+
 # Copiar el proyecto al DocumentRoot
 COPY . /var/www/html/
 
