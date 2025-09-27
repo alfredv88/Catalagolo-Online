@@ -1421,7 +1421,7 @@ function createProductCard(product) {
         mainImage = product.images[0];
     } else {
         // Si no hay imágenes, usar el logo
-        mainImage = 'assets/logo.png';
+        mainImage = 'images/logo.png';
     }
     
     // Generar miniaturas solo si hay más de 1 imagen
