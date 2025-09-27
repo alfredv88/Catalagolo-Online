@@ -80,6 +80,11 @@ function loadProductsFromStorage() {
             console.log('Productos de ejemplo agregados:', products.length);
         }
     }
+    
+    // Reconfigurar eventos de imágenes después de cargar productos
+    setTimeout(() => {
+        setupImageThumbnails();
+    }, 100);
 }
 
 // Guardar productos en localStorage
@@ -1726,6 +1731,11 @@ function renderTable() {
         `;
         tbody.appendChild(tr);
     });
+    
+    // Reconfigurar eventos de imágenes después de renderizar la tabla
+    setTimeout(() => {
+        setupImageThumbnails();
+    }, 100);
 }
 
 // Editar celda
