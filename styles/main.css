@@ -1911,8 +1911,6 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    height: 100%;
-    justify-content: center; /* Centrar verticalmente el bloque de imágenes */
 }
 
 .product-modal .modal-main-image {
