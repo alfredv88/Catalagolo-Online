@@ -409,6 +409,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Inicializar EmailJS
     initEmailJS();
+    
+    // 🔧 HACER FUNCIÓN DE PRUEBA DISPONIBLE GLOBALMENTE
+    window.testEmailJS = testEmailJS;
+    console.log('🔧 Función de prueba disponible: testEmailJS()');
+    console.log('💡 Ejecuta testEmailJS() en la consola para probar EmailJS');
         
     setupPrintButton();
     initializeCategoryCounts();
@@ -2069,14 +2074,31 @@ function submitOrder() {
         order_date: new Date().toLocaleString('es-ES')
     };
     
-    // Debug: Mostrar datos que se van a enviar
-    console.log('Datos del email a enviar:', emailData);
-    console.log('Carrito:', cart);
+    // 🔍 DIAGNÓSTICO DETALLADO PARA ERROR 422
+    console.log('=== DIAGNÓSTICO EMAILJS ===');
+    console.log('1. Carrito actual:', cart);
+    console.log('2. Datos del formulario:', orderData);
+    console.log('3. Datos del email (completos):', emailData);
+    console.log('4. Estructura del objeto emailData:');
+    Object.keys(emailData).forEach(key => {
+        console.log(`   - ${key}: "${emailData[key]}" (tipo: ${typeof emailData[key]})`);
+    });
+    console.log('5. Validación de campos requeridos:');
+    console.log(`   - to_email: ${emailData.to_email ? '✅' : '❌'}`);
+    console.log(`   - from_name: ${emailData.from_name ? '✅' : '❌'}`);
+    console.log(`   - from_email: ${emailData.from_email ? '✅' : '❌'}`);
+    console.log(`   - order_items: ${emailData.order_items ? '✅' : '❌'}`);
+    console.log(`   - order_total: ${emailData.order_total ? '✅' : '❌'}`);
+    console.log(`   - order_date: ${emailData.order_date ? '✅' : '❌'}`);
+    console.log('6. Configuración EmailJS:');
+    console.log(`   - Service ID: service_30ko4qz`);
+    console.log(`   - Template ID: template_3u8h10r`);
+    console.log('=== FIN DIAGNÓSTICO ===');
     
     // Enviar email usando EmailJS
     emailjs.send('service_30ko4qz', 'template_3u8h10r', emailData)
         .then(function(response) {
-            console.log('Email enviado exitosamente:', response);
+            console.log('✅ Email enviado exitosamente:', response);
             showSuccessNotification('¡Pedido enviado exitosamente! Te contactaremos pronto.');
             // Limpiar carrito
             cart = [];
@@ -2084,10 +2106,52 @@ function submitOrder() {
             updateCartCount();
             closeCheckoutModal();
         }, function(error) {
-            console.error('Error detallado al enviar email:', error);
+            console.error('❌ Error detallado al enviar email:', error);
             console.error('Código de error:', error.status);
             console.error('Texto de error:', error.text);
+            console.error('Respuesta completa:', error);
+            
+            // 🔍 DIAGNÓSTICO ADICIONAL DEL ERROR
+            console.log('=== DIAGNÓSTICO DEL ERROR 422 ===');
+            console.log('Posibles causas:');
+            console.log('1. Template ID incorrecto:', 'template_3u8h10r');
+            console.log('2. Service ID incorrecto:', 'service_30ko4qz');
+            console.log('3. Campos faltantes en template');
+            console.log('4. Formato de datos incorrecto');
+            console.log('5. Límite de cuota excedido');
+            console.log('6. Datos del carrito:', cart.length, 'items');
+            console.log('=== FIN DIAGNÓSTICO ERROR ===');
+            
             alert(`Error al enviar el pedido. Código: ${error.status || 'N/A'}. Por favor, inténtalo de nuevo.`);
+        });
+}
+
+// 🔧 FUNCIÓN DE PRUEBA PARA DIAGNÓSTICO
+function testEmailJS() {
+    console.log('=== PRUEBA EMAILJS CON DATOS MÍNIMOS ===');
+    
+    // Datos de prueba mínimos
+    const testData = {
+        to_email: 'desarrollador883@gmail.com',
+        from_name: 'Test User',
+        from_email: 'test@example.com',
+        phone: '123456789',
+        message: 'Mensaje de prueba',
+        order_items: '• Producto de prueba - Cantidad: 1 - Precio: 10.00€',
+        order_total: '10.00€',
+        order_date: new Date().toLocaleString('es-ES')
+    };
+    
+    console.log('Datos de prueba:', testData);
+    
+    emailjs.send('service_30ko4qz', 'template_3u8h10r', testData)
+        .then(function(response) {
+            console.log('✅ PRUEBA EXITOSA:', response);
+            alert('Prueba exitosa: EmailJS funciona correctamente');
+        }, function(error) {
+            console.error('❌ PRUEBA FALLIDA:', error);
+            console.error('Error en prueba:', error.status, error.text);
+            alert(`Prueba fallida: ${error.status} - ${error.text}`);
         });
 }
 
