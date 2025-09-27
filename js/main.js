@@ -419,6 +419,13 @@ document.addEventListener('DOMContentLoaded', function() {
     window.testEmailJS = testEmailJS;
     console.log('🔧 Función de prueba disponible: testEmailJS()');
     console.log('💡 Ejecuta testEmailJS() en la consola para probar EmailJS');
+    
+    // 🔧 FORZAR ACTUALIZACIÓN DE CATEGORÍAS DESPUÉS DE F5
+    setTimeout(() => {
+        updateCategoryCounts();
+        updateSidebarCategories();
+        console.log('🔧 Categorías forzadas a actualizar después de F5');
+    }, 500);
         
     setupPrintButton();
     initializeCategoryCounts();
@@ -1856,20 +1863,12 @@ function autoCreateNewCategories(excelData) {
         saveCategoriesToStorage();
         showSuccessNotification(`✅ Se crearon ${newCategories.length} categorías nuevas: ${newCategories.join(', ')}`);
         
-        // Actualizar contadores de productos por categoría
-        updateCategoryCounts();
-        
-        // Actualizar sidebar de categorías
-        updateSidebarCategories();
-        
-        // Si el panel de administración está abierto, refrescar
-        if (document.getElementById('adminPanel') && document.getElementById('adminPanel').style.display !== 'none') {
-            // Forzar actualización del panel de categorías
-            setTimeout(() => {
-                updateSidebarCategories();
-                updateCategoryCounts();
-            }, 100);
-        }
+        // 🔧 FORZAR ACTUALIZACIÓN COMPLETA DEL SIDEBAR
+        setTimeout(() => {
+            updateCategoryCounts();
+            updateSidebarCategories();
+            console.log('🔧 Categorías actualizadas después de Excel');
+        }, 200);
     }
 }
 
