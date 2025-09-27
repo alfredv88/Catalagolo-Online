@@ -23,13 +23,13 @@
                 </button>
             </div>
             <div class="header-actions">
-                <button class="cart-btn" onclick="toggleCartModal()" title="Ver carrito">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span id="cartCount">0</span>
-                </button>
                 <button class="print-btn" onclick="window.print()">
                     <i class="fas fa-print"></i>
                     Imprimir PDF
+                </button>
+                <button class="cart-btn" onclick="toggleCartModal()" title="Ver carrito">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span id="cartCount">0</span>
                 </button>
                 <button class="admin-btn" onclick="toggleAdminPanel()">
                     <i class="fas fa-cog"></i>
@@ -402,14 +402,16 @@
                 <button class="close-btn" onclick="closeCartModal()">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="cartItems"></div>
+                <div id="cartItems">
+                    <!-- Los items del carrito se cargarán aquí -->
+                </div>
                 <div class="cart-total">
                     <strong>Total: <span id="cartTotal">0.00€</span></strong>
                 </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeCartModal()">Seguir Comprando</button>
-                <button class="btn btn-primary" onclick="showCheckoutForm()" id="checkoutBtn" disabled>Proceder al Pago</button>
+                <button class="btn btn-primary" id="checkoutBtn" onclick="showCheckoutForm()" disabled>Proceder al Pedido</button>
             </div>
         </div>
     </div>
@@ -418,7 +420,7 @@
     <div class="modal" id="checkoutModal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Información de Contacto</h3>
+                <h3>Datos del Pedido</h3>
                 <button class="close-btn" onclick="closeCheckoutModal()">&times;</button>
             </div>
             <div class="modal-body">
@@ -432,16 +434,16 @@
                         <input type="text" id="lastName" name="lastName" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Correo Electrónico *</label>
+                        <label for="email">Email *</label>
                         <input type="email" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Teléfono (Opcional)</label>
+                        <label for="phone">Teléfono (opcional)</label>
                         <input type="tel" id="phone" name="phone">
                     </div>
                     <div class="form-group">
-                        <label for="message">Mensaje Adicional (Opcional)</label>
-                        <textarea id="message" name="message" rows="3" placeholder="Comentarios adicionales sobre tu pedido..."></textarea>
+                        <label for="message">Mensaje adicional (opcional)</label>
+                        <textarea id="message" name="message" rows="3" placeholder="Comentarios sobre el pedido..."></textarea>
                     </div>
                 </form>
             </div>
@@ -451,10 +453,5 @@
             </div>
         </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script src="js/main.js"></script>
 </body>
 </html>
