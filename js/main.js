@@ -2067,8 +2067,8 @@ function submitOrder() {
         to_email: 'desarrollador883@gmail.com',
         from_name: `${orderData.firstName} ${orderData.lastName}`,
         from_email: orderData.email,
-        phone: orderData.phone,
-        message: orderData.message,
+        phone: orderData.phone || 'No proporcionado',
+        message: orderData.message || 'Sin mensaje adicional',
         order_items: orderItems,
         order_total: formatPrice(orderData.total),
         order_date: new Date().toLocaleString('es-ES')
