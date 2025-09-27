@@ -117,114 +117,73 @@ body {
 
 
 .print-btn {
-    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 12px;
+    padding: 10px 16px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 8px;
+    transition: background-color 0.3s;
 }
 
 .print-btn:hover {
-    background: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(243, 156, 18, 0.4);
-}
-
-.print-btn:active {
-    transform: translateY(0) scale(0.98);
+    background: var(--primary-dark);
 }
 
 .admin-btn {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    background: #000000;
     color: white;
     border: none;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 10px;
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 500;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    width: 48px;
-    height: 48px;
-    box-shadow: 0 4px 15px rgba(44, 62, 80, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    transition: background-color 0.3s;
 }
 
 .admin-btn:hover {
-    background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(44, 62, 80, 0.4);
+    background: #333333;
 }
 
-.admin-btn:active {
-    transform: translateY(0) scale(0.98);
-}
-
-/* Estilos modernos para el botón del carrito */
+/* Estilos para el botón del carrito */
 .cart-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 50%;
-    width: 64px;
-    height: 64px;
-    font-size: 22px;
+    padding: 8px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    z-index: 1000;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: 14px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    gap: 6px;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
 .cart-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
-
-.cart-btn:active {
-    transform: translateY(-1px) scale(0.98);
+    background: var(--primary-dark);
+    transform: translateY(-1px);
 }
 
 .cart-btn #cartCount {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    background: #ff4444;
     color: white;
     border-radius: 50%;
-    width: 26px;
-    height: 26px;
-    font-size: 11px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 8px rgba(238, 90, 36, 0.3);
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 18px;
+    text-align: center;
 }
 
 /* Estilos para modales del carrito */
