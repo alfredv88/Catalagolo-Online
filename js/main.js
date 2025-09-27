@@ -1691,15 +1691,23 @@ function renderTable() {
     }
     
     tableData.forEach((row, index) => {
-        // 🔄 CARGAR IMÁGENES DESDE PRODUCTS ARRAY SI NO ESTÁN EN TABLEDATA
-        if (!row.imagenes || row.imagenes.length === 0) {
-            const product = products.find(p => p.referencia === row.referencia);
-            if (product && product.images && product.images.length > 0) {
+        // 🔄 SINCRONIZAR BIDIRECCIONALMENTE CON PRODUCTS ARRAY
+        const product = products.find(p => p.referencia === row.referencia);
+        
+        if (product) {
+            // Si el producto existe, sincronizar imágenes
+            if (product.images && product.images.length > 0) {
+                // Cargar desde products a tableData
                 row.imagenes = product.images;
                 row.imagen1 = product.images[0] || '';
                 row.imagen2 = product.images[1] || '';
                 row.imagen3 = product.images[2] || '';
-                console.log(`Imágenes cargadas desde products para ${row.referencia}`);
+                console.log(`🔄 Imágenes sincronizadas desde products para ${row.referencia}`);
+            } else if (row.imagenes && row.imagenes.length > 0) {
+                // Cargar desde tableData a products
+                product.images = row.imagenes;
+                saveProductsToStorage();
+                console.log(`🔄 Imágenes sincronizadas desde tableData para ${row.referencia}`);
             }
         }
         
