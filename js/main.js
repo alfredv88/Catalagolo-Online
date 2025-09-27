@@ -2245,7 +2245,9 @@ function triggerImagesUpload(rowIndex) {
 }
 
 function handleImagesUpload(rowIndex, input) {
+    console.log('🔍 DEBUG: handleImagesUpload iniciado para fila:', rowIndex);
     const files = Array.from(input.files || []).slice(0, 3);
+    console.log('🔍 DEBUG: Archivos seleccionados:', files.length);
     if (files.length === 0) return;
 
     const readers = files.map(file => {
@@ -2263,22 +2265,37 @@ function handleImagesUpload(rowIndex, input) {
 
     Promise.all(readers)
         .then(images => {
+            console.log('🔍 DEBUG: Imágenes procesadas:', images.length);
+            console.log('🔍 DEBUG: tableData antes:', tableData[rowIndex]);
+            
             const existing = tableData[rowIndex].imagenes || [];
             tableData[rowIndex].imagenes = images;
             tableData[rowIndex].imagen1 = images[0] || existing[0] || '';
             tableData[rowIndex].imagen2 = images[1] || '';
             tableData[rowIndex].imagen3 = images[2] || '';
             
+            console.log('🔍 DEBUG: tableData después:', tableData[rowIndex]);
+            
             // 🔄 SINCRONIZAR CON PRODUCTS ARRAY
             const referencia = tableData[rowIndex].referencia;
+            console.log('🔍 DEBUG: Referencia buscada:', referencia);
+            console.log('🔍 DEBUG: Products array:', products.length, 'productos');
+            
             const productIndex = products.findIndex(p => p.referencia === referencia);
+            console.log('🔍 DEBUG: ProductIndex encontrado:', productIndex);
+            
             if (productIndex !== -1) {
                 products[productIndex].images = images;
+                console.log('🔍 DEBUG: Producto actualizado:', products[productIndex]);
                 saveProductsToStorage();
-                console.log('Imágenes sincronizadas con products array');
+                console.log('✅ Imágenes sincronizadas con products array');
+            } else {
+                console.log('❌ ERROR: No se encontró producto con referencia:', referencia);
             }
             
+            console.log('🔍 DEBUG: Guardando tableData...');
             saveTableDataToStorage();
+            console.log('🔍 DEBUG: Re-renderizando tabla...');
             renderTable();
         })
         .catch(() => {
