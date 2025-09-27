@@ -2131,35 +2131,47 @@ function submitOrder() {
     console.log(`   - Template ID: template_3u8h10r`);
     console.log('=== FIN DIAGNÓSTICO ===');
     
-    // Enviar email usando EmailJS
-    emailjs.send('service_30ko4qz', 'template_3u8h10r', emailData)
-        .then(function(response) {
-            console.log('✅ Email enviado exitosamente:', response);
-            showSuccessNotification('¡Pedido enviado exitosamente! Te contactaremos pronto.');
-            // Limpiar carrito
+    // Primero intentar vía backend (api/order.php). Fallback a EmailJS si falla.
+    fetch('/api/order.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            firstName: orderData.firstName,
+            lastName: orderData.lastName,
+            email: orderData.email,
+            phone: orderData.phone,
+            message: orderData.message,
+            items: cart,
+            total: orderData.total
+        })
+    })
+    .then(res => res.ok ? res.json() : Promise.reject({ status: res.status }))
+    .then(json => {
+        if (json && json.ok) {
+            showSuccessNotification('¡Pedido enviado exitosamente!');
             cart = [];
             saveCartToStorage();
             updateCartCount();
             closeCheckoutModal();
-        }, function(error) {
-            console.error('❌ Error detallado al enviar email:', error);
-            console.error('Código de error:', error.status);
-            console.error('Texto de error:', error.text);
-            console.error('Respuesta completa:', error);
-            
-            // 🔍 DIAGNÓSTICO ADICIONAL DEL ERROR
-            console.log('=== DIAGNÓSTICO DEL ERROR 422 ===');
-            console.log('Posibles causas:');
-            console.log('1. Template ID incorrecto:', 'template_3u8h10r');
-            console.log('2. Service ID incorrecto:', 'service_30ko4qz');
-            console.log('3. Campos faltantes en template');
-            console.log('4. Formato de datos incorrecto');
-            console.log('5. Límite de cuota excedido');
-            console.log('6. Datos del carrito:', cart.length, 'items');
-            console.log('=== FIN DIAGNÓSTICO ERROR ===');
-            
-            alert(`Error al enviar el pedido. Código: ${error.status || 'N/A'}. Por favor, inténtalo de nuevo.`);
-        });
+        } else {
+            return Promise.reject({ status: 500, text: 'Respuesta inválida del servidor' });
+        }
+    })
+    .catch(err => {
+        console.warn('⚠️ Fallback a EmailJS por error en backend:', err);
+        return emailjs.send('service_30ko4qz', 'template_3u8h10r', emailData)
+            .then(function(response) {
+                console.log('✅ EmailJS enviado exitosamente:', response);
+                showSuccessNotification('¡Pedido enviado exitosamente!');
+                cart = [];
+                saveCartToStorage();
+                updateCartCount();
+                closeCheckoutModal();
+            }, function(error) {
+                console.error('❌ Error en EmailJS y backend:', error);
+                alert(`Error al enviar el pedido. Inténtalo más tarde.`);
+            });
+    });
 }
 
 // 🔧 FUNCIÓN DE PRUEBA PARA DIAGNÓSTICO
@@ -2265,56 +2277,76 @@ function handleImagesUpload(rowIndex, input) {
     console.log('🔍 DEBUG: Archivos seleccionados:', files.length);
     if (files.length === 0) return;
 
-    const readers = files.map(file => {
-        return new Promise((resolve, reject) => {
-            if (!file.type.startsWith('image/')) {
-                reject(new Error('Archivo no válido'));
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = e => resolve(e.target.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
-    });
+    // Subir cada archivo al servidor (api/upload.php). Fallback: dataURL si falla.
+    const uploadOne = (file) => {
+        if (!file.type.startsWith('image/')) {
+            return Promise.reject(new Error('Archivo no válido'));
+        }
+        const form = new FormData();
+        form.append('file', file);
+        return fetch('/api/upload.php', { method: 'POST', body: form })
+            .then(res => {
+                if (!res.ok) throw new Error(`Upload HTTP ${res.status}`);
+                return res.json();
+            })
+            .then(json => {
+                if (!json || !json.ok || !json.url) throw new Error('Respuesta inválida de upload');
+                return json.url; // URL absoluta
+            })
+            .catch(err => {
+                console.warn('⚠️ Upload fallido, usando dataURL como fallback:', err.message);
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve(e.target.result);
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            });
+    };
 
-    Promise.all(readers)
-        .then(images => {
-            console.log('🔍 DEBUG: Imágenes procesadas:', images.length);
+    Promise.all(files.map(uploadOne))
+        .then(imageRefs => {
+            console.log('🔍 DEBUG: Imágenes referenciadas:', imageRefs);
             console.log('🔍 DEBUG: tableData antes:', tableData[rowIndex]);
-            
+
+            // Guardar referencias en la fila (URLs o dataURL si fallback)
             const existing = tableData[rowIndex].imagenes || [];
-            tableData[rowIndex].imagenes = images;
-            tableData[rowIndex].imagen1 = images[0] || existing[0] || '';
-            tableData[rowIndex].imagen2 = images[1] || '';
-            tableData[rowIndex].imagen3 = images[2] || '';
-            
-            console.log('🔍 DEBUG: tableData después:', tableData[rowIndex]);
-            
-            // 🔄 SINCRONIZAR CON PRODUCTS ARRAY
+            tableData[rowIndex].imagenes = imageRefs;
+            tableData[rowIndex].imagen1 = imageRefs[0] || existing[0] || '';
+            tableData[rowIndex].imagen2 = imageRefs[1] || '';
+            tableData[rowIndex].imagen3 = imageRefs[2] || '';
+
+            // 🔄 Sincronizar con products
             const referencia = tableData[rowIndex].referencia;
-            console.log('🔍 DEBUG: Referencia buscada:', referencia);
-            console.log('🔍 DEBUG: Products array:', products.length, 'productos');
-            
             const productIndex = products.findIndex(p => p.referencia === referencia);
-            console.log('🔍 DEBUG: ProductIndex encontrado:', productIndex);
-            
             if (productIndex !== -1) {
-                products[productIndex].images = images;
-                console.log('🔍 DEBUG: Producto actualizado:', products[productIndex]);
+                products[productIndex].images = imageRefs;
                 saveProductsToStorage();
-                console.log('✅ Imágenes sincronizadas con products array');
             } else {
-                console.log('❌ ERROR: No se encontró producto con referencia:', referencia);
+                // Crear stub mínimo si aún no existe en products (p.ej., fila nueva)
+                const row = tableData[rowIndex];
+                products.push({
+                    id: Date.now(),
+                    referencia: row.referencia || `REF-${Date.now()}`,
+                    name: row.descripcion || 'Producto',
+                    description: row.descripcion || 'Producto',
+                    quantity: parseInt(row.cantidad, 10) || 0,
+                    loc: row.loc || '',
+                    price: parseFloat(row.precio) || 0,
+                    category: row.categoria || 'recgeneral',
+                    images: imageRefs,
+                    rating: 0,
+                    reviews: 0
+                });
+                saveProductsToStorage();
+                console.log('ℹ️ Stub de producto creado para conservar imágenes');
             }
-            
-            console.log('🔍 DEBUG: Guardando tableData...');
+
             saveTableDataToStorage();
-            console.log('🔍 DEBUG: Re-renderizando tabla...');
             renderTable();
         })
         .catch(() => {
-            alert('Hubo un problema al leer las imágenes seleccionadas.');
+            alert('Hubo un problema al procesar las imágenes.');
         })
         .finally(() => {
             input.value = '';
