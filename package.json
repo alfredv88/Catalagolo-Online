@@ -1,0 +1,39 @@
+{
+  "name": "catalogo-motos-ortiz",
+  "version": "1.0.0",
+  "description": "Catálogo Digital Motos Ortiz - FASE 3 Testing Railway",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No build step required'",
+    "postinstall": "echo 'FASE 3: Testing en Railway - Instalación completada'"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "keywords": [
+    "catalogo",
+    "motos-ortiz",
+    "productos",
+    "admin",
+    "ams-desarrollos",
+    "nodejs",
+    "railway",
+    "testing"
+  ],
+  "author": "AMS Desarrollos",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ams-desarrollos/catalogo-digital"
+  },
+  "homepage": "https://motosortiz.com",
+  "bugs": {
+    "url": "https://github.com/ams-desarrollos/catalogo-digital/issues"
+  }
+}
