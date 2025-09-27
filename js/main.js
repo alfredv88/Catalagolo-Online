@@ -2063,8 +2063,12 @@ function submitOrder() {
         order_date: new Date().toLocaleString('es-ES')
     };
     
+    // Debug: Mostrar datos que se van a enviar
+    console.log('Datos del email a enviar:', emailData);
+    console.log('Carrito:', cart);
+    
     // Enviar email usando EmailJS
-        emailjs.send('service_30ko4qz', 'template_3u8h10r', emailData)
+    emailjs.send('service_30ko4qz', 'template_3u8h10r', emailData)
         .then(function(response) {
             console.log('Email enviado exitosamente:', response);
             showSuccessNotification('¡Pedido enviado exitosamente! Te contactaremos pronto.');
@@ -2074,8 +2078,10 @@ function submitOrder() {
             updateCartCount();
             closeCheckoutModal();
         }, function(error) {
-            console.error('Error al enviar email:', error);
-            alert('Error al enviar el pedido. Por favor, inténtalo de nuevo.');
+            console.error('Error detallado al enviar email:', error);
+            console.error('Código de error:', error.status);
+            console.error('Texto de error:', error.text);
+            alert(`Error al enviar el pedido. Código: ${error.status || 'N/A'}. Por favor, inténtalo de nuevo.`);
         });
 }
 
