@@ -323,7 +323,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupPrintButton() {
         const printBtn = document.querySelector('.print-btn');
         if (printBtn) {
-            printBtn.addEventListener('click', function() {
+            // 🔧 LIMPIAR EVENT LISTENERS ANTERIORES
+            const newPrintBtn = printBtn.cloneNode(true);
+            printBtn.parentNode.replaceChild(newPrintBtn, printBtn);
+            
+            newPrintBtn.addEventListener('click', function() {
                 // Agregar información adicional antes de imprimir
                 const printInfo = document.createElement('div');
                 printInfo.innerHTML = `
@@ -1030,7 +1034,11 @@ function initializeExcelImport() {
     const uploadZone = document.getElementById('excelUploadZone');
     
     if (fileInput) {
-        fileInput.addEventListener('change', handleExcelFile);
+        // 🔧 LIMPIAR EVENT LISTENERS ANTERIORES
+        const newFileInput = fileInput.cloneNode(true);
+        fileInput.parentNode.replaceChild(newFileInput, fileInput);
+        
+        newFileInput.addEventListener('change', handleExcelFile);
     }
     
     if (uploadZone) {
