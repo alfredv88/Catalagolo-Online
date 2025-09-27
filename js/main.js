@@ -2053,7 +2053,7 @@ function submitOrder() {
     
     // Preparar datos para EmailJS
     const emailData = {
-        to_email: 'alfredv88@gmail.com',
+        to_email: 'desarrollador883@gmail.com',
         from_name: `${orderData.firstName} ${orderData.lastName}`,
         from_email: orderData.email,
         phone: orderData.phone,
