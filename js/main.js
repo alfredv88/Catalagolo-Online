@@ -2046,6 +2046,12 @@ function submitOrder() {
         return;
     }
     
+    // Validar que el carrito no esté vacío
+    if (cart.length === 0) {
+        alert('El carrito está vacío. Agrega productos antes de proceder.');
+        return;
+    }
+    
     // Formatear items del pedido para EmailJS
     const orderItems = cart.map(item => 
         `• ${item.name} (Ref: ${item.referencia || 'N/A'}) - ${item.quantity}x ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}`
