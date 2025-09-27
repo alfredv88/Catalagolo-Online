@@ -822,9 +822,18 @@ body {
 
 /* Estilos para impresión (PDF) */
 @media print {
-    /* Ocultar botón del carrito en impresión */
-    .cart-btn {
+    /* Ocultar elementos del carrito en impresión */
+    .cart-btn,
+    button.cart-btn,
+    .header .cart-btn {
         display: none !important;
+        visibility: hidden !important;
+    }
+    
+    #cartModal,
+    #checkoutModal {
+        display: none !important;
+        visibility: hidden !important;
     }
     
     .header {
