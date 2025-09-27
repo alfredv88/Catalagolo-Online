@@ -406,6 +406,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar carrito
     loadCartFromStorage();
     updateCartCount();
+    
+    // Inicializar EmailJS
+    initEmailJS();
         
     setupPrintButton();
     initializeCategoryCounts();
@@ -2017,7 +2020,12 @@ function closeCheckoutModal() {
     }
 }
 
-// Enviar pedido usando mailto
+// Inicializar EmailJS
+function initEmailJS() {
+    emailjs.init("iv11F2B5kZQYQx6A8"); // Clave pública de EmailJS
+}
+
+// Enviar pedido usando EmailJS
 function submitOrder() {
     const form = document.getElementById('checkoutForm');
     const formData = new FormData(form);
@@ -2038,48 +2046,37 @@ function submitOrder() {
         return;
     }
     
-    // Formatear items del pedido
+    // Formatear items del pedido para EmailJS
     const orderItems = cart.map(item => 
         `• ${item.name} (Ref: ${item.referencia || 'N/A'}) - ${item.quantity}x ${formatPrice(item.price)} = ${formatPrice(item.price * item.quantity)}`
     ).join('\n');
     
-    // Crear asunto del email
-    const subject = `Pedido de ${orderData.firstName} ${orderData.lastName}`;
+    // Preparar datos para EmailJS
+    const emailData = {
+        to_email: 'alfredv88@gmail.com',
+        from_name: `${orderData.firstName} ${orderData.lastName}`,
+        from_email: orderData.email,
+        phone: orderData.phone,
+        message: orderData.message,
+        order_items: orderItems,
+        order_total: formatPrice(orderData.total),
+        order_date: new Date().toLocaleString('es-ES')
+    };
     
-    // Crear cuerpo del email
-    const body = `Nuevo pedido recibido:
-
-DATOS DEL CLIENTE:
-Nombre: ${orderData.firstName} ${orderData.lastName}
-Email: ${orderData.email}
-Teléfono: ${orderData.phone || 'No proporcionado'}
-
-PRODUCTOS SOLICITADOS:
-${orderItems}
-
-TOTAL: ${formatPrice(orderData.total)}
-
-${orderData.message ? `MENSAJE ADICIONAL:\n${orderData.message}` : ''}
-
----
-Enviado desde el catálogo digital el ${new Date().toLocaleString('es-ES')}`;
-    
-    // Crear enlace mailto
-    const mailtoLink = `mailto:alfredv88@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    
-    // Abrir cliente de email
-    window.open(mailtoLink);
-    
-    // Mostrar confirmación
-    showSuccessNotification('¡Pedido preparado! Se abrirá tu cliente de email para enviar el pedido.');
-    
-    // Limpiar carrito después de un delay
-    setTimeout(() => {
-        cart = [];
-        saveCartToStorage();
-        updateCartCount();
-        closeCheckoutModal();
-    }, 2000);
+    // Enviar email usando EmailJS
+    emailjs.send('service_30ko4qz', 'template_613ci5v', emailData)
+        .then(function(response) {
+            console.log('Email enviado exitosamente:', response);
+            showSuccessNotification('¡Pedido enviado exitosamente! Te contactaremos pronto.');
+            // Limpiar carrito
+            cart = [];
+            saveCartToStorage();
+            updateCartCount();
+            closeCheckoutModal();
+        }, function(error) {
+            console.error('Error al enviar email:', error);
+            alert('Error al enviar el pedido. Por favor, inténtalo de nuevo.');
+        });
 }
 
 function normalizeCategory(value) {
