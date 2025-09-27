@@ -1420,9 +1420,8 @@ function createProductCard(product) {
     if (product.images && product.images.length > 0) {
         mainImage = product.images[0];
     } else {
-        // Si no hay imágenes, usar placeholder con el nombre del producto
-        const productName = product.name || 'Producto';
-        mainImage = `https://via.placeholder.com/400x400/ffffff/333333?text=${encodeURIComponent(productName.substring(0, 20))}`;
+        // Si no hay imágenes, usar el logo
+        mainImage = 'assets/logo.png';
     }
     
     // Generar miniaturas solo si hay más de 1 imagen
