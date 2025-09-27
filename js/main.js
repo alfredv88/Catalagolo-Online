@@ -1676,6 +1676,18 @@ function renderTable() {
     }
     
     tableData.forEach((row, index) => {
+        // 🔄 CARGAR IMÁGENES DESDE PRODUCTS ARRAY SI NO ESTÁN EN TABLEDATA
+        if (!row.imagenes || row.imagenes.length === 0) {
+            const product = products.find(p => p.referencia === row.referencia);
+            if (product && product.images && product.images.length > 0) {
+                row.imagenes = product.images;
+                row.imagen1 = product.images[0] || '';
+                row.imagen2 = product.images[1] || '';
+                row.imagen3 = product.images[2] || '';
+                console.log(`Imágenes cargadas desde products para ${row.referencia}`);
+            }
+        }
+        
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td>
@@ -2256,6 +2268,16 @@ function handleImagesUpload(rowIndex, input) {
             tableData[rowIndex].imagen1 = images[0] || existing[0] || '';
             tableData[rowIndex].imagen2 = images[1] || '';
             tableData[rowIndex].imagen3 = images[2] || '';
+            
+            // 🔄 SINCRONIZAR CON PRODUCTS ARRAY
+            const referencia = tableData[rowIndex].referencia;
+            const productIndex = products.findIndex(p => p.referencia === referencia);
+            if (productIndex !== -1) {
+                products[productIndex].images = images;
+                saveProductsToStorage();
+                console.log('Imágenes sincronizadas con products array');
+            }
+            
             saveTableDataToStorage();
             renderTable();
         })
